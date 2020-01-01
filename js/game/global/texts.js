@@ -11,6 +11,10 @@ class _Texts{
     static Quests = {};
     /** @type {Object.<string, _motionsTxt>} PoolKey des id de motions Words */
     static WORDS = {};
+
+    static SPLITBY_LETTER = /[\s\S]/g;
+    static SPLITBY_WORD = /\S+\s+\d\s|\S+\s*/g;
+    static SPLITBY_LINE = "TODO";//todo : hum ?
     constructor() {
         /**@type {Object.<string, Array.<DataMessages> >} - Contiens les arrays [DataMessages] par id*/
         this.messages = {};
@@ -190,10 +194,10 @@ class _motionsTxt extends PIXI.Container{
     initialize_splitter(){
         const matrix = this.matrix;
         const splittedMatrix = [];
-        const re = /\S+\s+\d\s|\S+\s*/g; // split by word option
+        const re = _Texts.SPLITBY_LETTER; // split by word option
         for (let i=0, l=matrix.length; i<l; i++) {
             const m = matrix[i];
-            if(m.tag){
+            if(m.tag){// si un tag <> continue, pas besoin de spliting
                 splittedMatrix.push(m);
                 continue;
             }
@@ -318,9 +322,10 @@ class _motionsTxt extends PIXI.Container{
                 {
                     x:()=>`+=${Math.randomFrom(3,-3)}`,
                     y:()=>`+=${Math.randomFrom(4,-4)}`,
-                    ease: "power1.inOut", 
+                    ease: Power1.easeInOut, 
                     repeat: -1, 
                     yoyo: true,
+                    yoyoEase: true,
                     stagger: 0.2
                 });
         };
