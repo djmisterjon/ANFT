@@ -69,7 +69,7 @@ class _Texts{
             if(!id){ continue };
             //! creer un objet selon le id
             if(_Texts.WORDS[id]){throw console.error("ERROR! Words id existe deja: ",id)};
-            _Texts.WORDS[id] = new _motionsTxt(id,string,9,{ fontWeight: '900', fill:"#fff" } );
+            _Texts.WORDS[id] = new _motionsTxt(id,string.toUpperCase(),0,{ fontWeight: '900', fill:"#fff" } );
         };
     };
     /** initialize les data messages */
@@ -153,6 +153,7 @@ class _motionsTxt extends PIXI.Container{
         this.initialize_metric();
         this.initialize_sprites();
         this.initialize_motionsTexture();
+        this.getLocalBounds();
         this.child = this.childrenToName();
         this.debug(false); //!DELETE ME
     };
@@ -277,12 +278,21 @@ class _motionsTxt extends PIXI.Container{
     initialize_motionsTexture(){
         if('allow options motions sprites'){
             const motionsTexture = new PIXI.Sprite( $app.renderer.generateTexture(this) ).setName('motionsTexture');
-            motionsTexture.pivot.set(motionsTexture.width,motionsTexture.height);
-            motionsTexture.position.set(motionsTexture.pivot.x,motionsTexture.pivot.y);
+            //motionsTexture.pivot.set(motionsTexture.width,motionsTexture.height);
+            //motionsTexture.position.set(motionsTexture.pivot.x,motionsTexture.pivot.y);
             this.addChildAt(motionsTexture,0);
         };
     };
     //#endregion
+
+    /** special anchor pour motionText. baser sur pivot */
+    anchors(x,y=x){
+        const width = this._localBoundsRect.width
+        const height = this._localBoundsRect.height;
+        this.child.Master.pivot.set(width*x, height*y);
+        this.child.motionsTexture.pivot.set(width*x, height*y);
+        return this;
+    };
 
     txtMatrice(string,styleID,tag,origine=0){
         return {string,styleID,tag};
@@ -290,7 +300,7 @@ class _motionsTxt extends PIXI.Container{
 
     /** Action la motions text si disponible dans les options */
     show(enableMotion=false){
-        gsap.from(this, {y:'-=50'});
+        gsap.from(this.child.Master, {y:'-=50'});
         enableMotion && this.startMotion();
         return this;
     };
@@ -341,8 +351,6 @@ class _motionsTxt extends PIXI.Container{
         }else{
             this.child.motionsTexture.renderable = false;
         }
-
-    
         //this.child.motionsTexture.renderable = false;
         return this;
     };

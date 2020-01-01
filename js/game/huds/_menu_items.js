@@ -90,9 +90,10 @@ class _Menue_Items extends _Huds_Base {
                     ButtonColor.position.set(85+136*i,12);
                     ButtonColor.d.anchor.set(0.5);
                     ButtonColor.n.anchor.set(0.5);
-                const FilterTxt = _Texts.WORDS[`_TYPE_${filterType}`].setName('FilterTxt').show(true)
+                const FilterTxt = _Texts.WORDS[`_TYPE_${filterType}`].setName('FilterTxt').anchors(0.5,0.5).show(true);
                // const FilterTxt = new PIXI.Text( filterType.toUpperCase(),$systems.styles[0] ).setName("FilterTxt");
-                    FilterTxt.position.set(85+136*i,12);
+               FilterTxt.scale.set(0.7);
+                    FilterTxt.position.set(85+136*i,14);
                     //FilterTxt.anchor.set(0.5);
                     BackgroundFilter.addChild(ButtonBg,ButtonColor,FilterTxt);
             };
