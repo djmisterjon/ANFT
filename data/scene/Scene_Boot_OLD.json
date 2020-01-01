@@ -1,0 +1,213 @@
+{
+	"_sheets": {
+		"gameItems": {
+			"png": "data2/Objets/gameItems/gameItems.png",
+			"root": "data2/Objets/gameItems/gameItems.json",
+			"dir": "data2/Objets/gameItems",
+			"base": "gameItems.json",
+			"ext": ".json",
+			"name": "gameItems",
+			"dirArray": [
+				"data2",
+				"Objets",
+				"gameItems"
+			]
+		},
+		"caseEvents": {
+			"png": "data2/Divers/caseEvents/caseEvents.png",
+			"root": "data2/Divers/caseEvents/caseEvents.json",
+			"dir": "data2/Divers/caseEvents",
+			"base": "caseEvents.json",
+			"ext": ".json",
+			"name": "caseEvents",
+			"dirArray": [
+				"data2",
+				"Divers",
+				"caseEvents"
+			]
+		},
+		"caseFXhit1": {
+			"png": "data2/FX/caseFX1/caseFXhit1.png",
+			"root": "data2/FX/caseFX1/caseFXhit1.json",
+			"dir": "data2/FX/caseFX1",
+			"base": "caseFXhit1.json",
+			"ext": ".json",
+			"name": "caseFXhit1",
+			"dirArray": [
+				"data2",
+				"FX",
+				"caseFXhit1"
+			]
+		},
+		"messageBox": {
+			"png": "data2/Texts/messageBox/messageBox.png",
+			"root": "data2/Texts/messageBox/messageBox.json",
+			"dir": "data2/Texts/messageBox",
+			"base": "messageBox.json",
+			"ext": ".json",
+			"name": "messageBox",
+			"dirArray": [
+				"data2",
+				"Texts",
+				"messageBox"
+			]
+		},
+		"heroe1_rendered": {
+			"png": "data2/Characteres/a1/heroe1_rendered.png",
+			"root": "data2/Characteres/a1/heroe1_rendered.json",
+			"dir": "data2/Characteres/a1",
+			"base": "heroe1_rendered.json",
+			"ext": ".json",
+			"name": "heroe1_rendered",
+			"dirArray": [
+				"data2",
+				"Characteres",
+				"a1"
+			]
+		},
+		"gloves": {
+			"png": "data2/Miscs/gloves/gloves.png",
+			"root": "data2/Miscs/gloves/gloves.json",
+			"dir": "data2/Miscs/gloves",
+			"base": "gloves.json",
+			"ext": ".json",
+			"name": "gloves",
+			"dirArray": [
+				"data2",
+				"Miscs",
+				"gloves"
+			]
+		},
+		"hudStats": {
+			"png": "data2/Hubs/stats/hudStats.png",
+			"root": "data2/Hubs/stats/hudStats.json",
+			"dir": "data2/Hubs/stats",
+			"base": "hudStats.json",
+			"ext": ".json",
+			"name": "hudStats",
+			"dirArray": [
+				"data2",
+				"Hubs",
+				"stats"
+			]
+		},
+		"hud_displacement": {
+			"png": "data2/Hubs/stamina/hud_displacement.png",
+			"root": "data2/Hubs/stamina/hud_displacement.json",
+			"dir": "data2/Hubs/stamina",
+			"base": "hud_displacement.json",
+			"ext": ".json",
+			"name": "hud_displacement",
+			"dirArray": [
+				"data2",
+				"Hubs",
+				"stamina"
+			]
+		},
+		"hud_combats": {
+			"png": "data2/Hubs/combats/hud_combats.png",
+			"root": "data2/Hubs/combats/hud_combats.json",
+			"dir": "data2/Hubs/combats",
+			"base": "hud_combats.json",
+			"ext": ".json",
+			"name": "hud_combats",
+			"dirArray": [
+				"data2",
+				"Hubs",
+				"combats"
+			]
+		},
+		"hudsCombatVictory": {
+			"png": "data2/Hubs/victory/hudsCombatVictory.png",
+			"root": "data2/Hubs/victory/hudsCombatVictory.json",
+			"dir": "data2/Hubs/victory",
+			"base": "hudsCombatVictory.json",
+			"ext": ".json",
+			"name": "hudsCombatVictory",
+			"dirArray": [
+				"data2",
+				"Hubs",
+				"victory"
+			]
+		},
+		"hudsPinBar": {
+			"png": "data2/Hubs/pinBar/hudsPinBar.png",
+			"root": "data2/Hubs/pinBar/hudsPinBar.json",
+			"dir": "data2/Hubs/pinBar",
+			"base": "hudsPinBar.json",
+			"ext": ".json",
+			"name": "hudsPinBar",
+			"dirArray": [
+				"data2",
+				"Hubs",
+				"pinBar"
+			]
+		},
+		"menueItems": {
+			"png": "data2/Hubs/menueItems/menueItems.png",
+			"root": "data2/Hubs/menueItems/menueItems.json",
+			"dir": "data2/Hubs/menueItems",
+			"base": "menueItems.json",
+			"ext": ".json",
+			"name": "menueItems",
+			"dirArray": [
+				"data2",
+				"Hubs",
+				"menueItems"
+			]
+		},
+		"iconsMonsters": {
+			"png": "data2/Icons/monstersIcons/iconsMonsters.png",
+			"root": "data2/Icons/monstersIcons/iconsMonsters.json",
+			"dir": "data2/Icons/monstersIcons",
+			"base": "iconsMonsters.json",
+			"ext": ".json",
+			"name": "iconsMonsters",
+			"dirArray": [
+				"data2",
+				"Icons",
+				"monstersIcons"
+			]
+		},
+		"m0": {
+			"png": "data2/Characteres/monster/m0/m0.png",
+			"root": "data2/Characteres/monster/m0/m0.json",
+			"dir": "data2/Characteres/monster/m0",
+			"base": "m0.json",
+			"ext": ".json",
+			"name": "m0",
+			"dirArray": [
+				"data2",
+				"Characteres",
+				"monster",
+				"m0"
+			]
+		},
+		"states": {
+			"png": "data2/System/states/states.png",
+			"root": "data2/System/states/states.json",
+			"dir": "data2/System/states",
+			"base": "states.json",
+			"ext": ".json",
+			"name": "states",
+			"dirArray": [
+				"data2",
+				"System",
+				"states"
+			]
+		},
+		"orbs": {
+			"png": "data2/Objets/orbs/orbs.png",
+			"root": "data2/Objets/orbs/orbs.json",
+			"dir": "data2/Objets/orbs",
+			"base": "orbs.json",
+			"ext": "json",
+			"name": "orbs",
+			"dirArray": [
+				"data2",
+				"Objets",
+				"orbs"
+			]
+		}
+	}
+}

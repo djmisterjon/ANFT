@@ -1,0 +1,30 @@
+{
+  "name": "game",
+  "main": "index.html",
+  "chromium-args": "--expose-gc --disable-raf-throttling --limit-fps=60 --remote-debugging-port=9222 --ignore-gpu-blacklist --force-gpu-mem-available-mb=14000 --enable-gpu-rasterization ",
+  "js-flags": "--expose_gc --enable-webvr --enable-gamepad-extensions --enable-gamepad-vibration --webxr --disable-raf-throttling",
+  "dependencies": {
+    "dat.gui": "^0.7.6",
+    "draggable": "^4.2.0",
+    "gsap": "^3.0.4",
+    "izitoast": "^1.4.0",
+    "mn-accordion": "^1.0.3",
+    "nw": "^0.39.0-sdk",
+    "pixi-filters": "^2.7.1",
+    "pixi-layers": "^0.2.2",
+    "pixi-lights": "^2.0.3",
+    "pixi-projection": "^0.2.8",
+    "pixi-sound": "^3.0.3",
+    "pixi-spine": "~1.5.7",
+    "pixi.js": "^4.8.7",
+    "recursive-readdir": "^2.2.2"
+  },
+  "commentaire chromium-args": "--in-process-gpu --experimental-report --disable-raf-throttling  --enable-native-gpu-memory-buffers --enable-zero-copy",
+  "commentaire js-flags": "--disallow-code-generation-from-strings  --harmony_proxies --harmony_collections",
+  "devDependencies": {
+    "nwjs-types": "^1.0.0"
+  },
+  "permissions": [
+    "usb"
+  ]
+}

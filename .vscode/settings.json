@@ -1,0 +1,12 @@
+{
+    "workbench.colorCustomizations": {
+        "statusBar.noFolderBackground": "#212121",
+        "statusBar.debuggingBackground": "#ff0000",
+        "scrollbarSlider.hoverBackground": "#7b7a43",
+        "tab.activeBackground": "#717171",
+        "tab.border": "#5a5a5a",
+        "tab.unfocusedHoverBackground": "#131313",
+        "editor.background": "#202020",
+        "tab.unfocusedActiveBorder": "#fff0"
+    }
+}

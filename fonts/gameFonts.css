@@ -1,0 +1,31 @@
+@font-face {
+    font-family: 'Bumble Bee';
+    src: url('bumblebee-webfont.eot');
+    src: local('☺'), 
+         url('bumblebee-webfont.woff') format('woff'), 
+         url('bumblebee-webfont.ttf') format('truetype'), 
+         url('bumblebee-webfont.svg#webfontg8dbVmxj') format('svg');
+  }
+  
+  @font-face {
+    font-family: 'GestaReFogular';
+    src: url('gestareg-webfont.eot');
+    src: local('☺'), 
+         url('gestareg-webfont.woff') format('woff'), 
+         url('gestareg-webfont.ttf') format('truetype'), 
+         url('gestareg-webfont.svg#webfontg8dbVmxj') format('svg');
+  }
+  
+  body {
+    overflow: hidden; 
+    margin:0px;
+    background-color: rgb(221, 221, 221); 
+    font-family: 'GestaRegular', Arial, Helvetica, sans-serif;
+  }
+  
+  .IIV::-webkit-media-controls-play-button,
+video::-webkit-media-controls-start-playback-button {
+    opacity: 0;
+    pointer-events: none;
+    width: 5px;
+}

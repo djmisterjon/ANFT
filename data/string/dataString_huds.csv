@@ -1,0 +1,9 @@
+id;frCA;frFR;enUS;AR;JAP;CHN;RU;ESP
+COMBAT_D_IMUNITY;Les indicateur d'imuniter influ sur la capaciter a ce defendre face a des infliger ou influeur de damage ou de status. 100% equivaut a une immuniter baser sur le facteur de chance de la cible.;;;;;;;
+COMBAT_D_ALIMENT;Les preference alimentaire peuvent influer sur le comportement du debut de tours de la cible. Lorsque un aliment est ingerer , ces effet s'appliquer immediament.La cible peut ingerer des aliments a proximiter selon sa ditance.;;;;;;;
+COMBAT_D_CAPACITY;Les capaciter magic en heritage de la creature.Les capaciter sont heriter avec un facteur de chance par niveau et leur efficasiter est aleatoire.;;;;;;;
+;;;;;;;;
+;;;;;;;;
+;;;;;;;;
+;;;;;;;;
+;;;;;;;;

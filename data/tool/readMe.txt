@@ -1,0 +1,1 @@
+Pour exporter translate correctement, il faut exporter en .txt unidode et ensuite remplacer tous les valeurs ; tabulatoir

@@ -1,0 +1,31 @@
+id;frCA;frFR;enUS;AR;JAP;CHN;RU;ESP
+_NAME;Nom;;Name;????:;??;;???;Nombre
+_LEVEL;Level;;Level;;;;;
+_TYPE;Type;;Type;;;;;
+_DESCS;Descriptions;;;;;;;
+_IMUNITY;Immunitées;;;;;;;
+_INFLIC;Inflige;;;;;;;
+_CAPACITY;Capaciter;;;;;;;
+_WEIGHT;Poids;;;;;;;
+_ALIMENT;Alimentation;;;;;;;
+_REWARD;Récompense;;Reward;;;;;
+_VICTORY;Victoire;;Victory;;;;;
+_MASTER;Master;Epic;Master;;;;;
+_TOTALXP;Total XP:;;;;;;;
+_TOTALGOLD;Total PO:;;;;;;;
+_GETXP;XP Recu:;;;;;;;
+_GETGOLD;PO Recu:;;;;;;;
+_TYPE_mineral;mineral;minéral;;;;;;
+_TYPE_plant;plants;plante;;;;;;
+_TYPE_builder;builders;construc;;;;;;
+_TYPE_magic;magics;magique;;;;;;
+_TYPE_water;waters;aqua;;;;;;
+_TYPE_food;foods;aliment;;;;;;
+_TYPE_tools;tools;outils;;;;;;
+__TODMG_R;au dammages de Distance.;;;;;;;
+__TODMG_P;au dammages de physic proximiter.;;;;;;;
+__inflicStatus;d'infliger un status de;;;;;;;
+__effectiveFrom;effectif entre;;;;;;;
+__fromRecipe;grace a la combinaison de vos items.;;;;;;;
+__boostDMG;Augmente les degat de frappe de;;;;;;;
+__boostElements;Heritage des degats elementaires;;;;;;;

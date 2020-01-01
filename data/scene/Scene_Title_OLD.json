@@ -1,0 +1,173 @@
+{
+	"system": {
+		"heaps": 24,
+		"heapTotal": 32.2,
+		"external": 357.5,
+		"rss": 341.2,
+		"versionEditor": ">not avaible ...",
+		"SavePath": ">not avaible ...",
+		"totalSpines": null,
+		"totalAnimations": null,
+		"totalTileSprites": null,
+		"totalLight": null,
+		"totalEvents": null,
+		"totalSheets": null
+	},
+	"_lights": {
+		"ambientLight": {
+			"shaderName": "ambientLightShader",
+			"blendMode": 1,
+			"alpha": 1,
+			"drawMode": 4,
+			"lightHeight": 0.075,
+			"brightness": 0.5,
+			"falloff": [
+				0.75,
+				3,
+				20
+			],
+			"color": 16777215
+		},
+		"directionalLight": {
+			"shaderName": "directionalLightShader",
+			"blendMode": 1,
+			"alpha": 1,
+			"drawMode": 4,
+			"lightHeight": 0.075,
+			"brightness": 1,
+			"falloff": [
+				0.75,
+				3,
+				20
+			],
+			"color": 16777215
+		}
+	},
+	"_background": {
+		"p": {
+			"dataName": "p1m1",
+			"name": null,
+			"parentGroup": 0
+		}
+	},
+	"_sheets": {
+		"p1m1": {
+			"base": "p1m1.json",
+			"dir": "data2/BG/map1planet1",
+			"dirArray": [
+				"data2",
+				"BG",
+				"map1planet1"
+			],
+			"name": "p1m1",
+			"root": "data2/BG/map1planet1/p1m1.json",
+			"type": "tileSheet"
+		},
+		"houseP1M1_01": {
+			"base": "houseP1M1_01.json",
+			"dir": "data2/Buildings/houseP1M1_01",
+			"dirArray": [
+				"data2",
+				"Buildings",
+				"houseP1M1_01"
+			],
+			"name": "houseP1M1_01",
+			"root": "data2/Buildings/houseP1M1_01/houseP1M1_01.json",
+			"type": "tileSheet"
+		}
+	},
+	"_objs": [
+		{
+			"p": {
+				"type": "tileSheet",
+				"textureName": "pen",
+				"dataName": "houseP1M1_01",
+				"groupID": "houseP1M1_01",
+				"name": "penvohyavdu10",
+				"description": "data2/Buildings/houseP1M1_01/houseP1M1_01.json",
+				"position": [
+					555.3468055578284,
+					274.0510649804697
+				],
+				"scale": [
+					1,
+					1
+				],
+				"skew": [
+					0,
+					0
+				],
+				"pivot": [
+					0,
+					0
+				],
+				"rotation": 0,
+				"alpha": 1,
+				"autoGroups": [
+					false,
+					false,
+					false,
+					false,
+					false,
+					false,
+					false
+				],
+				"zIndex": 274.0510649804697,
+				"parentGroup": 1,
+				"pathConnexion": {}
+			},
+			"d": {
+				"position": [
+					0,
+					0
+				],
+				"scale": [
+					1,
+					1
+				],
+				"skew": [
+					0,
+					0
+				],
+				"pivot": [
+					0,
+					0
+				],
+				"anchor": [
+					0.5,
+					1
+				],
+				"rotation": 0,
+				"alpha": 1,
+				"blendMode": 0,
+				"tint": 16777215
+			},
+			"n": {
+				"position": [
+					0,
+					0
+				],
+				"scale": [
+					1,
+					1
+				],
+				"skew": [
+					0,
+					0
+				],
+				"pivot": [
+					0,
+					0
+				],
+				"anchor": [
+					0.5,
+					1
+				],
+				"rotation": 0,
+				"alpha": 1,
+				"blendMode": 0,
+				"tint": 16777215
+			}
+		}
+	]
+}

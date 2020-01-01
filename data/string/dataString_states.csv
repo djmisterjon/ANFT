@@ -1,0 +1,7 @@
+id;frCA;frFR;enUS;AR;JAP;CHN;RU;ESP
+N_STATE_statePoison;Poison;;;;;;;
+D_STATE_statePoison;Une cible sous l'effect de poison subi un % de damage selon ces hp au debut de chaque tours.Le % varie selon l'origine et le poison ne peut etre mortel.;;;;;;;
+N_STATE_stateAttack;Frappe Physic;;;;;;;
+D_STATE_stateAttack;Infliger des damage de base physic, baser sur l'attaque, defense et la chance.;;;;;;;
+N_STATE_stateItem;Boosters de frappe;;;;;;;
+D_STATE_stateItem;Les boosters peuvent augmenter et influer le resulta selon la frappe de base et leur combinaison.;;;;;;;

@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "target": "es2016",
+        "module": "commonJS",
+        "checkJs": true
+    },
+    "exclude": ["node_modules", "**/node_modules/*"],
+    
+    "comment":["allowSyntheticDefaultImports: true"]
+}
