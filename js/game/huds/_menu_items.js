@@ -21,7 +21,8 @@ class _Menue_Items extends _Huds_Base {
          * 'BackgroundFilter':ContainerDN, 'ButtonBg':ContainerDN, 'ButtonColor':ContainerDN, 
          * 'OrbsDiffuserBG':Array.<ContainerDN>, 'Orbs':Array.<ContainerDN>, 'OrbsFlare':Array.<ContainerDN>, 
          * 'SortTxt':PIXI.Text, 'FilterTxt':PIXI.Text, 'MasterOrbsDiffusers':PIXI.Container, 'MasterItContainer':PIXI.Container,
-         * 'renderSpriteD':PIXI.Sprite, 'renderSpriteN':PIXI.Sprite, 'mask':PIXI.Sprite, 'ItemsContainer':PIXI.Container,}} */
+         * 'renderSpriteD':PIXI.Sprite, 'renderSpriteN':PIXI.Sprite, 'mask':PIXI.Sprite, 'ItemsContainer':PIXI.Container,
+         * ExtraInformations:__ExtraInformations}} */
         this.child = null;
     };
     //#region [Initialize]
@@ -90,7 +91,7 @@ class _Menue_Items extends _Huds_Base {
                     ButtonColor.position.set(85+136*i,12);
                     ButtonColor.d.anchor.set(0.5);
                     ButtonColor.n.anchor.set(0.5);
-                const FilterTxt = _Texts.WORDS[`_TYPE_${filterType}`].setName('FilterTxt').anchors(0.5,0.5).show(true);
+                const FilterTxt = $texts.MotionsTxt("id","{style}","splitBy")//_Texts.WORDS[`_TYPE_${filterType}`].setName('FilterTxt').anchors(0.5,0.5).show(true);
                // const FilterTxt = new PIXI.Text( filterType.toUpperCase(),$systems.styles[0] ).setName("FilterTxt");
                FilterTxt.scale.set(0.7);
                     FilterTxt.position.set(85+136*i,14);
@@ -399,22 +400,22 @@ class __ItemSlot extends PIXI.Container {
             BackgroundSlot.n.alpha = 1;
         //# data2\GUI\menues\menueItems\SOURCE\images\menueIt_itemSlot.png
         const SlotItem = $objs.ContainerDN(dataBase,'menueIt_itemSlot','SlotItem');
-            SlotItem.position.set(50,65);
+            SlotItem.position.set(50);
             SlotItem.d.anchor.set(0.5);
             SlotItem.n.anchor.set(0.5);
         //#Text 
-        const ValueTxt = new PIXI.Text(`value:${Item._value} Weight:${Item._weight} id:${Item._id }`
-            ,{ fill: "white", fontFamily:"Comic Sans MS",fontSize: 16, fontVariant: "small-caps", fontWeight: 900 }).setName("ValueTxt");
-            ValueTxt.position.set(15,6);
+        const ValueTxt = new PIXI.Text(`${_Texts.WORDS._VALUE.T}:${Item._value} ${_Texts.WORDS._WEIGHT.T}:${Item._weight}`
+            ,$systems.styles[7]).setName("ValueTxt");
+            ValueTxt.position.set(94,6);
         const TitleTxt = new PIXI.Text(Item.name,$systems.styles[6]).setName("TitleTxt");
-            TitleTxt.position.set(90,20);
+            TitleTxt.position.set(94,25);
         const QtyTxt = new PIXI.Text(`X${Item.qty}`,{ fill: "white", fontFamily:"Comic Sans MS",fontSize: 20, fontVariant: "small-caps", fontWeight: 900 }).setName("QtyTxt");
         QtyTxt.anchor.set(1,0);
         QtyTxt.position.set(285,80);    
         //# data2\System\gameItems\SOURCE\images\0.png
         const ItemIcon = $objs.ContainerDN(dataBase2,Math.min(this._id,48),'ItemIcon'); //TODO: FINALISER LA DB ITEMS 48
             ItemIcon.scale.set(0.8);
-            ItemIcon.position.set(50,65);
+            ItemIcon.position.set(50);
             ItemIcon.d.anchor.set(0.5);
             ItemIcon.n.anchor.set(0.5);
         //!end
@@ -434,8 +435,8 @@ class __ItemSlot extends PIXI.Container {
     pointerover_ItemSlot(){
         $audio._sounds.BT_A.play("BT_A06");
         const BackgroundSlot = this.child.BackgroundSlot;
-        BackgroundSlot.d.alpha = 0.7;
-        BackgroundSlot.n.alpha = 0.7;
+        BackgroundSlot.d.alpha = 0.2;
+        BackgroundSlot.n.alpha = 2;
         BackgroundSlot.n.filters = [$systems.PixiFilters.OutlineFilterx4Black];
         const SlotItem = this.child.ItemIcon; //todo: reflechir pour permet ani renderer
         //gsap.fromTo(SlotItem, 0.4, {rotation:-0.1}, {rotation:0.1, ease:Power1.easeInOut, repeat: -1, yoyoEase: true} );
@@ -444,8 +445,8 @@ class __ItemSlot extends PIXI.Container {
     };
     pointerout_ItemSlot(){
         const BackgroundSlot = this.child.BackgroundSlot;
-        BackgroundSlot.d.alpha = 0.3;
-        BackgroundSlot.n.alpha = 1;
+        BackgroundSlot.d.alpha = 0
+        BackgroundSlot.n.alpha = 0
         BackgroundSlot.n.filters = null;
         const SlotItem = this.child.ItemIcon;
         gsap.to(SlotItem, 0.2, {rotation:0 } );
@@ -518,26 +519,48 @@ class __ExtraInformations extends PIXI.Container{
 
     initialize_ItemInformation(){
         const dataBase2 = $loader.DATA2.gameItems;
-        //# txt total weight total items
-        const TitleTxt = new PIXI.Text('ItemTitle',$systems.styles[6]).setName('TitleTxt');
-            TitleTxt.position.set(-70,0);
+        //# txt item
+        const DescriptionContainer = new PIXI.Container().setName('DescriptionContainer');
+        //const TitleTxt = new PIXI.Text('ItemTitle',$systems.styles[6]).setName('TitleTxt');
+        //    TitleTxt.position.set(-70,15);
+        //const FilterTypeTxt = new PIXI.Text('[ItemType]',$systems.styles[7]).setName('FilterTypeTxt');
+        //    FilterTypeTxt.position.set(-165,90);
+        //const DescTxt = new PIXI.Text('[ItemType]',$systems.styles[0]).setName('DescTxt');
+        //    DescTxt.position.set(-165,145);
+        //const ExtraDesc = new PIXI.Text('[ItemType]',$systems.styles[0]).setName('ExtraDesc');
+        //    ExtraDesc.position.set(-165,175); // dynamic
         //# data2\System\gameItems\SOURCE\images\0.png
         const ItemIcon = new PIXI.Sprite(PIXI.Texture.WHITE).setName('ItemIcon');
             ItemIcon.position.set(-130,35);
             ItemIcon.anchor.set(0.5);
-        this.addChild(TitleTxt,ItemIcon);
+        this.addChild(ItemIcon,DescriptionContainer);
     };
     //#endregion
 
     //#region [Method]
     /** Affiche les informations d'un items */
-    showInformation(id){
+    showInformation(id){ //TODO: REMASTERISER AVEC LES MOTION TEXT . creer un container avec un clear
         const dataBase = $loader.DATA2.gameItems;
         const Item = _ItemsManager.ITEMS[id];
-        this.child.TitleTxt.text = Item.name;
-        //# data2\System\gameItems\SOURCE\images\0.png
-        const texture = dataBase.textures[id];
-        this.child.ItemIcon.texture = texture;
+        const DescriptionContainer =  this.child.DescriptionContainer;
+        DescriptionContainer.removeChildren(); // clear
+        if(Item && _Texts.ITEMS[id]){
+            const title = _Texts.ITEMS[id].title.show(true,0.01);
+                title.position.set(-70,15);
+            const desc = _Texts.ITEMS[id].desc.show(true,0.01);
+                desc.position.set(-165,145);
+            const extraDesc = _Texts.ITEMS[id].extraDesc.show(true,0.02);
+                extraDesc.position.set(-165,desc.y+desc.height+10);
+            DescriptionContainer.addChild(title,desc,extraDesc);
+        };
+        if(Item){
+            //# data2\System\gameItems\SOURCE\images\0.png
+            const texture = dataBase.textures[id];
+            this.child.ItemIcon.texture = texture;
+            this.child.ItemIcon.renderable = true;
+        }else{
+            this.child.ItemIcon.renderable = false;
+        };
     };
     //#endregion
 

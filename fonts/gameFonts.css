@@ -21,6 +21,7 @@
     margin:0px;
     background-color: rgb(221, 221, 221); 
     font-family: 'GestaRegular', Arial, Helvetica, sans-serif;
+    -webkit-font-smoothing: antialiased;
   }
   
   .IIV::-webkit-media-controls-play-button,

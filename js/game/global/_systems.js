@@ -68,7 +68,7 @@ class _systems{
             }),
             new PIXI.TextStyle({//id:1
                 fill: "#de8447", fontFamily: "ArchitectsDaughter", 
-                fontSize: 70, lineJoin: "bevel", miterLimit: 0, padding: 4, stroke: "white", strokeThickness: 10 
+                fontSize: 35, lineJoin: "bevel", miterLimit: 0, padding: 4, stroke: "white", strokeThickness: 10 
             }),
             new PIXI.TextStyle({//id:2 [infoMonsterBox dans battle]
                 fill: "#d8d8d8", fontFamily: "ArchitectsDaughter", 
@@ -88,11 +88,11 @@ class _systems{
             }),
             new PIXI.TextStyle({//id:6 items descript menuItem
                 fill: "#80662f",fontFamily: "ArchitectsDaughter", 
-                fontSize: 18,strokeThickness:1,stroke:"#80662f",lineHeight:18
+                fontSize: 20,strokeThickness:1,stroke:"#80662f",lineHeight:18,letterSpacing:1,
             }),
             new PIXI.TextStyle({//id:7 black desc , navigator ...
                 fill: "#1c1c1c",fontFamily: "ArchitectsDaughter", 
-                fontSize: 16,strokeThickness:0.5,stroke:"#1c1c1c",lineHeight:16
+                fontSize: 14,strokeThickness:1.5,stroke:"#1c1c1c",lineHeight:16,letterSpacing:1,
             }),
             new PIXI.TextStyle({//id:8 waring
                 fill: "#e63746",fontFamily: "ArchitectsDaughter", 

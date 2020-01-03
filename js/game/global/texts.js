@@ -1,20 +1,43 @@
+/**
+    * @typedef {Object} DataString_QUESTS Regroup les quests motionsTxt part tag excel
+    * @property {_motionsTxt} DataString_QUESTS.title - title
+    * @property {_motionsTxt} DataString_QUESTS.title2 - BIG TITLE
+    * @property {_motionsTxt} DataString_QUESTS.titleDesc - descriptions
+    * @property {Array.<_motionsTxt>} DataString_QUESTS.quest - subDescriptions d'une quest
+*/ 
+/**
+    * @typedef {Object} DataString_ITEMS Regroup les items motionsTxt par tag excel
+    * @property {_motionsTxt} DataString_ITEMS.title - title
+    * @property {_motionsTxt} DataString_ITEMS.desc - descriptions
+    * @property {_motionsTxt} DataString_ITEMS.extraDesc - descriptions suplementaire
+*/ 
+
+//TODO: OK les _motionsTxt doivent pouvoir etre generer sur appelle dans les initialize des menue et atre
+// TODO: pour les messages, ce sera dans message initialize
+// TODO: Les texte ne devrai etre que du data calculer live quand appeller
+/**
+ * Items dans items
+ * quest dans quest
+ * Messages dans messages
+ * 
+ * utiliser un poor pour chaque moduel et stoker motionstext, permetre injecter des styles custom
+ */
+
 /** Les events sont sois appeller directement, sois apeller sur un update */
 class _Texts{
-    /**
-        * @typedef {Object} DataString_QUESTS Objet qui stock id quest string
-        * @property {_motionsTxt} DataString_QUESTS.title - title
-        * @property {_motionsTxt} DataString_QUESTS.title2 - BIG TITLE
-        * @property {_motionsTxt} DataString_QUESTS.titleDesc - descriptions
-        * @property {Array.<_motionsTxt>} DataString_QUESTS.quest - subDescriptions d'une quest
-    */ 
-    /** @type {Object.<string, DataString_QUESTS>} Pool des Quests id */
+    //#region [Static]
+    /** @type {Object.<string, DataString_QUESTS>} - Pool des Quests id */
     static Quests = {};
-    /** @type {Object.<string, _motionsTxt>} PoolKey des id de motions Words */
+    /** @type {Object.<string, _motionsTxt>} - PoolKey des id de motions Words */
     static WORDS = {};
+    /** @type {Object.<string, DataString_ITEMS>} - Pool des items par id */
+    static ITEMS = {};
 
     static SPLITBY_LETTER = /[\s\S]/g;
     static SPLITBY_WORD = /\S+\s+\d\s|\S+\s*/g;
     static SPLITBY_LINE = "TODO";//todo : hum ?
+    //#endregion
+
     constructor() {
         /**@type {Object.<string, Array.<DataMessages> >} - Contiens les arrays [DataMessages] par id*/
         this.messages = {};
@@ -31,9 +54,9 @@ class _Texts{
     //#region [Initialize]
     initialize(options){
         const strings = $loader.DATA.string;
-        this.initialize_quests(strings.dataString_quests.data);
-        this.initialize_keyword(strings.dataString_keyword.data);
-        //this.initialize_message(strings.dataString_message.data);
+        //this.initialize_quests(strings.dataString_quests.data);
+        //this.initialize_keyword(strings.dataString_keyword.data);
+        this.initialize_items(strings.dataString_items.data);
        //this.initialize_MessagesPages(options);
        //this.initialize_MotionsTextsBlurs(options);
     };
@@ -72,6 +95,26 @@ class _Texts{
             _Texts.WORDS[id] = new _motionsTxt(id,string.toUpperCase(),0,{ fontWeight: '900', fill:"#fff" } );
         };
     };
+
+    /** initialize les data items title, description extra descriptions */
+    initialize_items(DataString){
+        const localIndex = this._localId+2;
+        for (let i=1, l=DataString.length; i<l; i++) {
+            const data = DataString[i];
+            const id = data[0];
+            const tag = data[1];
+            const string = data[localIndex];
+            if(!tag){ continue }; // ou pas id:null..
+            //! creer un objet selon le id
+            const ITEMS = _Texts.ITEMS[id] || ( _Texts.ITEMS[id] = { title:null,desc:null,extraDesc:null } )
+            switch (tag) {
+                case 'n' : ITEMS.title     = new _motionsTxt(id,string,6,{ fontWeight: '900', fill:"#fff" } ); break;
+                case 'd' : ITEMS.desc      = new _motionsTxt(id,string,0,{ wordWrap  : true , wordWrapWidth: 350   } ); break; //todo:wordWrap 
+                case 'exd' : ITEMS.extraDesc = new _motionsTxt(id,string,0,{ wordWrap  : true , wordWrapWidth: 350   } ); break;//todo:wordWrap
+            };
+        };
+    };
+
     /** initialize les data messages */
     initialize_message(DataString){
         for (let i=1, l=DataString.length; i<l; i++) {
@@ -122,7 +165,17 @@ class _Texts{
     //#endregion
 
     //#region [Method]
+    /** @return {String} - cherche et return String data from DB */
+    getStringById(id){
+        return _Texts.POOL[id];
+    };
 
+    /** Creer un MotionsText Container selon un ID */
+    MotionsTxt(id,suffixe='',style,splitBy=_Texts.SPLITBY_WORD){
+        const string = this.getStringById(id+suffixe);
+        const MotionsTxt = new _motionsTxt(id,string,6,{ fontWeight: '900', fill:"#fff" } );
+        return MotionsTxt;
+    };
     //#endregion
 };
 
@@ -147,15 +200,18 @@ class _motionsTxt extends PIXI.Container{
         this.initialize();
     };
 
+    /**@returns {String} - _originalString pour usage PIXI.TEXT */
+    get T() { return this._originalString };
+
     initialize(){
         this.initialize_regex();
-        this.initialize_splitter();
+        //this.initialize_splitter();// doi etre executer apres
         this.initialize_metric();
         this.initialize_sprites();
         this.initialize_motionsTexture();
         this.getLocalBounds();
         this.child = this.childrenToName();
-        this.debug(false); //!DELETE ME
+        this.debug(true); //!DELETE ME
     };
 
     //#region [Initialize]
@@ -195,7 +251,7 @@ class _motionsTxt extends PIXI.Container{
     initialize_splitter(){
         const matrix = this.matrix;
         const splittedMatrix = [];
-        const re = _Texts.SPLITBY_LETTER; // split by word option
+        const re = _Texts.SPLITBY_WORD; // split by word pour permetre wordWrap de fonctionner
         for (let i=0, l=matrix.length; i<l; i++) {
             const m = matrix[i];
             if(m.tag){// si un tag <> continue, pas besoin de spliting
@@ -217,7 +273,7 @@ class _motionsTxt extends PIXI.Container{
         let styleOptions = Object.assign({}, this.styleOptions); // quand saut ligne , reset
         const isWordWrap = styleOptions.wordWrap && delete styleOptions.wordWrap; //On delete car metric a un bug de width avec `wordWrap`
         let maxHeightLine = 0; // calcul la hauteur maximal pour la ligne actuel pour un saut line
-        for (let i=0, x=0,y=0; i<matrix.length; i++) {
+        for (let i=0,line=0, x=0,y=0; i<matrix.length; i++) {
             const textMatrix = matrix[i];
             const style = Object.assign($systems.styles[textMatrix.styleID].clone(),styleOptions);
             let TextMetrics = PIXI.TextMetrics.measureText(textMatrix.string, style,isWordWrap);
@@ -227,15 +283,36 @@ class _motionsTxt extends PIXI.Container{
                 //!reset
                 x=0;
                 y+=maxHeightLine;
+                line++;
                 maxHeightLine = 0;
                 styleOptions.wordWrapWidth = this.styleOptions.wordWrapWidth; // reset
                 continue;
             };
             // Si metric a spliter , ces que ces un saut ligne
             if(TextMetrics.lines.length>1 ){
-                if(TextMetrics.lineWidths[0]>styleOptions.wordWrapWidth){ // si le premier word splited brise la limite, envoyer tous pour second line.
+               // for (let ii=0,xx=0, l=TextMetrics.lines.length; i<l; ii++) {
+               //     const lines = TextMetrics.lines[i];
+               //     const lineWidths = TextMetrics.lineWidths[i];
+               //     const wordWrapWidth = styleOptions.wordWrapWidth;
+               //     if(xx+lineWidths>wordWrapWidth){
+               //         matrix.splice(i,0,this.txtMatrice('',textMatrix.styleID,"N") ); // restart
+               //     }
+               //     xx+=(x+lineWidths);
+               // };
+               // throw console.error("TextMetrics a pas trouver une line continue")
+                // sur une nouvelle ligne ?
+                if(x===0){
+                    textMatrix.string = TextMetrics.lines.shift();
+                    for (let ii=TextMetrics.lines.length; ii-- ; ) {
+                        matrix.splice(i+1,0,this.txtMatrice(TextMetrics.lines[ii],textMatrix.styleID) );
+                    };
+                    i--; continue;
+                }else{ // sinon ajoute un saut ligne pour recalculer
                     matrix.splice(i,0,this.txtMatrice('',textMatrix.styleID,"N") ); // restart
                     i--; continue;
+                }
+                if(TextMetrics.lineWidths[0]>styleOptions.wordWrapWidth){ // si le premier word splited brise la limite, envoyer tous pour second line.
+
                 };
                 //todo: pas besoin si utilise mode splitter words, mais a fair si pas le mode spittler words (rempalcer push par splice)
                 /*matrix.push( this.txtMatrice('',textMatrix.styleID,"N") ); // ajout un jump line
@@ -299,13 +376,13 @@ class _motionsTxt extends PIXI.Container{
     };
 
     /** Action la motions text si disponible dans les options */
-    show(enableMotion=false){
+    show(enableMotion=false,staggerSpeed=0.07){
         gsap.from(this.child.Master, {y:'-=50'});
-        enableMotion && this.startMotion();
+        enableMotion && this.startMotion(staggerSpeed);
         return this;
     };
 
-    startMotion(){
+    startMotion(staggerSpeed){
         const List = this.child.Master.children;
         //!motions words
         if('option motions words show'){
@@ -323,7 +400,7 @@ class _motionsTxt extends PIXI.Container{
 
             gsap.fromTo(List, 0.3,
                 { alpha:0 },
-                { alpha:1, ease: Power1.easeIn, stagger: 0.07 });
+                { alpha:1, ease: Power1.easeIn, stagger: staggerSpeed });
             gsap.fromTo(List, 4,
                 {
                     x:(i,o)=>o.position.zero._x,

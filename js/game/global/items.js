@@ -107,6 +107,10 @@ console.log1('$itemsManager', $itemsManager);
             this._dmg = _dmg && _dmg.split(',').map(n=>+n) || [0];
         };
         //#region [GetterSetter]
+        get name() { return _Texts.ITEMS[this._id] && _Texts.ITEMS[this._id].title.T};
+        get desc() { return _Texts.ITEMS[this._id] && _Texts.ITEMS[this._id].desc.T};
+        get extraDesc() { return _Texts.ITEMS[this._id] && _Texts.ITEMS[this._id].extraDesc.T};
+        get qty() { return $itemsManager.itemPossed[this._id] || 0};
         get DmgDesc(){return Array.isArray(this._dmg)? this._dmg.join(' <=> ') : this._dmg };
         /** obtien le dammage minimal de l'item */
         get DmgMin() {return Array.isArray(this._dmg)? Math.min(...this._dmg) : this._dmg || 0 };
