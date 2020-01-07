@@ -130,57 +130,59 @@ class _Huds_Travel extends _Huds_Base {
     /** @param {PIXI.interaction.InteractionEvent} e -*/
     _pointerdown(e) {
         if(e.currentTarget !== e.target){return};// car les _TravelSlot sont child de hudTravel
-        if( this.canRoll() ){
-            const shaker = RoughEase.ease.config({ 
-                template:  Power4.easeOut, strength: 2, points: 35, taper: "in", randomize: false, clamp: false
-            });
-            const tl = gsap.timeline({id:'shakeRoll'});
-            tl.fromTo(this.child.Gear_Center.scale, 1.5, { x: 0.8, y: 0.8 },{ x: 1, y: 1, ease: shaker },0)
-            tl.to(this.child.Gear_Top, 1.5, { rotation:`+=${Math.PI*4}`, ease:Back.easeIn.config(1) },0)
-            tl.to(this.child.Gear_Bottom, 1.5, { rotation:`-=${Math.PI*2}`, ease:Back.easeIn.config(1) },0)
-            tl.to(this.child.Gear_backDeco, 1.5, { rotation:`+=${Math.PI*1.5}`, ease:Back.easeIn.config(1) },0)
-            tl.to(this.child.FlashLight, 0.5, { rotation:-0.14, } ,0);
-            tl.fromTo(this.child.FlashLight, 0.08, { rotation:-0.14, },{ rotation:0, ease:Power0.easeNone,repeat:15,immediateRender:false, },0.5)
-            tl.fromTo(this.child.TravelSlot.map((s)=>s.position), 1.4,
-                { x:(i,o)=>o.zero.x, y:(i,o)=>o.zero.y, },
-                { x: 0, y: 0, ease: SlowMo.ease.config(0.6, 0.9, false) },0.1);
-            tl.fromTo(this.child.TravelSlot.map((s)=>s.scale), 1.4,
-            { x:1, y:1, },
-            { x: 0.6, y: 0.6, ease: SlowMo.ease.config(0.2, 0.75, false) },0.1);
-            tl.add(()=>{
-                //! test fx deleteme
-                const fx = $objs.create($loader.DATA2.travelEnergyFx,'FXEnergieA');
-                    fx.child.parentGroup = $displayGroup.group[0]
-                    fx.child.child.a.anchor.set(0.5);
-                    //fx.child.child.a.tint = 0xb5a900
-                    fx.child.scale.set(0.9);
-                    fx.child.child.a.loop = false;
-                    fx.child.child.a.animationSpeed = 0.4;
-                    this.addChild(fx.child);
-            },1);
-            tl.add(()=>{
-                //! test fx deleteme
-                const fx = $objs.create($loader.DATA2.travelEnergyFx,'FxEnergieB');
-                    fx.child.parentGroup = $displayGroup.group[0]
-                    fx.child.child.a.anchor.set(0.5);
-                    //fx.child.child.a.tint = 0xb5a900
-                    fx.child.scale.set(1.5);
-                    fx.child.child.a.loop = false;
-                    fx.child.child.a.animationSpeed = 0.5;
-                    this.addChild(fx.child);
-            },1.5);
-            tl.add(()=>{
-                this._ready = true;
-            },1);
-            tl.add(()=>{
-                gsap.fromTo(this.child.FlashLight, 1, { rotation:-0.3, },{ rotation:0, ease:Bounce.easeOut, }) //deleteme
-                gsap.to(this.child.TravelSlot.map((s)=>s.position), 0.6, { x:(i,o)=>o.zero.x, y:(i,o)=>o.zero.y, ease:Elastic.easeOut.config(1, 0.3) });
-                gsap.to(this.child.TravelSlot.map((s)=>s.scale), 0.6, { x:1, y:1, ease:Elastic.easeOut.config(1, 0.3) });
-             
-                this._ready = false;
-                this.startRoll();
-            },1.5);
-        };
+        const canRoll = this.canRoll(); // si ne repond pas au condition, le roll sera canceller
+        const shaker = RoughEase.ease.config({ 
+            template:  Power4.easeOut, strength: 2, points: 35, taper: "in", randomize: false, clamp: false
+        });
+        const tl = gsap.timeline({id:'shakeRoll'});
+        tl.fromTo(this.child.Gear_Center.scale, 1.5, { x: 0.8, y: 0.8 },{ x: 1, y: 1, ease: shaker },0)
+        tl.to(this.child.Gear_Top, 1.5, { rotation:`+=${Math.PI*4}`, ease:Back.easeIn.config(1) },0)
+        tl.to(this.child.Gear_Bottom, 1.5, { rotation:`-=${Math.PI*2}`, ease:Back.easeIn.config(1) },0)
+        tl.to(this.child.Gear_backDeco, 1.5, { rotation:`+=${Math.PI*1.5}`, ease:Back.easeIn.config(1) },0)
+        tl.to(this.child.FlashLight, 0.5, { rotation:-0.14, } ,0);
+        tl.fromTo(this.child.FlashLight, 0.08, { rotation:-0.14, },{ rotation:0, ease:Power0.easeNone,repeat:15,immediateRender:false, },0.5)
+        tl.fromTo(this.child.TravelSlot.map((s)=>s.position), 1.4,
+            { x:(i,o)=>o.zero.x, y:(i,o)=>o.zero.y, },
+            { x: 0, y: 0, ease: SlowMo.ease.config(0.6, 0.9, false) },0.1);
+        tl.fromTo(this.child.TravelSlot.map((s)=>s.scale), 1.4,
+        { x:1, y:1, },
+        { x: 0.6, y: 0.6, ease: SlowMo.ease.config(0.2, 0.75, false) },0.1);
+        tl.add(()=>{
+            //! test fx deleteme
+            const fx = $objs.create($loader.DATA2.travelEnergyFx,'FXEnergieA');
+                fx.child.parentGroup = $displayGroup.group[0]
+                fx.child.child.a.anchor.set(0.5);
+                //fx.child.child.a.tint = 0xb5a900
+                fx.child.scale.set(0.9);
+                fx.child.child.a.loop = false;
+                fx.child.child.a.animationSpeed = 0.4;
+                this.addChild(fx.child);
+        },0.2); //1
+        tl.add(()=>{
+            //! test fx deleteme
+            const fx = $objs.create($loader.DATA2.travelEnergyFx,'FxEnergieB');
+                fx.child.parentGroup = $displayGroup.group[0]
+                fx.child.child.a.anchor.set(0.5);
+                //fx.child.child.a.tint = 0xb5a900
+                fx.child.scale.set(1.5);
+                fx.child.child.a.loop = false;
+                fx.child.child.a.animationSpeed = 0.5;
+                this.addChild(fx.child);
+        },1.5);
+        tl.add(()=>{
+            if(!canRoll){
+                return this.cancelRoll(canRoll);
+            }
+            this._ready = true;
+        },1);
+        tl.add(()=>{
+            gsap.fromTo(this.child.FlashLight, 1, { rotation:-0.3, },{ rotation:0, ease:Bounce.easeOut, }) //deleteme
+            gsap.to(this.child.TravelSlot.map((s)=>s.position), 0.6, { x:(i,o)=>o.zero.x, y:(i,o)=>o.zero.y, ease:Elastic.easeOut.config(1, 0.3) });
+            gsap.to(this.child.TravelSlot.map((s)=>s.scale), 0.6, { x:1, y:1, ease:Elastic.easeOut.config(1, 0.3) });
+            
+            this._ready = false;
+            this.startRoll();
+        },1.5);
     };
 
     /** @param {PIXI.interaction.InteractionEvent} e -*/
@@ -240,6 +242,25 @@ class _Huds_Travel extends _Huds_Base {
         
         return true;
     };
+
+    /** cancel un roll 
+     * @param {Boolean} canRoll - Si canRoll ne produit pas alert!, sinon expliquer les raisons du cantRoll
+    */
+    cancelRoll(canRoll){
+        const shake = gsap.getById('shakeRoll');
+        shake.kill();
+        gsap.fromTo(this.child.Gear_Center.scale, 0.6, { x: 0.8, y: 0.8 },{ x: 1, y: 1 } );
+        gsap.fromTo(this.child.FlashLight, 1, { rotation:-0.3, },{ rotation:0, ease:Bounce.easeOut, }) //deleteme
+        gsap.to(this.child.TravelSlot.map((s)=>s.position), 0.6, { x:(i,o)=>o.zero.x, y:(i,o)=>o.zero.y, ease:Elastic.easeOut.config(1, 0.3) });
+        gsap.to(this.child.TravelSlot.map((s)=>s.scale), 0.6, { x:1, y:1, ease:Elastic.easeOut.config(1, 0.3) });
+        //! rotation des gear todo: reprendre l'animations
+        gsap.to(this.child.Gear_Bottom   , 2 , { rotation:`+=${-Math.PI}` })
+        gsap.to(this.child.Gear_backDeco , 2 , { rotation:`-=${-Math.PI}` })
+        gsap.to(this.child.Gear_Top      , 2 , { rotation:`+=${-Math.PI}` })
+        if(!canRoll){
+            //alert('plz add min x1 gemDice');
+        }
+    }
 
     /** roll dice */
     startRoll() {
