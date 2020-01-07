@@ -63,7 +63,7 @@ class _systems{
         this.styles = [
             new PIXI.TextStyle({//id:0
                 fill: "#d8d8d8",fontFamily: "ArchitectsDaughter", 
-                fontSize: 16, lineJoin: "bevel", miterLimit: 0, padding: 2, stroke: "white", stroke:"#292929", strokeThickness: 4,
+                fontSize: 16, lineJoin: "bevel", miterLimit: 0, padding: 2, stroke: "white", stroke:"#292929", strokeThickness: 1,
                 lineHeight:17
             }),
             new PIXI.TextStyle({//id:1
@@ -74,6 +74,7 @@ class _systems{
                 fill: "#d8d8d8", fontFamily: "ArchitectsDaughter", 
                 fontSize: 17, lineJoin: "bevel", miterLimit: 0, padding: 4, stroke: "white", strokeThickness: 5 , stroke:"#3c3c3c"
             }),
+            // fonts\style0.jpg
             new PIXI.TextStyle({ // id:3 Combat dammage HIT
                 fill:"#ffffff", fontFamily: "ArchitectsDaughter", 
                 fontSize:40,fontWeight:"bold",lineJoin:"round",miterLimit:20,strokeThickness:10

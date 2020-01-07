@@ -248,8 +248,8 @@ class __QuestSlots extends PIXI.Container {
         //# data2/Hubs/Quests/SOURCE/images/pln-10.png
         const QuestSlot_Planet = $objs.ContainerDN(dataBase,'pln-10','QuestSlot_Planet');
         //# txt Title
-        const QuestSlot_Txt_title = _Texts.Quests[this._questId].title.setName('QuestSlot_Txt_title');//.setName('QuestSlot_Txt_title');
-        QuestSlot_Txt_title.x = 25;
+        const QuestSlot_Txt_title = $texts.MotionsTxt(this._questId+'n').setName('QuestSlot_Txt_title');//.setName('QuestSlot_Txt_title');
+            QuestSlot_Txt_title.x = 25;
         //!end slot
         this.addChild(QuestSlot_BG,QuestSlot_Frame,QuestSlot_Planet,QuestSlot_Txt_title);
         this.child = this.childrenToName();

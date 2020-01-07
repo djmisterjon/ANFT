@@ -26,12 +26,18 @@
 /** Les events sont sois appeller directement, sois apeller sur un update */
 class _Texts{
     //#region [Static]
-    /** @type {Object.<string, DataString_QUESTS>} - Pool des Quests id */
-    static Quests = {};
-    /** @type {Object.<string, _motionsTxt>} - PoolKey des id de motions Words */
-    static WORDS = {};
-    /** @type {Object.<string, DataString_ITEMS>} - Pool des items par id */
-    static ITEMS = {};
+    static TAG = {
+        item:{n:'n', d:'d', exd:'exd'},
+    };
+    static POOL = {
+
+    };
+    ///** @type {Object.<string, DataString_QUESTS>} - Pool des Quests id */
+    //static Quests = {};
+    ///** @type {Object.<string, _motionsTxt>} - PoolKey des id de motions Words */
+    //static WORDS = {};
+    ///** @type {Object.<string, DataString_ITEMS>} - Pool des items par id */
+    //static ITEMS = {};
 
     static SPLITBY_LETTER = /[\s\S]/g;
     static SPLITBY_WORD = /\S+\s+\d\s|\S+\s*/g;
@@ -54,8 +60,8 @@ class _Texts{
     //#region [Initialize]
     initialize(options){
         const strings = $loader.DATA.string;
-        //this.initialize_quests(strings.dataString_quests.data);
-        //this.initialize_keyword(strings.dataString_keyword.data);
+        this.initialize_quests(strings.dataString_quests.data);
+        this.initialize_words(strings.dataString_keyword.data);
         this.initialize_items(strings.dataString_items.data);
        //this.initialize_MessagesPages(options);
        //this.initialize_MotionsTextsBlurs(options);
@@ -70,48 +76,37 @@ class _Texts{
             const tag = data[1];
             const string = data[localIndex];
             if(!id){ continue };
+            if(this.getStringById(id+tag)){ throw console.error("ERROR! Words id existe deja: ",id) };
             //! creer un objet selon le id
-            !_Texts.Quests[id] && (_Texts.Quests[id] = {title:null,titleDesc:null,quest:[]});
-            switch (tag) {
-                case 't' :
-                    _Texts.Quests[id].title  = new _motionsTxt(id,string,9,{ fontWeight: '900', fill:"#fff" } );
-                    _Texts.Quests[id].title2 = new _motionsTxt(id,string,3,{ fontWeight: '900', fill:"#fff", fontVariant: "small-caps", } );
-                break;
-                case 'td': _Texts.Quests[id].titleDesc =    new _motionsTxt(id,string,9,{ wordWrap: true, wordWrapWidth: 700 }  ); break;
-                case 'q' : _Texts.Quests[id].quest.push(new _motionsTxt(id,string,9,{ wordWrap: true, wordWrapWidth: 700 }) );     break;
-            };
+            _Texts.POOL[id+tag] = string;
         };
     };
     /** les keyword  */
-    initialize_keyword(DataString){
+    initialize_words(DataString){
         const localIndex = this._localId+1;
         for (let i=1, l=DataString.length; i<l; i++) {
             const data = DataString[i];
             const id = data[0];
             const string = data[localIndex];
             if(!id){ continue };
+            if(this.getStringById(id)){ throw console.error("ERROR! Words id existe deja: ",id) };
             //! creer un objet selon le id
-            if(_Texts.WORDS[id]){throw console.error("ERROR! Words id existe deja: ",id)};
-            _Texts.WORDS[id] = new _motionsTxt(id,string.toUpperCase(),0,{ fontWeight: '900', fill:"#fff" } );
+            _Texts.POOL[id] = string;
         };
     };
 
     /** initialize les data items title, description extra descriptions */
     initialize_items(DataString){
         const localIndex = this._localId+2;
-        for (let i=1, l=DataString.length; i<l; i++) {
+        for (let i=1,lastId= 0, l=DataString.length; i<l; i++) {
             const data = DataString[i];
-            const id = data[0];
+            const id = data[0] || lastId;
             const tag = data[1];
             const string = data[localIndex];
             if(!tag){ continue }; // ou pas id:null..
-            //! creer un objet selon le id
-            const ITEMS = _Texts.ITEMS[id] || ( _Texts.ITEMS[id] = { title:null,desc:null,extraDesc:null } )
-            switch (tag) {
-                case 'n' : ITEMS.title     = new _motionsTxt(id,string,6,{ fontWeight: '900', fill:"#fff" } ); break;
-                case 'd' : ITEMS.desc      = new _motionsTxt(id,string,0,{ wordWrap  : true , wordWrapWidth: 350   } ); break; //todo:wordWrap 
-                case 'exd' : ITEMS.extraDesc = new _motionsTxt(id,string,0,{ wordWrap  : true , wordWrapWidth: 350   } ); break;//todo:wordWrap
-            };
+            if(_Texts.POOL[id+tag]){ throw console.error('ERROR (IDTAG) EXISTE DEJA!: ',id+tag) };
+            _Texts.POOL[id+tag] = string || '';
+            lastId = id;
         };
     };
 
@@ -171,9 +166,17 @@ class _Texts{
     };
 
     /** Creer un MotionsText Container selon un ID */
-    MotionsTxt(id,suffixe='',style,splitBy=_Texts.SPLITBY_WORD){
-        const string = this.getStringById(id+suffixe);
-        const MotionsTxt = new _motionsTxt(id,string,6,{ fontWeight: '900', fill:"#fff" } );
+    /**
+     * @param {String}  id - id du POOL string
+     * @param {Number}  styleId - le data string origin
+     * @param {RegExp}  splitBy - option suplementaire
+     * @param {Number}  wordWrap - Si number, activer le wordwrap
+     * @param {PIXI.TextStyleOptions}  style2 - extra style hack si besoin
+     */
+    MotionsTxt(id, styleId = 0, splitBy=_Texts.SPLITBY_WORD, wordWrap = 0, style2){
+        const string = this.getStringById(id);
+        if(string === undefined){throw console.error('ERROR STRING TXT ID: ',string)} // patienter de faire tous les items
+        const MotionsTxt = new _motionsTxt(id,string,styleId,splitBy,wordWrap,style2 );
         return MotionsTxt;
     };
     //#endregion
@@ -186,96 +189,93 @@ console.log1('$texts: ', $texts);
 /** Motions Text est la class Container qui manage les child text et les splits */
 
 class _motionsTxt extends PIXI.Container{
-    /**@param {PIXI.TextStyleOptions}  styleOptions - option suplementaire */
-    constructor(id,string,defaultStyle=9,styleOptions={ wordWrap: false, wordWrapWidth: 300 }) {
+    /**
+    * @typedef {Object} TXTMATRIX - une matrix text
+    * @property {String} TXTMATRIX.string descriptions
+    * @property {Number} TXTMATRIX.styleID descriptions
+    * @property {String} TXTMATRIX.tag descriptions
+    * @property {PIXI.TextMetrics} TXTMATRIX.metric Metric de debugage
+    * @property {PIXI.Point} TXTMATRIX.position position initiale du text
+    * @returns TXTMATRIX */
+    static TXTMATRIX(string,styleID,tag){
+        return {string,styleID,tag,metric:null,position:null};
+    };
+    
+    /**
+     * @param {String}  id - id du POOL string
+     * @param {String}  originalString - le data string origin
+     * @param {RegExp}  splitBy - option suplementaire
+     * @param {Number}  wordWrap - Si number, activer le wordwrap
+     * @param {PIXI.TextStyleOptions}  style2 - extra style hack si besoin
+     */
+    constructor(id,originalString,styleId,splitBy,wordWrap,style2={}) {
         super();
         this._id = id;
-        this._originalString = string;
-        this._defaultStyle = defaultStyle;
-        /**@type {TextMatrix} */
+        this._originalString = originalString;
+        this._defaultstyleId = styleId;
+        this._splitBy = splitBy;
+        this._wordWrap = wordWrap;
+        this.style2 = Object.assign(style2, {wordWrapWidth:wordWrap});
+        /** @type {Array.<TXTMATRIX>} */
         this.matrix = null;
-        this.styleOptions = styleOptions;
         /** @type {{ 'Master':PIXI.Container, 'motionsTexture':PIXI.Sprite }} */
         this.child = null;
         this.initialize();
     };
 
-    /**@returns {String} - _originalString pour usage PIXI.TEXT */
-    get T() { return this._originalString };
-
     initialize(){
         this.initialize_regex();
-        //this.initialize_splitter();// doi etre executer apres
         this.initialize_metric();
+        this.initialize_splitter();// doi etre executer apres
         this.initialize_sprites();
         this.initialize_motionsTexture();
         this.getLocalBounds();
         this.child = this.childrenToName();
-        this.debug(true); //!DELETE ME
+        this.debug(false); //!DELETE ME
     };
 
     //#region [Initialize]
     /** Decoup le string selon les tags */
     initialize_regex(){
+        const matrix = [];
+        const re = /\<(#|S|P|N|I)(\w+|)\>/;
         let txt = this._originalString;
-        let matrix = [];
-        let currentStyleId = this._defaultStyle;
-        let re = /\<(#|S|P|N|I)(\w+|)\>/;
+        let currentStyleId = this._defaultstyleId;
         for (let match; match = re.exec(txt); ) {
-            (match.index > 0) && matrix.push( this.txtMatrice( txt.slice(0, match.index), currentStyleId ) );
+            (match.index > 0) && matrix.push( _motionsTxt.TXTMATRIX( txt.slice(0, match.index), currentStyleId ) );
             switch (match[1]) { // type de tags trouver?
                 case 'S': //#STYLE
-                    currentStyleId = match[2]?+match[2]:this._defaultStyle;
+                    currentStyleId = match[2]? +match[2] : this._defaultstyleId;
                 break;
                 case 'P': //#FORCE NEW PAGE
-                    matrix.push( this.txtMatrice( '', currentStyleId, match[1] ) );
+                    matrix.push( _motionsTxt.TXTMATRIX( '', currentStyleId, match[1] ) );
                 break;
                 case 'N': //#FORCE NEW LINE
-                    matrix.push( this.txtMatrice( '', currentStyleId, match[1] ) );
+                    matrix.push( _motionsTxt.TXTMATRIX( '', currentStyleId, match[1] ) );
                 break;
                 case 'I': //#ICON ID
-                    matrix.push( this.txtMatrice( '', currentStyleId, match[1] ) );
+                    matrix.push(  _motionsTxt.TXTMATRIX( '', currentStyleId, match[1] ) );
                 break;
                 case 'V': //#VARIBALE dynamic, special update avant affiche le text 
-                    matrix.push( this.txtMatrice( '', currentStyleId, match[1] ) );
+                    matrix.push( _motionsTxt.TXTMATRIX( '', currentStyleId, match[1] ) );
                 break;
                 default:  ;break;
             };
             txt = txt.slice(match.index + match[0].length); // update text
         };
-        matrix.push( this.txtMatrice( txt, currentStyleId ) );
+        matrix.push( _motionsTxt.TXTMATRIX( txt, currentStyleId ) );
         this.matrix = matrix;
-    };
-
-    /** split la matrix selon option word,letter,line */
-    initialize_splitter(){
-        const matrix = this.matrix;
-        const splittedMatrix = [];
-        const re = _Texts.SPLITBY_WORD; // split by word pour permetre wordWrap de fonctionner
-        for (let i=0, l=matrix.length; i<l; i++) {
-            const m = matrix[i];
-            if(m.tag){// si un tag <> continue, pas besoin de spliting
-                splittedMatrix.push(m);
-                continue;
-            }
-            const match = m.string.match(re);
-            match.forEach(string => {
-                splittedMatrix.push(this.txtMatrice(string,m.styleID));
-            });
-                
-        };
-        this.matrix = splittedMatrix;
     };
 
     /** creer les instance metric pour les saut ligne */
     initialize_metric(){
         const matrix = this.matrix;
-        let styleOptions = Object.assign({}, this.styleOptions); // quand saut ligne , reset
-        const isWordWrap = styleOptions.wordWrap && delete styleOptions.wordWrap; //On delete car metric a un bug de width avec `wordWrap`
+        const isWordWrap = !!this._wordWrap;
+        const wordWrapWidth = this._wordWrap;
         let maxHeightLine = 0; // calcul la hauteur maximal pour la ligne actuel pour un saut line
         for (let i=0,line=0, x=0,y=0; i<matrix.length; i++) {
             const textMatrix = matrix[i];
-            const style = Object.assign($systems.styles[textMatrix.styleID].clone(),styleOptions);
+            const style = Object.assign($systems.styles[textMatrix.styleID].clone(), this.style2);
             let TextMetrics = PIXI.TextMetrics.measureText(textMatrix.string, style,isWordWrap);
             //!si ces un newLine
             if(textMatrix.tag === "N"){
@@ -285,55 +285,56 @@ class _motionsTxt extends PIXI.Container{
                 y+=maxHeightLine;
                 line++;
                 maxHeightLine = 0;
-                styleOptions.wordWrapWidth = this.styleOptions.wordWrapWidth; // reset
+                this.style2.wordWrapWidth = wordWrapWidth; // reset
                 continue;
             };
             // Si metric a spliter , ces que ces un saut ligne
             if(TextMetrics.lines.length>1 ){
-               // for (let ii=0,xx=0, l=TextMetrics.lines.length; i<l; ii++) {
-               //     const lines = TextMetrics.lines[i];
-               //     const lineWidths = TextMetrics.lineWidths[i];
-               //     const wordWrapWidth = styleOptions.wordWrapWidth;
-               //     if(xx+lineWidths>wordWrapWidth){
-               //         matrix.splice(i,0,this.txtMatrice('',textMatrix.styleID,"N") ); // restart
-               //     }
-               //     xx+=(x+lineWidths);
-               // };
-               // throw console.error("TextMetrics a pas trouver une line continue")
-                // sur une nouvelle ligne ?
-                if(x===0){
-                    textMatrix.string = TextMetrics.lines.shift();
-                    for (let ii=TextMetrics.lines.length; ii-- ; ) {
-                        matrix.splice(i+1,0,this.txtMatrice(TextMetrics.lines[ii],textMatrix.styleID) );
+                if(x>0){ // si plsu grand que x0, ont ressaye avec un jumpLine
+                    matrix.splice(i,0, _motionsTxt.TXTMATRIX('',textMatrix.styleID,"N") ); // restart
+                }else{ // si x0? ont shift le premier [0], combine (sum) le reste [...]
+                    textMatrix.string = TextMetrics.lines.shift();// FIXME: MDFUCKER
+                    const restant = TextMetrics.lines.join(' ');
+                    restant && matrix.splice(i+1,0, _motionsTxt.TXTMATRIX(restant,textMatrix.styleID) );
+                    if(TextMetrics.lines.length === 1){ // si restai just 1[array] , il yaura pas de split dont ont saute
+                        matrix.splice(i+1,0, _motionsTxt.TXTMATRIX('',textMatrix.styleID,"N") ); // restart
                     };
-                    i--; continue;
-                }else{ // sinon ajoute un saut ligne pour recalculer
-                    matrix.splice(i,0,this.txtMatrice('',textMatrix.styleID,"N") ); // restart
-                    i--; continue;
-                }
-                if(TextMetrics.lineWidths[0]>styleOptions.wordWrapWidth){ // si le premier word splited brise la limite, envoyer tous pour second line.
-
                 };
-                //todo: pas besoin si utilise mode splitter words, mais a fair si pas le mode spittler words (rempalcer push par splice)
-                /*matrix.push( this.txtMatrice('',textMatrix.styleID,"N") ); // ajout un jump line
-                while (TextMetrics.lines.length>1) {
-                    const line = TextMetrics.lines.splice(1,1)[0];
-                    const _matrix = this.txtMatrice(line,textMatrix.styleID);
-                    matrix.push(_matrix);
-                };
-                textMatrix.string = TextMetrics.lines[0];
-                TextMetrics = PIXI.TextMetrics.measureText(textMatrix.string, style);*/
-                
+                i--; continue;
             }else{
-                styleOptions.wordWrapWidth=Math.max(styleOptions.wordWrapWidth-TextMetrics.maxLineWidth,1);
+                this.style2.wordWrapWidth=Math.max(this.style2.wordWrapWidth-TextMetrics.maxLineWidth,1); // reduit wordWrapWidth min 1px
             };
             //Fix du bug, car metric a un bug de width avec `wordWrap`. On recalcul sans wordWrap si besoin
-            TextMetrics = isWordWrap?TextMetrics = PIXI.TextMetrics.measureText(textMatrix.string, style) : TextMetrics;
+            TextMetrics = isWordWrap? PIXI.TextMetrics.measureText(textMatrix.string, style, false) : TextMetrics;
             textMatrix.metric = TextMetrics;
             textMatrix.position = new PIXI.Point(x,y);
             x+=TextMetrics.width;
             maxHeightLine = style.lineHeight || Math.max(TextMetrics.height,maxHeightLine);
         };
+    };
+
+    /** split la matrix selon option word,letter,line */
+    initialize_splitter(){
+        if(this._splitBy === _Texts.SPLITBY_LINE){return};
+        const matrix = []; // reformat une nouvelle matrix selon le splits
+        for (let i=0, l=this.matrix.length; i<l; i++) {
+            const m = this.matrix[i];
+            if(m.tag){// si un tag <> continue, pas besoin de spliting
+                matrix.push(m);
+                continue;
+            };
+            const match = m.string.match(this._splitBy);
+            let x = 0;
+            match && match.forEach(string => {
+                const txtMatrix = _motionsTxt.TXTMATRIX(string, m.styleID );
+                const TextMetrics = PIXI.TextMetrics.measureText(txtMatrix.string, m.metric.style, false);
+                txtMatrix.metric = TextMetrics;
+                txtMatrix.position = new PIXI.Point(x, m.position.y);
+                matrix.push(txtMatrix);
+                x+=TextMetrics.maxLineWidth;
+            });
+        };
+        matrix.length && (this.matrix = matrix); // replace new matrix
     };
 
     /** creer les sprites des TextMetrics   */
@@ -371,13 +372,13 @@ class _motionsTxt extends PIXI.Container{
         return this;
     };
 
-    txtMatrice(string,styleID,tag,origine=0){
+    txtMatrice(string,styleID,tag){
         return {string,styleID,tag};
     };
 
-    /** Action la motions text si disponible dans les options */
-    show(enableMotion=false,staggerSpeed=0.07){
-        gsap.from(this.child.Master, {y:'-=50'});
+    /** Action start la motions */
+    start(enableMotion=false,staggerSpeed=0.07){
+        gsap.fromTo(this.child.Master, 1, {alpha:0, y:-50},{alpha:1, y:0, ease:Expo.easeOut });
         enableMotion && this.startMotion(staggerSpeed);
         return this;
     };
@@ -387,17 +388,6 @@ class _motionsTxt extends PIXI.Container{
         //!motions words
         if('option motions words show'){
             gsap.killTweensOf(List);
-            /*TweenMax.staggerFromTo(List, 0.5, {alpha:0},{alpha:1, ease: Power1.easeIn}, 0.05);
-            TweenMax.staggerFromTo(List, 4, 
-                {
-                    x:(i,o)=>o.position.zero._x,
-                    y:(i,o)=>o.position.zero._y
-                },{
-                    x:()=>`+=${Math.randomFrom(4,-8)}`,
-                    y:()=>`+=${Math.randomFrom(7,-10)}`, 
-                ease: Power1.easeInOut, repeat:-1, yoyo:true
-            }, 0.4);*/
-
             gsap.fromTo(List, 0.3,
                 { alpha:0 },
                 { alpha:1, ease: Power1.easeIn, stagger: staggerSpeed });
@@ -420,10 +410,10 @@ class _motionsTxt extends PIXI.Container{
         //!motions blur
         if('option motionsFx :motionsSprite'){
             const b = $systems.PixiFilters.blurTxt;
-            const f = $systems.PixiFilters.MotionBlurFilter;
+            //const f = $systems.PixiFilters.MotionBlurFilter;//FIXME: PAS BESOIN ET ARTEFACT BIZARD.
            // const bounds = this.child.motionsTexture.getBounds(); //FIXME: gros problem gpu performance 100%
            // this.child.motionsTexture.filterArea = bounds;
-            this.child.motionsTexture.filters = [f,b];
+            this.child.motionsTexture.filters = [b];
             gsap.fromTo(this.child.motionsTexture, 5, {alpha:0}, {alpha:1})
         }else{
             this.child.motionsTexture.renderable = false;
@@ -444,26 +434,37 @@ class _motionsTxt extends PIXI.Container{
 
     debug(enable){
         if(!enable){return};
-       const bound =  this.child.Master.getBounds();
-       const graphics = new PIXI.Graphics();
-       
-        graphics.lineStyle(4, 0xffffff, 1);
-        graphics.drawRect(bound.x,bound.y,bound.width,bound.height);
-        graphics.endFill();
+       const bound =  this.child.Master.getBounds(true);
+       const MasterRec = new PIXI.Graphics();
+            MasterRec.lineStyle(2, 0xffffff, 1);
+            MasterRec.drawRect(bound.x,bound.y,bound.width,bound.height);
+            this._wordWrap && MasterRec.drawRect(bound.x,bound.y,this._wordWrap,bound.height);
+            MasterRec.endFill();
        //!widh indicator
-       const txt = new PIXI.Text(`x:${~~bound.width}\ny:${~~bound.height}`,{ fill: "white", fontSize: 16, lineHeight: 18 });
-       txt.anchor.y = 0.5;
-       txt.position.set(4+bound.width,bound.height/2);
-       this.addChild(graphics,txt);
+       const MasterTxt = new PIXI.Text(
+           `x:${~~bound.width} \ny:${~~bound.height} \nWrapW:${this._wordWrap?this._wordWrap:false}`
+           ,{ fill: "white", fontSize: 14, lineHeight: 14 });
+            MasterTxt.position.set(4+(this._wordWrap||bound.width),0);
+        this.addChild(MasterRec,MasterTxt);
        //!subtext
-       this.child.Master.children.forEach(Text => {
-            const color = [0xffffff,0x000000,0xff0000,0x0000ff,0xffd800,0xcb42f4][~~(Math.random()*6)];
-            const bound =  Text.getBounds();
-            const graphics = new PIXI.Graphics();
-            graphics.lineStyle(2, color, 1);
-            graphics.drawRect(0,0,bound.width,bound.height);
-            graphics.endFill();
-            Text.addChild(graphics);
+       this.matrix.forEach((matrix,i) => {
+            const color = [0x35e95c,0x000000,0xff0000,0x0000ff,0xffd800,0xcb42f4][~~(Math.random()*6)];
+            if(matrix.tag === "N"){
+                const N = new PIXI.Sprite(PIXI.Texture.WHITE);
+                    N.position.copy(matrix.position);
+                    this.addChild(N);
+            }else{
+                const rec = new PIXI.Graphics();
+                rec.lineStyle(1, color, 0.7);
+                rec.drawRect(matrix.position.x,matrix.position.y,matrix.metric.width,matrix.metric.height);
+                rec.endFill();
+                this.addChild(rec);
+            }
        });
+       //!interactive text pour zoom ?
+       MasterRec.interactive = true;
+       MasterRec.hitArea = MasterRec.getBounds()
+       MasterRec.on("pointerup", ()=>{gsap.to(this.scale, {x:'+=0.5',y:'+=0.5'})})
+
     };
 };

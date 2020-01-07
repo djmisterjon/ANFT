@@ -37,8 +37,7 @@ window.onload = function() {
         //! editor
         await loadJS('js/editor');
         //#TODO: Decryptor,
-        //#JSON,CSV,
-        await $loader.initialize();
+        await $loader.initialize();//#JSON,CSV,
         $app.initialize();
     })();
 };

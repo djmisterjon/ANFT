@@ -281,7 +281,7 @@ class _Huds_Travel extends _Huds_Base {
     onCompletteRoll(result){
         //!inject les puissance Orbic au 2 players.
         // pour le player 2 ces une options
-        this.sta = result.values.sum();
+        this.sta = 126 //result.values.sum();
         $players.updateOrbic();
         $gui.GameSteps.setStep(1);//deleteme:
     };

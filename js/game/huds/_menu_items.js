@@ -91,10 +91,12 @@ class _Menue_Items extends _Huds_Base {
                     ButtonColor.position.set(85+136*i,12);
                     ButtonColor.d.anchor.set(0.5);
                     ButtonColor.n.anchor.set(0.5);
-                const FilterTxt = $texts.MotionsTxt("id","{style}","splitBy")//_Texts.WORDS[`_TYPE_${filterType}`].setName('FilterTxt').anchors(0.5,0.5).show(true);
+                const FilterTxt = $texts.MotionsTxt(`_TYPE_${filterType}`,4,_Texts.SPLITBY_LETTER,0,{fontVariant: "small-caps"}).setName("FilterTxt"); //_Texts.WORDS[`_TYPE_${filterType}`].setName('FilterTxt').anchors(0.5,0.5).show(true);
                // const FilterTxt = new PIXI.Text( filterType.toUpperCase(),$systems.styles[0] ).setName("FilterTxt");
-               FilterTxt.scale.set(0.7);
-                    FilterTxt.position.set(85+136*i,14);
+                    FilterTxt.anchors(0.5)
+                    FilterTxt.scale.set(0.7);
+                    FilterTxt.position.set(85+136*i,7);
+                    FilterTxt.start(true)
                     //FilterTxt.anchor.set(0.5);
                     BackgroundFilter.addChild(ButtonBg,ButtonColor,FilterTxt);
             };
@@ -404,7 +406,7 @@ class __ItemSlot extends PIXI.Container {
             SlotItem.d.anchor.set(0.5);
             SlotItem.n.anchor.set(0.5);
         //#Text 
-        const ValueTxt = new PIXI.Text(`${_Texts.WORDS._VALUE.T}:${Item._value} ${_Texts.WORDS._WEIGHT.T}:${Item._weight}`
+        const ValueTxt = new PIXI.Text(`${_Texts.POOL['_VALUE']}:${Item._value} ${_Texts.POOL['_WEIGHT']}:${Item._weight}`
             ,$systems.styles[7]).setName("ValueTxt");
             ValueTxt.position.set(94,6);
         const TitleTxt = new PIXI.Text(Item.name,$systems.styles[6]).setName("TitleTxt");
@@ -477,10 +479,13 @@ class __ItemSlot extends PIXI.Container {
 
 /**@class slot extra informationj lorsque survol un slotItem, indique egalement des instruction de base */
 class __ExtraInformations extends PIXI.Container{
+    /** @type {Object.<string, _motionsTxt>} - Stock les items description cache */
+    static POOL = {};
     constructor() {
         super();
         this.name = 'ExtraInformations';
-        /** @type {{ 'BarTop':ContainerDN, 'BarBottom':ContainerDN, 
+        /** @type {{ 'BarTop':ContainerDN, 'BarBottom':ContainerDN,
+         * 'ItemValue':PIXI.Text, 'ItemWeight':PIXI.Text, 
          * 'TotalWeightTxt':PIXI.Text, 'TotalItemsTxt':PIXI.Text, 'TotalTrouverTxt':PIXI.Text, 'TitleTxt':PIXI.Text, 'ItemIcon':PIXI.Text, }} */
         this.child = {};
         this.initialize();
@@ -490,6 +495,7 @@ class __ExtraInformations extends PIXI.Container{
     initialize(){
         this.initialize_base();
         this.initialize_ItemInformation();
+        this.initialize_MotionsTxt();
         this.position.set(215,70);
         this.child = this.childrenToName();
     };
@@ -521,19 +527,41 @@ class __ExtraInformations extends PIXI.Container{
         const dataBase2 = $loader.DATA2.gameItems;
         //# txt item
         const DescriptionContainer = new PIXI.Container().setName('DescriptionContainer');
-        //const TitleTxt = new PIXI.Text('ItemTitle',$systems.styles[6]).setName('TitleTxt');
-        //    TitleTxt.position.set(-70,15);
-        //const FilterTypeTxt = new PIXI.Text('[ItemType]',$systems.styles[7]).setName('FilterTypeTxt');
-        //    FilterTypeTxt.position.set(-165,90);
-        //const DescTxt = new PIXI.Text('[ItemType]',$systems.styles[0]).setName('DescTxt');
-        //    DescTxt.position.set(-165,145);
-        //const ExtraDesc = new PIXI.Text('[ItemType]',$systems.styles[0]).setName('ExtraDesc');
-        //    ExtraDesc.position.set(-165,175); // dynamic
         //# data2\System\gameItems\SOURCE\images\0.png
         const ItemIcon = new PIXI.Sprite(PIXI.Texture.WHITE).setName('ItemIcon');
             ItemIcon.position.set(-130,35);
             ItemIcon.anchor.set(0.5);
-        this.addChild(ItemIcon,DescriptionContainer);
+        const ItemValue = new PIXI.Text(`${_Texts.POOL['_VALUE'].toUpperCase()}:999`,$systems.styles[7]).setName('ItemValue');
+            ItemValue.position.set(-80,-6);
+        const ItemWeight = new PIXI.Text(`${_Texts.POOL['_WEIGHT'].toUpperCase()}:999`,$systems.styles[7]).setName('ItemWeight');
+            ItemWeight.position.set(60,-6);''
+        this.addChild(ItemIcon,DescriptionContainer,ItemValue,ItemWeight);
+    };
+
+    /** preCache dans pool les MotionsTxt */
+    initialize_MotionsTxt(){
+        for (let i=0, l=_ItemsManager.ITEMS.length; i<l; i++) {
+            const Item = _ItemsManager.ITEMS[i];
+            if(Item._idn){ //_idn PARCEQUE LA DB EST PAS FINI ET CA BUG
+                const ItemN = $texts.MotionsTxt(i+'n',6);
+                const ItemD = $texts.MotionsTxt(i+'d',0, void 0,330);
+                const ItemDD = $texts.MotionsTxt(i+'dd');
+                __ExtraInformations.POOL[ItemN._id] = ItemN;
+                __ExtraInformations.POOL[ItemD._id] = ItemD;
+                __ExtraInformations.POOL[ItemDD._id] = ItemDD;
+            };
+        };
+        //!stock les colors et types pour items
+        $systems.colorsSystem.keys.forEach(color=>{
+            const id = `_${color}`;
+            const style2 = {fill: "#bc9239",fontVariant: "small-caps"}
+            __ExtraInformations.POOL[id] = $texts.MotionsTxt(id,4, void 0, 0, style2);
+        });
+        $systems.filterType.keys.forEach(type=>{
+            const id = `_TYPE_${type}`;
+            const style2 = {fill: "#bc9239",fontVariant: "small-caps"}
+            __ExtraInformations.POOL[id] = $texts.MotionsTxt(id,4,void 0,0,style2);
+        });
     };
     //#endregion
 
@@ -543,24 +571,40 @@ class __ExtraInformations extends PIXI.Container{
         const dataBase = $loader.DATA2.gameItems;
         const Item = _ItemsManager.ITEMS[id];
         const DescriptionContainer =  this.child.DescriptionContainer;
-        DescriptionContainer.removeChildren(); // clear
-        if(Item && _Texts.ITEMS[id]){
-            const title = _Texts.ITEMS[id].title.show(true,0.01);
-                title.position.set(-70,15);
-            const desc = _Texts.ITEMS[id].desc.show(true,0.01);
-                desc.position.set(-165,145);
-            const extraDesc = _Texts.ITEMS[id].extraDesc.show(true,0.02);
-                extraDesc.position.set(-165,desc.y+desc.height+10);
-            DescriptionContainer.addChild(title,desc,extraDesc);
-        };
+            DescriptionContainer.removeChildren(); // clear
         if(Item){
             //# data2\System\gameItems\SOURCE\images\0.png
             const texture = dataBase.textures[id];
             this.child.ItemIcon.texture = texture;
             this.child.ItemIcon.renderable = true;
+            gsap.fromTo(this.child.ItemIcon.scale, 0.3, {x:0,y:0}, {x:1,y:1, ease:Elastic.easeOut.config(0.4, 0.3) });
+            //# txt values
+            const ItemValue = this.child.ItemValue;
+            const ItemWeight = this.child.ItemWeight;
+            gsap.fromTo(ItemValue  .scale, 0.2, {x:0,y:0}, {x:1,y:1, ease:Elastic.easeOut.config(0.4, 0.3) });
+            gsap.fromTo(ItemWeight .scale, 0.2, {x:0,y:0}, {x:1,y:1, ease:Elastic.easeOut.config(0.4, 0.3) });
+            //# motions desciptions
+            // On va chercher les txt en cache dans le pool 
+            const MotionTxt_n = __ExtraInformations.POOL[id+'n']; // name
+            const MotionTxt_color = __ExtraInformations.POOL[`_${Item._cType}`]; // color
+            const MotionTxt_type = __ExtraInformations.POOL[`_TYPE_${Item._iType}`]; // type
+            const MotionTxt_d = __ExtraInformations.POOL[id+'d']; // desc
+            const MotionTxt_dd = __ExtraInformations.POOL[id+'dd']; // extra desc
+                MotionTxt_n.position.set(-70,21);
+                MotionTxt_color.position.set(-165,90);
+                MotionTxt_type.position.set((MotionTxt_color.x+MotionTxt_color.width+20),90);
+                MotionTxt_d.position.set(-165,145);
+                MotionTxt_dd.position.set(-165,MotionTxt_d.y+MotionTxt_d.height+10);
+                MotionTxt_n.start(true);
+                MotionTxt_color.start(true,0.5);
+                MotionTxt_type.start(true,0.6);
+                MotionTxt_d.start(true);
+                MotionTxt_dd.start(true);
+                DescriptionContainer.addChild(MotionTxt_n,MotionTxt_color,MotionTxt_type,MotionTxt_d,MotionTxt_dd);
         }else{
             this.child.ItemIcon.renderable = false;
         };
+
     };
     //#endregion
 
