@@ -1,6 +1,7 @@
 
 /** GUI Control Manage tous les type de gui, menue,huds */
 class _GUI { //TODO REFACTORING DANS UN CONTAINER ? .huds .menue gui.huds. gui.menue
+    static Menues = ['Settings','Saves','Quests','Maps','Items','Status','MonstersBook'];
     constructor() {
         /** @type {{ 'Master':PIXI.Container,
          * '_Huds_Travel'            :_Huds_Travel            ,
@@ -15,7 +16,7 @@ class _GUI { //TODO REFACTORING DANS UN CONTAINER ? .huds .menue gui.huds. gui.m
          * '_Menue_Quests'           :_Menue_Quests           , 
          * }} */
         this.child = null;
-    };
+    }
     //#region [GetterSetter]
     //!Huds
     get Travel() { return this.child._Huds_Travel };
@@ -61,7 +62,7 @@ class _GUI { //TODO REFACTORING DANS UN CONTAINER ? .huds .menue gui.huds. gui.m
             const gui = GUI[i];
             gui.initialize();
             gui.renderable = false; // reative sur .show()
-        };
+        }
         $stage.addChild(Master); //TODO: RENDU ICI, FINALISER LES MENU
         //this.setRendering(false);
         //!deleteme debug.
@@ -72,7 +73,7 @@ class _GUI { //TODO REFACTORING DANS UN CONTAINER ? .huds .menue gui.huds. gui.m
        this.Items.show();
        //this.MessageIndicator.show();
        //this.MessageIndicator.show();
-    };
+    }
 
     /** active ou disable le rendering et la visibiliter pour les scenes au besoin
      * @param {Boolean} enable - rendering
@@ -83,15 +84,16 @@ class _GUI { //TODO REFACTORING DANS UN CONTAINER ? .huds .menue gui.huds. gui.m
         this.child.Master.visible = enable;
         if(animation){ //todo: equivalent de show all, hide all 
 
-        };
-    };
+        }
+    }
 
     /** affiche un hud ou menu selon un string id dynamic*/
     show(name){
-        this[name].show();
-    };
+        const gui = this[name];
+        gui && this[name].show();
+    }
 
-};
+}
 
 let $gui = new _GUI();
 console.log1('$gui', $gui);

@@ -87,8 +87,9 @@ class _Huds_PinBar extends _Huds_Base {
         //#PinOptions
         const PinOptionContainer = new PIXI.Container().setName("PinOptionContainer");
             PinOptionContainer.x = 380;
-            for (let i=0, l=7; i<l; i++) {
-                const PinOption = new __PinOption(i);
+            for (let i=0, l=_GUI.Menues.length; i<l; i++) {
+                const menuName = _GUI.Menues[i];
+                const PinOption = new __PinOption(i,menuName);
                 PinOptionContainer.addChild(PinOption);
             };
         Bar.addChild(PinSlotContainer,PinOptionContainer);
@@ -401,13 +402,13 @@ class __PinSlot extends PIXI.Container {
 
 /**@class Les pinOption permette de gerer les menues attacher au pinBar */
 class __PinOption extends PIXI.Container {
-    constructor(id, key) {
+    constructor(id, menuName) {
         super();
         this.name = "PinOption";
         /** pinSlot index */
         this._id = id;
-        /** nom de base de l'option et refence du child */
-        this._name = key;
+        /** nom de base du menue associer a l'options */
+        this._name = menuName;
         /** @type {{ SlotButton:ContainerDN, BottomCorner:ContainerDN, Orb:ContainerDN, Icon:ContainerDN, Lock:ContainerDN }} */
         this.child = null;
         this._locked = false;
