@@ -260,6 +260,7 @@ class _Huds_Travel extends _Huds_Base {
         if(!canRoll){
             //alert('plz add min x1 gemDice');
         }
+        $mouse.showHelpBox('___cancelRoll');
     }
 
     /** roll dice */

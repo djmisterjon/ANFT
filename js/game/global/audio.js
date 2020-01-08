@@ -23,7 +23,7 @@ let $audio = PIXI.sound;
     this.bgs = [];
     this.sfx = [];
     this.mfx = [];
-    //this.volumeAll = 0; //! REMOVEME DEBUG
+    this.volumeAll = 0; //! REMOVEME DEBUG
 
   };
 

@@ -17,8 +17,6 @@ class _mouse extends PIXI.Container{
         super();
         /** disable la possibiliter de scanner les elements */
         this._scanDisable = true;
-        /**@type {PIXI.Container} - affiche helpbox description states ..*/
-        this.HelpBox = null;
         /** pinslotId si holding provien du pinBar */
         this._pinSlotId = null;
         /** freeze point true:false */
@@ -80,7 +78,7 @@ class _mouse extends PIXI.Container{
     get xx(){ return this.interaction.mouse.global.x }
     get yy(){ return this.interaction.mouse.global.y }
 
-
+    //#region [Initialize]
     /** initialise mosue with game options */
     initialize(options) {//TODO: OPTIONS
         //setup the interaction manager
@@ -89,8 +87,9 @@ class _mouse extends PIXI.Container{
         this.initialize_helpBox(options);
         this.initialize_trail(options);
         this.initialize_configureInteractionEventForDOMEvent(options);
-        this.setupInteraction();
         this.child = this.childrenToName();
+        this.setupInteraction();
+        
         
         this.debug();//FIXME: DELETE ME
 
@@ -122,13 +121,15 @@ class _mouse extends PIXI.Container{
     };
     /**box pour les description ou help*/
     initialize_helpBox(options){
-        const HelpBox = this.HelpBox = new PIXI.Container();
-        const helpBoxBG = new PIXI.Sprite(PIXI.Texture.WHITE);
-        helpBoxBG.name = 'helpBoxBG';
-        const helpBoxTxt = new PIXI.Text('',$systems.styles[7]); //TODO: TEXT MANAGER :
-        helpBoxTxt.name = 'helpBoxTxt';
-        HelpBox.addChild(helpBoxBG,helpBoxTxt);
-        this.addChild(HelpBox);
+        const HelpBoxContainer = new PIXI.Container().setName('HelpBoxContainer');
+        const HelpBoxBox = new PIXI.Sprite(PIXI.Texture.WHITE).setName('HelpBoxBox'); // radius pour le mouseOut
+            HelpBoxBox.scale.set(2);
+            HelpBoxBox.anchor.set(0.5);
+        const HelpBoxBG = new PIXI.Sprite(PIXI.Texture.WHITE).setName('helpBoxBG');
+        const HelpBoxTxt = new PIXI.Text('',$systems.styles[7]).setName('HelpBoxTxt'); //TODO: TEXT MANAGER :
+        HelpBoxContainer.addChild(HelpBoxBox,HelpBoxBG,HelpBoxTxt);
+        HelpBoxContainer.renderable = false;
+        this.addChild(HelpBoxContainer);
     };
 
 
@@ -211,9 +212,11 @@ class _mouse extends PIXI.Container{
             return interactionEvent;
         };*/
     };
+    //#endregion
 
     setupInteraction(){
-        this.HelpBox.on('pointerout'  , this.pointerout_HelpBox ,this);
+        const HelpBoxContainer = this.child.HelpBoxContainer;
+            HelpBoxContainer.on('pointerout'  , this.pointerout_HelpBoxContainer ,this);
         // GLOBAL INTERACTIONS ?
         this.interaction.on('pointerover' , this.pointerover_global ,this);
         this.interaction.on('pointerout'  , this.pointerout_global  ,this);
@@ -222,9 +225,10 @@ class _mouse extends PIXI.Container{
         this.interaction.on('pointermove' , this.pointermove_global ,this);
     };
     /**@param {PIXI.interaction.InteractionEvent} e */
-    pointerout_HelpBox(e){
-        this.HelpBox.interactive = false;
-        this.HelpBox.renderable = false;
+    pointerout_HelpBoxContainer(e){
+        const HelpBoxContainer = e.currentTarget;
+        HelpBoxContainer.interactive = false;
+        HelpBoxContainer.renderable = false;
     };
 
     /**@param {PIXI.interaction.InteractionEvent} e */
@@ -322,7 +326,8 @@ class _mouse extends PIXI.Container{
     canScan(){
         //$huds.GameSteps._currentMode!==1 || e.isRight || e.target || e.currentTarget || this.holding )
         return !this._scanDisable && !this.holding;
-    };
+    }
+
     /** creer un scan click */
     createScanSelector(){
         //!data2/System/Selectors/SOURCE/images/selector_bigCircle.png
@@ -344,6 +349,7 @@ class _mouse extends PIXI.Container{
         // Selector.proj.euler.pitch = 0.2;
         return this.scanSelector = Selector;
     }
+
     proceedScanSelector(scanSelector){
         //!hit test
         let touch = [];
@@ -438,26 +444,27 @@ class _mouse extends PIXI.Container{
         };
     };
 
-    /** affiche le helpBox info */
-    showHelpBox(txt){
+    /** affiche le helpBox info 
+     * @param {String} txtId - passe un text id
+    */
+    showHelpBox(txtId){
+        const txt = $texts.getStringById(txtId);
+        const HelpBoxContainer  = this.child.HelpBoxContainer;
         const helpBoxBG  = this.child.helpBoxBG;
-        const helpBoxTxt = this.child.helpBoxTxt;
-        helpBoxTxt.text = txt;
-        helpBoxBG.width = this.child.helpBoxTxt.width;
-        helpBoxBG.height = this.child.helpBoxTxt.height;
-        const [x,y] = [$mouse.xx,$mouse.yy];
-        TweenLite.fromTo(this.HelpBox, 0.5, { x:x,y:y-40,alpha:0 }, { x:x,y:y,alpha:1, ease: Power4.easeOut });
-        //! fix les marge out screen
-        if(this.xx+helpBoxTxt.width>1900){
-            helpBoxBG.anchor.set(1,0)
-            helpBoxTxt.anchor.set(1,0)
-        }else{
-            helpBoxBG.anchor.set(0,0)
-            helpBoxTxt.anchor.set(0,0)
-        }
-        this.HelpBox.renderable = true;
-        this.HelpBox.interactive = true;
-    };
+        const HelpBoxTxt = this.child.HelpBoxTxt;
+            HelpBoxTxt.text = txt;
+            helpBoxBG.scale.set((HelpBoxTxt.width+10)/10, (HelpBoxTxt.height+10)/10 );
+        const [x,y] = [this.xx, this.yy];
+        gsap.fromTo(HelpBoxContainer, 0.4, { x:x,y:y-40,alpha:0 }, { x:x,y:y,alpha:1, ease: Power4.easeOut })
+        .eventCallback('onStart', ()=>{
+            HelpBoxContainer.renderable  = true;
+            HelpBoxContainer.interactive = true;
+        });
+        //# pivot selon la sourit sur screen marge
+        const px = (x+HelpBoxTxt.width  +20>$camera._screenW) ?helpBoxBG.width  :0;
+        const py = (y+HelpBoxTxt.height +10>$camera._screenH) ?helpBoxBG.height :0;
+            HelpBoxContainer.pivot.set(px,py);
+    }
 
     //add a mouse position debugger
     debug() {
