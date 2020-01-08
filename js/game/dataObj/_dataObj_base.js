@@ -102,11 +102,13 @@ class _DataObj_Base {
         this.child && this.child.asignFactory(factory);
     };
 
-    /**Proced a l'identification d'un obj */
+    /**Proced a l'identification d'un obj, discover, show */
     doIdentification(){
         //Todo, pour le moment ces basic, ajouter des fx
         if(!this._identified){
             this._identified = true;
+            //message comme quoi l'objet est identifier
+            $mouse.showHelpBox('__newobjIdentified')
             if(this.child){
                 this.child.n && (this.child.n.filters = [$systems.PixiFilters.OutlineFilterx4Black]);
             }

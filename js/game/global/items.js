@@ -125,7 +125,7 @@ console.log1('$itemsManager', $itemsManager);
         /** verefy si le items a deja eter poseder et trouver */
         get finded() {return $items.itemPossed.hasOwnProperty(this._id); };
         /** check if is a type dice gem */
-        get isDice() {return this._iType === 'diceGem'};
+        get isDice() {return this._id<49 }; // les diceGems sont de 0 a 48
         //#endregion
 
     };

@@ -239,7 +239,6 @@ class _Huds_Travel extends _Huds_Base {
         if(__TravelSlot.OrbsItemsInfused.filter(o=>o && o.DataItem.isDice).length<1){ // min 1 dicegem
             return false;
         }
-        
         return true;
     };
 
