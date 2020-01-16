@@ -92,6 +92,7 @@ class _Messages{ //TODO: RENDU ICI , REMASTERISER LE MESSAGE AVEC TEXT CACHE
         const MessageBubble = new PIXI.projection.Spine3d(dataBase3.spineData);
             MessageBubble.name = 'MessageBubble';
             MessageBubble.hackAttachmentGroups("_n",PIXI.lights.normalGroup,PIXI.lights.diffuseGroup);
+            MessageBubble.drawDebug(); //DELETE ME:
         //!container text render: (update position avec le bone:'mover') contien les container message et motions..
         const MessageRenderContainer = new PIXI.Container();
             MessageRenderContainer.name = 'MessageRenderContainer';

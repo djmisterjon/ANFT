@@ -386,18 +386,30 @@
             }
         };
         
-        const Spine = PIXI.spine.Spine,
-            oldUpadte = Spine.prototype.update,
-            drawDebug = function(){
-                if(!this.drawDebug){
+        const Spine = PIXI.spine.Spine;
+        const oldUpadte = Spine.prototype.update;
+        const drawDebug = function(){
+                if(!this._drawDebug){
                     return;
                 };
                 if(!this.spineDebug){
+                    const options = this._drawDebug;
+                    Object.assign(this, options);
                     this.spineDebug = new SpineDebug(this);
                 };
                 this.spineDebug.update();
             };
-    
+        const options = {
+            drawBones             :true ,
+            drawRegionAttachments :true,
+            drawClipping          :false,
+            drawMeshHull          : true,
+            drawMeshTriangles     :true,
+            drawPaths             :false,
+            drawBoundingBoxes     :true,
+        };
+        Spine.prototype.drawDebug = function(option=options){
+            this._drawDebug = option};
         Spine.prototype.updateMyDebugGraphics = drawDebug;
         Spine.prototype.update = function(dt){
             oldUpadte.call(this,dt);
