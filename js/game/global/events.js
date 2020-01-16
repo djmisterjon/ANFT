@@ -92,7 +92,7 @@ class _events{
             const tl = new TimelineMax({id:'message'});
             tl.add(() => {
                 master.pause();
-                $messages.create('Intro_WakeUp').then( ()=>master.resume() );
+                $messages.show('Intro_WakeUp').then( ()=>master.resume() );
             });
             return tl.to({},{});
         };
@@ -121,7 +121,7 @@ class _events{
             //TODO: PARLER DU BAG ICI, PAUSE
             tl.add(()=>{
                 master.pause();
-                $messages.create('Explain_travelHud').then( ()=>master.resume() );
+                $messages.show('Explain_travelHud').then( ()=>master.resume() );
             });
             tl.add(()=>{
                 $gui.Travel.show();
@@ -157,7 +157,7 @@ class _events{
             const tl = new TimelineMax({id:'waitMoveNearBag'});
             tl.add(() => {
                 master.pause();
-                $messages.create('GetTheBag').then( ()=>{
+                $messages.show('GetTheBag').then( ()=>{
                     const bag = $objs.LOCAL[16];
                     const case28 = $objs.LOCAL[28];
                     $stage.scene.interactiveChildren = true;
@@ -181,7 +181,7 @@ class _events{
                 const bag = $objs.LOCAL[16];
                 master.pause();
                 gsap.getById('moveToTarget').kill(); // just en ca de debugage
-                $messages.create('LookTheObjInteraction').then( ()=>{
+                $messages.show('LookTheObjInteraction').then( ()=>{
                     $stage.scene.interactiveChildren = true;
                     gsap.to($camera.view.position3d, 0.5, {x:bag.child.p.position3d.x,y:0,z:bag.child.p.position3d.z, ease:Power4.easeOut } );
                     master.resume();
@@ -199,7 +199,7 @@ class _events{
                         $gui.Minimap.show();
                         $gui.GameSteps.show();
                         clearInterval(waitGetBag);
-                        $messages.create('SetupIntroPinBar').then( ()=>master.resume() );
+                        $messages.show('SetupIntroPinBar').then( ()=>master.resume() );
                     }
                 }, 200);
             },'+=0.3');
@@ -271,7 +271,7 @@ class _events{
                     if(!$gui.Items._show){
                         clearInterval(waitCloseMenueItem);
                         $gui.Items.child.Xbutton_B.d.filters = null; // just au cas que on pass par une command ?
-                        $messages.create('endSetupIntro').then( ()=>master.resume() );
+                        $messages.show('endSetupIntro').then( ()=>master.resume() );
                     };
                 }, 200);
             },'+=0.3');
@@ -304,7 +304,7 @@ class _events{
                     if($gui.Travel.sta>0){
                         $gui.Travel.child.CircleTop.d.filters = null;
                         clearInterval(waitFirstRoll);
-                        $messages.create('startTurnIntroFirstTime').then( ()=>master.resume() );
+                        $messages.show('startTurnIntroFirstTime').then( ()=>master.resume() );
                     };
                 }, 200);
             },'+=0.3');

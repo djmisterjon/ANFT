@@ -424,7 +424,7 @@ class __PinOption extends PIXI.Container {
         this.initialize_base();
         this.initialize_interactions();
         this.position.set(this._id*95,0);
-        this.setLock(!!this._id)
+        this.setLock(false);
     };
     initialize_base(){
         const dataBase  = $loader.DATA2.hudsPinBar;

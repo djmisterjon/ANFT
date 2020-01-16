@@ -60,11 +60,11 @@ class _Texts{
     //#region [Initialize]
     initialize(options){
         const strings = $loader.DATA.string;
-        this.initialize_quests(strings.dataString_quests.data);
-        this.initialize_words(strings.dataString_keyword.data);
-        this.initialize_items(strings.dataString_items.data);
-       //this.initialize_MessagesPages(options);
-       //this.initialize_MotionsTextsBlurs(options);
+        this.initialize_quests(strings.dataString_quests .data);
+        this.initialize_words (strings.dataString_keyword.data);
+        this.initialize_items (strings.dataString_items  .data);
+        //this.initialize_message(strings.dataString_message.data);
+        //this.initialize_MotionsTextsBlurs(options);
     };
 
     /** initialize les data messages */
@@ -107,20 +107,6 @@ class _Texts{
             if(_Texts.POOL[id+tag]){ throw console.error('ERROR (IDTAG) EXISTE DEJA!: ',id+tag) };
             _Texts.POOL[id+tag] = string || '';
             lastId = id;
-        };
-    };
-
-    /** initialize les data messages */
-    initialize_message(DataString){
-        for (let i=1, l=DataString.length; i<l; i++) {
-            const data = DataString[i];
-            const messageId = data[0];
-            const originalTxt = data[2+this._localId];
-            const target = data[1];
-            // pour chaque events message creer les data Pages
-            if(!messageId){continue};
-            this.messages[messageId] = this.messages[messageId] || [];
-            this.messages[messageId].push(...this.computeMessages(messageId,originalTxt,target));
         };
     };
 
@@ -179,6 +165,7 @@ class _Texts{
         const MotionsTxt = new _motionsTxt(id,string,styleId,splitBy,wordWrap,style2 );
         return MotionsTxt;
     };
+    
     //#endregion
 };
 

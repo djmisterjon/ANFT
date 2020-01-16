@@ -1,9 +1,19 @@
 /** Les events sont sois appeller directement, sois apeller sur un update */
-class _Messages{
+class _Messages{ //TODO: RENDU ICI , REMASTERISER LE MESSAGE AVEC TEXT CACHE
+    /** @type {Object.<string, Array>} - Stock les items description cache */
+    static POOLDATA = {};
+    /** @type {Object.<string, _motionsTxt>} - Stock les items description cache */
+    static POOL = {};
+
     constructor() {
         this._currentPage = -1;
         this._totalPage = 0;
-        this._targetId = null;
+        /**Le id actuel de la cible qui parle */
+        this._targetId = '';
+        /** le id actuel du message en cour */
+        this._currentId = '';
+        /** pa index actuel */
+        this._currentPageId = 0;
         /** @type {{
          * 'MasterContainer':PIXI.projection.Container3d, 
          * 'ContainerButtons':PIXI.projection.Container3d,
@@ -27,9 +37,14 @@ class _Messages{
             default:break;
         }
     }
+
+    get data() {
+        return _Messages.POOL[this._currentId];
+    }
     //#region [Initialize]
     initialize(){
         this.initialize_base();
+        this.initialize_Messages();
         this.initialize_interactions();
     };
 
@@ -86,8 +101,29 @@ class _Messages{
         //TODO: RENDU ICI, INTEGRER LE SPINE BUBBLE
         $camera.view.addChild(MasterContainer); // todo, move dans l'itinialisateur
         MasterContainer.renderable = false;
-    };
-    
+    }
+
+    /** Init les text pour messages, utilise les data seulement ici */
+    initialize_Messages(){
+        // les message sont special et utiliser seuelement ici
+        const DataString = $loader.DATA.string.dataString_message.data;
+        const localId = $texts._localId+2;
+        const styleId = 11;
+        const splitBy = _Texts.SPLITBY_WORD;
+        const wordWrap = 650; //todo check
+        const style2 = {};
+        for (let i=1, l=DataString.length; i<l; i++) {
+            const data = DataString[i];
+            const id = data[0];
+            const string = data[localId];
+            const target = data[1];
+            if(!id){continue};
+            _Messages.POOL[id] = _Messages.POOL[id] || [];
+            const motionsTxt = new _motionsTxt(id,string,styleId,splitBy,wordWrap,style2 )
+            _Messages.POOL[id].push({target,motionsTxt});
+        };
+    }
+
     initialize_interactions(){
         this.child.ButtonsR_xb.on("pointerover", this.Buttons_xb_pointerover)
         this.child.ButtonsR_xb.on("pointerout", this.Buttons_xb_pointerout)
@@ -113,18 +149,43 @@ class _Messages{
 
     //#region [Method]
 
-
     /** creer un message intro test 
      * @returns {Promise}
     */
-    create(messageId){
+    show(messageId){
         this.child.MasterContainer.renderable = true;
+        console.log('this.child: ', this.child);
+        this._currentId = messageId;
+        this._currentPageId = 0;
         return new Promise(async resolveEvent => {
-            await this.createMessages(messageId);
-            this.child.MasterContainer.renderable = false;
-            resolveEvent();
+            await this.setup();
+            await this.createMessages();
+            //this.child.MasterContainer.renderable = false;
+            //resolveEvent();
         });
-    };
+    }
+    
+    /** setup: pass en mode messages cinema */
+    setup(){
+        //todo: le mode cinema doit etre init au debut d'un events.
+        const FramTop = new PIXI.Sprite(PIXI.Texture.WHITE);
+        FramTop.width = 1920;
+        FramTop.height = 150;
+        FramTop.alpha = 0.9;
+        FramTop.tint = 0x000000;
+        const FramBottom = new PIXI.Sprite(PIXI.Texture.WHITE);
+        FramBottom.width = 1920;
+        FramBottom.height = 150;
+        FramBottom.alpha = 0.9;
+        FramBottom.anchor.set(0,1);
+        FramBottom.tint = 0x000000;
+        FramBottom.y = 1080;
+        $stage.addChild(FramTop,FramBottom);
+        $gui.child.Master.renderable = false;
+        return new Promise(resolve => {
+            resolve();
+        });
+    }
 
     /** position la camera pour voir la buble */
     setupCamera(targetId){
@@ -146,41 +207,63 @@ class _Messages{
      * @param {string} messageId
      * @returns {Promise}
      * */
-    createMessages(messageId){ // ces un new event target 
+    createMessages(){ // ces un new event target 
         return new Promise(resolve => {
-            this.showPage(0,$texts.getMessagesById(messageId),resolve);
+            this.showPage(0,resolve);
             //this.setupButtons(DataMessages,resolve);
         });
     };
     /** clear la page actuel */
     clearCurrentPage(DataMessages){
         //todo: clear the pool
-        const containerTxt = DataMessages.Pages[this._currentPage];
+        const containerTxt = DataMessages.Pages[this._currentPageId];
         const MasterContainer = this.child.MasterContainer;
         const MessageBubble = this.child.MessageBubble;
-        MessageBubble.skeleton.setToSetupPose(); // reset
-        TweenMax.killTweensOf(MessageBubble.scale)
-        containerTxt.children.forEach(txt => TweenMax.killTweensOf(txt) );
-        
-        containerTxt.removeAllListeners();
-        containerTxt.children.forEach(txt => txt.removeAllListeners() );
-        MasterContainer.removeChild(containerTxt);
+            MessageBubble.skeleton.setToSetupPose(); // reset
+            TweenMax.killTweensOf(MessageBubble.scale);
+            containerTxt.children.forEach(txt => TweenMax.killTweensOf(txt) );
+            containerTxt.removeAllListeners();
+            containerTxt.children.forEach(txt => txt.removeAllListeners() );
+            MasterContainer.removeChild(containerTxt);
 
     };
 
+    showPage(pageIndex,resolve){
+        const data = this.data[pageIndex];
+        const MotionsTxt = data.motionsTxt;
+        const target = data.target;
+        const MessageBubble = this.child.MessageBubble;
+        const mover = MessageBubble.skeleton.findBone('mover');
+        const MessageRenderContainer = this.child.MessageRenderContainer;
+        MessageRenderContainer.position.set(mover.x,-mover.y);
+        MessageRenderContainer.addChild(MotionsTxt);
+        console.log('mover: ', mover);
+        console.log('MotionsTxt: ', MotionsTxt );
+
+        //! point zero
+        const moverX = mover.x;
+        const moverY = mover.y;
+        setInterval(function(){ 
+            mover.x = moverX-($mouse.xx)*-1; // easeOption 0.03
+            mover.y = moverY-($mouse.yy);
+         }, 100);
+    }
+
     /**@param {Array.<DataMessages>} messages
      * @param {number} pageIndex
+     * @param {Promise} resolve
     */
-    showPage(pageIndex,messages,resolve){
+   showPage_old(pageIndex,resolve){
         const MessageRenderContainer = this.child.MessageRenderContainer;
-        MessageRenderContainer.removeChildren();
-        //! si pageIndex > nb page, ces la fin, resolve cette event message.
-        if(pageIndex>messages.length-1){return resolve()};
-        const DataMessage = messages[pageIndex];
-        this.setupTalking(DataMessage.target);
-        this.setupCamera(DataMessage.target);
-        DataMessage.motionsTexture && MessageRenderContainer.addChild(DataMessage.motionsTexture);
-        MessageRenderContainer.addChild(DataMessage.Container);
+            MessageRenderContainer.removeChildren();
+            //! si pageIndex > nb page, ces la fin, resolve cette event message.
+            const motionsTxt = this.MotionsTxt[pageIndex];
+            if(pageIndex>messages.length-1){return resolve()};
+            const DataMessage = messages[pageIndex];
+            this.setupTalking(DataMessage.target);
+            this.setupCamera(DataMessage.target);
+            DataMessage.motionsTexture && MessageRenderContainer.addChild(DataMessage.motionsTexture);
+            MessageRenderContainer.addChild(DataMessage.Container);
         //!options zoom FX
         if('option word hover focus txt'){ // note: ok suprimer dans clearCurrentPage() avec removeAllListeners()
             //!cool mouse zoom on text
@@ -263,7 +346,7 @@ class _Messages{
                 ButtonsR_xb.off('pointerup'); // suprime seulement le pointerup //todo: petit probleme, creer une method
                 ButtonsL_xb.off('pointerup'); // suprime seulement le pointerup //todo: petit probleme, creer une method
                 this.killPage(DataMessage,MessageBubble);
-                this.showPage(pageIndex-1,messages,resolve);
+                this.show(pageIndex-1,messages,resolve);
                 
             });
         };
@@ -276,7 +359,7 @@ class _Messages{
                 ButtonsR_xb.off('pointerup'); // suprime seulement le pointerup //todo: petit probleme, creer une method
                 ButtonsR_xb.off('pointerup'); // suprime seulement le pointerup //todo: petit probleme, creer une method
                 this.killPage(DataMessage,MessageBubble);
-                this.showPage(pageIndex+1,messages,resolve);
+                this.show(pageIndex+1,messages,resolve);
             });
         };
     };
@@ -295,3 +378,4 @@ class _Messages{
 
 let $messages = new _Messages();
 console.log1('$messages: ', $messages);
+

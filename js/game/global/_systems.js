@@ -109,6 +109,12 @@ class _systems{
                 dropShadow: true, dropShadowAlpha: 0.1, dropShadowAngle: 0.2, dropShadowBlur: 1, dropShadowDistance: 6,
                 padding: 8,
             }),
+            new PIXI.TextStyle({//id:11 messagebox
+                "dropShadowAlpha":0.3,"dropShadowBlur":3,"dropShadowDistance":4,
+                "fontFamily":"ArchitectsDaughter","fontVariant":"small-caps","lineJoin":"bevel","strokeThickness":1,"wordWrap":true,"wordWrapWidth":600
+            }),
+
+            
         ];
         /**list of possible options */
         this.optionsType = { // Meme nom que les menue et huds
