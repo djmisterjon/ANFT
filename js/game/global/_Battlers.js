@@ -106,6 +106,7 @@ class _battler  {
     /** initialise battler data */
     initialize_battler(level = 1){
         this.initialize_stats(level,true);
+        //this.debug();
     };
     get isPlayers() {
         return this._type === 'p';
@@ -324,4 +325,23 @@ class _battler  {
         this.s.state.addEmptyAnimation(3,0.3,0);
         TweenLite.to(this.p.position3d, 1, { x:to.x,z:to.z, ease: Power4.easeOut });
     };
+
+    debug(){
+        const pos = this.p.position3d;
+        const txt = new PIXI.Text('',{
+            fill: "white",
+            fontSize: 12,
+            lineJoin: "round",
+            strokeThickness: 4,
+            wordWrap: true,
+            wordWrapWidth: 0,
+            lineHeight: 6,
+        })
+        txt.alpha = 0.9;
+        txt.anchor.set(0,1);
+        this.p.addChild(txt);
+        $app.ticker.add(()=>{
+            txt.text = `x:${~~pos.x} y:${~~pos.y} z:${~~pos.z} ■`;
+        });
+    }
 };

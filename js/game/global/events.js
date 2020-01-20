@@ -18,6 +18,7 @@ class _events{
         this._autoSwitch.push(autoSwitch);
     };
 
+
     //#region [Initialize]
     /** Intro sleep events*/
     introSleep(autoSwitch = 'introSleep'){

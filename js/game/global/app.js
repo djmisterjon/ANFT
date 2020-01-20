@@ -1,6 +1,7 @@
 //PIXI.settings.PRECISION_FRAGMENT=PIXI.PRECISION.HIGH
 //PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
 //PIXI.settings.ROUND_PIXELS = true; //v5
+PIXI.Graphics.CURVES.adaptive = true;
 gsap.defaults({ //https://greensock.com/docs/v3/GSAP/gsap.config()
     ease: Power4.easeOut, 
     duration: 0.2,

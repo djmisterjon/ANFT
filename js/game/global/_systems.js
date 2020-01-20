@@ -64,7 +64,6 @@ class _systems{
             new PIXI.TextStyle({//id:0
                 fill: "#d8d8d8",fontFamily: "ArchitectsDaughter", 
                 fontSize: 16, lineJoin: "bevel", miterLimit: 0, padding: 2, stroke: "white", stroke:"#292929", strokeThickness: 1,
-                lineHeight:17
             }),
             new PIXI.TextStyle({//id:1
                 fill: "#de8447", fontFamily: "ArchitectsDaughter", 

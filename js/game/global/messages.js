@@ -6,6 +6,8 @@ class _Messages{ //TODO: RENDU ICI , REMASTERISER LE MESSAGE AVEC TEXT CACHE
     static POOL = {};
 
     constructor() {
+        /**@type {PIXI.Container} - Container pour afficher le mode cine sur le Stage */
+        this.CineContainer = null;
         this._currentPage = -1;
         this._totalPage = 0;
         /**Le id actuel de la cible qui parle */
@@ -44,6 +46,7 @@ class _Messages{ //TODO: RENDU ICI , REMASTERISER LE MESSAGE AVEC TEXT CACHE
     //#region [Initialize]
     initialize(){
         this.initialize_base();
+        this.initialize_cineMode();
         this.initialize_Messages();
         this.initialize_interactions();
     };
@@ -104,6 +107,28 @@ class _Messages{ //TODO: RENDU ICI , REMASTERISER LE MESSAGE AVEC TEXT CACHE
         MasterContainer.renderable = false;
     }
 
+    /** le mode cine mode, lorsque sequence messages */
+    initialize_cineMode(){
+        //todo: le mode cinema doit etre init au debut d'un events.
+        const FramTop = new PIXI.Sprite(PIXI.Texture.WHITE);
+            FramTop.width = 1920;
+            FramTop.height = 150;
+            FramTop.alpha = 1;
+            FramTop.tint = 0x000000;
+        const FramBottom = new PIXI.Sprite(PIXI.Texture.WHITE);
+            FramBottom.width = 1920;
+            FramBottom.height = 150;
+            FramBottom.alpha = 1;
+            FramBottom.anchor.set(0,1);
+            FramBottom.tint = 0x000000;
+            FramBottom.y = 1080;
+        const CineContainer = new PIXI.Container().setName('CineContainer');
+            CineContainer.parentGroup = $displayGroup.group[5];
+            CineContainer.alpha = 0.85;
+            CineContainer.addChild(FramTop,FramBottom);
+        this.CineContainer = CineContainer;
+    }
+
     /** Init les text pour messages, utilise les data seulement ici */
     initialize_Messages(){
         // les message sont special et utiliser seuelement ici
@@ -150,38 +175,45 @@ class _Messages{ //TODO: RENDU ICI , REMASTERISER LE MESSAGE AVEC TEXT CACHE
 
     //#region [Method]
 
+    getDataMessage(messageId){
+        return _Messages.POOL[messageId];
+    };
+
     /** creer un message intro test 
      * @returns {Promise}
     */
-    show(messageId){
-        this.child.MasterContainer.renderable = true;
-        console.log('this.child: ', this.child);
-        this._currentId = messageId;
-        this._currentPageId = 0;
-        return new Promise(async resolveEvent => {
-            await this.setup();
-            await this.createMessages();
+    show(messageId,target){
+        this.cineMode(true);
+        return new Promise((resolve, reject) => {
+            const dataMessage = this.getDataMessage(messageId);
+            const Bubble = new _Bubble(dataMessage,target,resolve);
+            $stage.addChild(Bubble.child.Master);
+        }).then(()=>this.cineMode(false));
+        /*return new Promise(async resolveEvent => {
+            //await this.setup(messageId,target);
+            //await this.createMessages();
             //this.child.MasterContainer.renderable = false;
             //resolveEvent();
-        });
+        });*/
     }
     
+    /** mode cinema */
+    cineMode(show=true){
+        if(show){
+            $stage.addChild( this.CineContainer );
+            gsap.fromTo( this.CineContainer.children, 0.3,{  alpha:0 },{  alpha:1 });
+        }else{
+            gsap.fromTo( this.CineContainer.children, 0.3,{  alpha:1 }, {  alpha:0 })
+            .eventCallback("onComplete", ()=>$stage.removeChild(this.CineContainer) );
+        }
+        
+    };
+
     /** setup: pass en mode messages cinema */
-    setup(){
-        //todo: le mode cinema doit etre init au debut d'un events.
-        const FramTop = new PIXI.Sprite(PIXI.Texture.WHITE);
-        FramTop.width = 1920;
-        FramTop.height = 150;
-        FramTop.alpha = 0.9;
-        FramTop.tint = 0x000000;
-        const FramBottom = new PIXI.Sprite(PIXI.Texture.WHITE);
-        FramBottom.width = 1920;
-        FramBottom.height = 150;
-        FramBottom.alpha = 0.9;
-        FramBottom.anchor.set(0,1);
-        FramBottom.tint = 0x000000;
-        FramBottom.y = 1080;
-        $stage.addChild(FramTop,FramBottom);
+    setup(messageId,target){
+        this.child.MasterContainer.renderable = true;
+        this._currentId = messageId;
+        this._currentPageId = 0;
         $gui.child.Master.renderable = false;
         return new Promise(resolve => {
             resolve();
@@ -232,12 +264,14 @@ class _Messages{ //TODO: RENDU ICI , REMASTERISER LE MESSAGE AVEC TEXT CACHE
     showPage(pageIndex,resolve){
         const data = this.data[pageIndex];
         const MotionsTxt = data.motionsTxt;
-        const target = data.target;
+        const target = this.getTarget(data.target);
+        const MasterContainer = this.child.MasterContainer;
+            MasterContainer.position3d.set(target.p.position3d.x,-target.p.height,target.p.position3d.z);
         const MessageBubble = this.child.MessageBubble;
         const mover = MessageBubble.skeleton.findBone('mover');
         const MessageRenderContainer = this.child.MessageRenderContainer;
-        MessageRenderContainer.position.set(mover.x,-mover.y);
-        MessageRenderContainer.addChild(MotionsTxt);
+            MessageRenderContainer.position.set(mover.x,-mover.y);
+            MessageRenderContainer.addChild(MotionsTxt);
         console.log('mover: ', mover);
         console.log('MotionsTxt: ', MotionsTxt );
 
@@ -379,4 +413,303 @@ class _Messages{ //TODO: RENDU ICI , REMASTERISER LE MESSAGE AVEC TEXT CACHE
 
 let $messages = new _Messages();
 console.log1('$messages: ', $messages);
+
+/** Bubble interactive message */
+class _Bubble{
+    constructor(dataMessage,target,resolve) {
+        this.dataMessage = dataMessage;
+        this.target = target;
+        this.resolve = resolve;
+        this._maxWidth = 300;
+        this._maxHeight = 150;
+        this._targetId = null;
+        this._curvX = 10;
+        this._curvY = 0.7;
+        this._pinX = 0;
+        this._pinY = 0;
+        this._radian = 0;
+        this._currentPageIndex = -1;
+        /** Hauteur y de la tete du target pour talk */
+        this._headPosY = 0;
+        /** pour animations de la bubble */
+        this.quadCurv = {
+            t:{cpX:0,cpY:0},
+            r:{cpX:0,cpY:0},
+            b:{cpX:0,cpY:0},
+            l:{cpX:0,cpY:0},
+        };
+        /** @type {{ 'Master':PIXI.Container, 'MessagesContainer':PIXI.Container, 
+         * 'Bubble':PIXI.Graphics, 'BubblePin':PIXI.Graphics,
+         * 'Button_A':PIXI.Sprite, 'Button_B':PIXI.Sprite,
+         * }} */
+        this.child = null;
+      // var rt = PIXI.RenderTexture.create(rx, ry);
+      // var sprite = PIXI.Sprite.from(rt);
+      // renderer.render(graphics, rt);
+
+        this.initialize();
+        //Inspectors.DisplayObj(this.quadCurv, true)
+        //Inspectors.DisplayObj(this, ['_radian'])
+    }
+
+    //#region [GetterSetter]
+    get targetX() { return $players.p0.p.position3d.x-this.child.Master.position3d.x; }
+    get targetY() { return $players.p0.p.position3d.y-this.child.Master.position3d.y; }
+    get targetZ() { return $players.p0.p.position3d.z-this.child.Master.position3d.z; }
+    /** @returns {_motionsTxt} - renvoi le motions text affiche */
+    get motionsTxt(){ return this.dataMessage[this._currentPageIndex].motionsTxt };
+    //#endregion
+
+    //#region [Initialize]
+    initialize() {
+        this.initialize_base();
+        this.initialize_interactions()
+        $app.ticker.add(this.update,this,PIXI.UPDATE_PRIORITY.UTILITY);
+       //this.child = this.childrenToName()
+        /*setInterval(()=>{
+            this.target && this.update();
+        }, 16);*/
+        this.nextPage();
+    };
+        
+    initialize_base() {
+        const dataBase = $loader.DATA2.XboxButonsHelper
+        const Master = new PIXI.Container().setName('Master');
+            Master.position.set(0);
+            Master.filters = [$systems.PixiFilters.OutlineFilterx4Black];
+            Master.parentGroup =  $displayGroup.group[5];
+        //!button xbox
+        //# data2\System\xboxButtonHelper\SOURCE\images\xb_A.png
+        const Button_A = new PIXI.Sprite(dataBase.textures.xb_A).setName('Button_A');
+            Button_A.position.set(0,0);
+            Button_A.anchor.set(0.5);
+        //# data2\System\xboxButtonHelper\SOURCE\images\xb_b.png
+        const Button_B = new PIXI.Sprite(dataBase.textures.xb_B).setName('Button_B');
+            Button_B.position.set(0,0);
+            Button_B.anchor.set(0.5);
+            Button_B.scale.set(0.85);
+        //#bubble
+        const Bubble = new PIXI.Graphics().setName('Bubble');
+        const BubblePin = new PIXI.Graphics().setName('BubblePin');
+        //#container text render: (update position avec le bone:'mover') contien les container message et motions..
+        const MessagesContainer = new PIXI.Container().setName('MessagesContainer');
+            MessagesContainer.position.set(20); // marge 20px
+        //!end
+        Master.addChild(BubblePin,Bubble,Button_B,Button_A,MessagesContainer);
+        this.child = Master.childrenToName();
+    }
+
+    initialize_interactions() {
+        const Bubble = this.child.Bubble;
+        Bubble.interactive = true;
+        //Bubble.on('pointerover'       , this.pointerover_Bubble    , this);
+        //Bubble.on('pointerout'        , this.pointerout_Bubble   , this);
+        //Bubble.on('pointerdown'       , this.pointerdown_Bubble    , this);
+        Bubble.on('pointerup'         , this.pointerup_Bubble    , this);
+    }
+    //#endregion
+
+    //#region [Interactive]
+    /** @param {PIXI.interaction.InteractionEvent} e -*/
+    pointerup_Bubble(e){
+        this.nextPage();
+    }
+    //#endregion
+    
+    nextPage(){
+        if(this._currentPageIndex+1<this.dataMessage.length){
+            this.showPage(this._currentPageIndex+1);
+        }else{
+            //!end message
+            this.Destroy();
+            this.resolve && this.resolve()
+
+        }
+    }
+
+    /** affiche un index de page */
+    showPage(pageIndex){
+        const data = this.dataMessage[pageIndex];
+        this.clearPage();
+        this.setupPage(pageIndex, data.motionsTxt, data.target);
+        this.playPage();
+    }
+
+    /**joue la page et animation */
+    playPage(){
+        // todo: mettrand dans class message ?
+        gsap.fromTo(this.child.Bubble, 1.2, {rotation:1},{rotation:0, ease:Elastic.easeOut.config(1.2, 0.5) });
+        gsap.fromTo(this.child.Master.scale, 1, {x:1,y:0},{ 
+            x:1, y:1,
+        });
+        gsap.fromTo(this.child.Master.position, 1.2, {x:(1920/2),y:(1080/2)},{ 
+            x:Math.max((1920/2)-this._maxWidth-40,0), y: Math.max((1080/2)-this._maxHeight-this.target.p.height-40,0),
+            ease: Elastic.easeOut.config(0.7, 0.5)
+        });
+        gsap.fromTo(this.child.BubblePin.scale, 0.2, {x:0,y:0},{ 
+            x:1, y: 1,
+            delay:0.4,
+        });
+        $camera.moveToTarget(this.target,3,Power4.easeOut)
+        if(this.target instanceof _battler){
+            this.target.s.state.setAnimation(5, 'talk1', false)
+            this.target.s.state.addEmptyAnimation(5,0.1,0)
+        }
+        this.motionsTxt.start(true);
+    
+    }
+
+    /** prepare la bulles avec la nouvelle page */
+    setupPage(pageIndex, MotionsTxt, targetId){
+        this._currentPageIndex = pageIndex;
+        this._targetId = targetId;
+
+        const maxWidth = this._maxWidth = MotionsTxt.width+50;
+        const maxHeight = this._maxHeight = MotionsTxt.height+50;
+        this.quadCurv = {
+            t:{cpX:maxWidth   ,cpY:0        },
+            r:{cpX:maxWidth+20,cpY:maxHeight},
+            b:{cpX:maxWidth   ,cpY:maxHeight},
+            l:{cpX:-30        ,cpY:maxHeight},
+        };
+
+        gsap.to(this, 0.7, { // marge 20
+            _maxWidth:maxWidth, _maxHeight: maxHeight,
+            ease: Elastic.easeOut.config(1.2, 0.5)
+        });
+        this.child.Button_A.position.set(maxWidth,maxHeight);
+        this.child.Button_B.position.set(maxWidth+20,maxHeight-40);
+        switch (targetId) {
+            case 'p0': this.target = $players.p0 ;break;
+            case 'p1': this.target = $players.p1 ;break;
+            //TODO: MORE A FAIR GLOBAL DANS SYSTEM
+            default:break;
+        }
+        this._headPosY = this.target.p.height/2;
+        const MessagesContainer = this.child.MessagesContainer;
+            MessagesContainer.addChild(MotionsTxt);
+    }
+
+    /** clear page message */
+    clearPage(){
+        const MessagesContainer = this.child.MessagesContainer;
+        MessagesContainer.removeChildren();
+    }
+
+    draw_Bubble(){
+        const Master = this.child.Master; 
+        const maxWidth = this._maxWidth;
+        const maxHeight = this._maxHeight;
+        const curv1 = 20; //todo: dinamyc ?
+        const Bubble = this.child.Bubble;
+        const jellyFroceXR = this._jellyFroceXR *4;
+        const jellyFroceXL = this._jellyFroceXL *4;
+        const jellyFroceYT = this._jellyFroceYT *4;
+        const jellyFroceYB = this._jellyFroceYB *4;
+        Bubble.clear();
+        Bubble.lineStyle(0).beginFill(0xffffff, 1);
+        Bubble.moveTo(0,0)
+        Bubble.quadraticCurveTo(this.quadCurv.t.cpX              , this.quadCurv.t.cpY+jellyFroceYB, maxWidth, 20          ); // top
+        Bubble.quadraticCurveTo(this.quadCurv.r.cpX-jellyFroceXR , this.quadCurv.r.cpY             , maxWidth, maxHeight   ); //right
+        Bubble.quadraticCurveTo(this.quadCurv.b.cpX              , this.quadCurv.b.cpY-jellyFroceYT, 0       , maxHeight+20); //bottom
+        Bubble.quadraticCurveTo(this.quadCurv.l.cpX+jellyFroceXL , this.quadCurv.l.cpY             , 0       , 0           ); //left
+        Bubble.endFill();
+    }
+
+    getDistanceFrom(p1,p2){
+        const deltaX = p1.x - p2.x;
+        const deltaY = p1.y - p2.y;
+        const deltaZ = p1.z - p2.z;
+        return {
+            d:Math.sqrt( deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ ),
+            a:-Math.atan2(p2.z - p1.z, p2.x - p1.x),
+        }
+    }
+
+    draw_BubblePin(){
+        const Master = this.child.Master; 
+        const BubblePin = this.child.BubblePin;
+        const point3d = new PIXI.Point3d();
+        point3d.copy(this.target.p.position3d)
+        point3d.x-=35; // decal selon dir du player
+        point3d.y-=this._headPosY; // hauteur de la bouche
+        this.target.p.position3d
+        const pos = $stage.toLocal(point3d,$camera.view,void 0,true) //this.target.p.toLocal(BubblePin.getGlobalPosition());
+        const pox = pos.x-Master.x//pos.x/$camera._zoom;
+        const poy = pos.y-Master.y//(pos.y+this._headPosY)/$camera._zoom;
+        const ratioX = Master.x/$camera._screenW;
+        const ratioY = Master.y/$camera._sceneH; 
+        this._pinX = (this._maxWidth-20)*ratioX;
+        this._pinY = this._maxHeight-20;
+
+        BubblePin.clear();
+        BubblePin.lineStyle(0).beginFill(0xffffff, 1);
+        //BubblePin.drawRect(0, 0, 30, 30)
+        BubblePin.moveTo(40,0)
+        BubblePin.quadraticCurveTo(-100, 140, pox-this._pinX, poy-this._pinY);
+        BubblePin.quadraticCurveTo(-140, 170, 0, 0);
+        //BubblePin.quadraticCurveTo(this._curvX, poy/this._curvY, pox, poy);
+        //BubblePin.moveTo(pox,poy+10)
+        //BubblePin.quadraticCurveTo(this._curvX, poy/this._curvY, 0, 0);
+        BubblePin.endFill();
+        BubblePin.position.set(this._pinX, this._pinY)//(this._pinX,this._pinY);
+
+    }
+
+    update(){
+        const Master = this.child.Master;
+        const MessagesContainer = this.child.MessagesContainer;
+            MessagesContainer.position.set(20+(-this._jellyFroceXR+this._jellyFroceXL)*1.5,20+(-this._jellyFroceYT+this._jellyFroceYB)*1.5);
+        //! updata ease
+        let _jellyFroceXR = this._jellyFroceXR || 0;
+        let _jellyFroceXL = this._jellyFroceXL || 0;
+        let _jellyFroceYT = this._jellyFroceYT || 0;
+        let _jellyFroceYB = this._jellyFroceYB || 0;
+        if($mouse.xx>Master.x+this._maxWidth){
+            _jellyFroceXL = _jellyFroceXL - _jellyFroceXL*0.1;
+            _jellyFroceXR = (Master.x-$mouse.xx+this._maxWidth)*-0.03;
+            //Master.x+= _jellyFroceXR;
+        }else
+        if($mouse.xx<Master.x){
+            _jellyFroceXR = _jellyFroceXR - _jellyFroceXR*0.1;
+            _jellyFroceXL = (Master.x-$mouse.xx)*0.03;
+            //Master.x-= _jellyFroceXL;
+        }else{
+            _jellyFroceXR = _jellyFroceXR - _jellyFroceXR*0.07;
+            _jellyFroceXL = _jellyFroceXL - _jellyFroceXL*0.07;
+            //Master.x+=(_jellyFroceXR+_jellyFroceXL);
+        };
+    
+        if($mouse.yy>Master.y+this._maxHeight){
+            _jellyFroceYB = _jellyFroceYB - _jellyFroceYB*0.1;
+            _jellyFroceYT = (Master.y-$mouse.yy+this._maxHeight)*-0.03;
+            //Master.y+= _jellyFroceYT
+        }else
+        if($mouse.yy<Master.y){
+            _jellyFroceYT = _jellyFroceYT - _jellyFroceYT*0.1;
+            _jellyFroceYB = Math.abs(Master.y-$mouse.yy)*0.03;
+            //Master.y-= _jellyFroceYB
+        }else{
+            _jellyFroceYT = _jellyFroceYT - _jellyFroceYT*0.07;
+            _jellyFroceYB = _jellyFroceYB - _jellyFroceYB*0.07;
+            //Master.y+=(_jellyFroceYT+_jellyFroceYB);
+        };
+        this._jellyFroceXR = _jellyFroceXR;
+        this._jellyFroceXL = _jellyFroceXL;
+        this._jellyFroceYT = _jellyFroceYT;
+        this._jellyFroceYB = _jellyFroceYB;
+        
+        this.draw_Bubble();
+        this.draw_BubblePin();
+    }
+
+    /** Destroy de bubble */
+    Destroy(){
+        this.clearPage();
+        $app.ticker.remove(this.update,this);
+        const Master = this.child.Master;
+        Master.destroy({children:true});
+    }
+};
+
 

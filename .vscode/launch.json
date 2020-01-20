@@ -16,7 +16,7 @@
             "webRoot": "${workspaceRoot}",
             "port": 9222,
             "reloadAfterAttached": true,
-            "sourceMaps": false,
+
         },
     ]
 }

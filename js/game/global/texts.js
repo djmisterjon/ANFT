@@ -32,6 +32,7 @@ class _Texts{
     static POOL = {
 
     };
+
     ///** @type {Object.<string, DataString_QUESTS>} - Pool des Quests id */
     //static Quests = {};
     ///** @type {Object.<string, _motionsTxt>} - PoolKey des id de motions Words */
@@ -224,7 +225,7 @@ class _motionsTxt extends PIXI.Container{
     //#region [Initialize]
     /** Decoup le string selon les tags */
     initialize_regex(){
-        const matrix = [];
+        const matrix = []; //TODO: 2 SYSTEM, 1 AVEC TAG ET UN PRETAG AVEC REPLACE DE MOT CLE
         const re = /\<(#|S|P|N|I)(\w+|)\>/;
         let txt = this._originalString;
         let currentStyleId = this._defaultstyleId;
@@ -256,7 +257,7 @@ class _motionsTxt extends PIXI.Container{
 
     /** creer les instance metric pour les saut ligne */
     initialize_metric(){
-        const matrix = this.matrix;
+        const matrix = this.matrix; // todo: calculer max lineheight pour saut
         const isWordWrap = !!this._wordWrap;
         const wordWrapWidth = this._wordWrap;
         let maxHeightLine = 0; // calcul la hauteur maximal pour la ligne actuel pour un saut line
@@ -281,7 +282,7 @@ class _motionsTxt extends PIXI.Container{
                     matrix.splice(i,0, _motionsTxt.TXTMATRIX('',textMatrix.styleID,"N") ); // restart
                 }else{ // si x0? ont shift le premier [0], combine (sum) le reste [...]
                     textMatrix.string = TextMetrics.lines.shift();// FIXME: MDFUCKER
-                    const restant = TextMetrics.lines.join(' ');
+                    const restant = TextMetrics.lines.join(' ')+' ';
                     restant && matrix.splice(i+1,0, _motionsTxt.TXTMATRIX(restant,textMatrix.styleID) );
                     if(TextMetrics.lines.length === 1){ // si restai just 1[array] , il yaura pas de split dont ont saute
                         matrix.splice(i+1,0, _motionsTxt.TXTMATRIX('',textMatrix.styleID,"N") ); // restart
@@ -304,14 +305,14 @@ class _motionsTxt extends PIXI.Container{
     initialize_splitter(){
         if(this._splitBy === _Texts.SPLITBY_LINE){return};
         const matrix = []; // reformat une nouvelle matrix selon le splits
-        for (let i=0, l=this.matrix.length; i<l; i++) {
+        for (let i=0, x = 0, l=this.matrix.length; i<l; i++) {
             const m = this.matrix[i];
             if(m.tag){// si un tag <> continue, pas besoin de spliting
+                x = 0;
                 matrix.push(m);
                 continue;
             };
             const match = m.string.match(this._splitBy);
-            let x = 0;
             match && match.forEach(string => {
                 const txtMatrix = _motionsTxt.TXTMATRIX(string, m.styleID );
                 const TextMetrics = PIXI.TextMetrics.measureText(txtMatrix.string, m.metric.style, false);

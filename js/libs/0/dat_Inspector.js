@@ -85,12 +85,29 @@ class Inspectors {
     //#endregion
 
  //#region [Static]
- /** Inspect un display Obj pour Debug */
+ /** Inspect un display Obj pour Debug 
+  * @param {PIXI.DisplayObject} DisplayObj
+  * @param {Array.<string>} Debug
+ */
     static DisplayObj(DisplayObj,Debug){
         const gui = new Inspectors(DisplayObj.constructor.name+" - "+DisplayObj.name, ' inspector Debug');
         const f1 = gui.addFolder('DisplayObj').listen().slider();
-        f1.add(DisplayObj, "position",['x','y'] ).step(1);
-        f1.add(DisplayObj, "scale",['x','y'] ).step(0.01);
+        DisplayObj.position && f1.add(DisplayObj, "position",['x','y'] ).step(1);
+        DisplayObj.scale && f1.add(DisplayObj, "scale",['x','y'] ).step(0.01);
+        DisplayObj.pivot && f1.add(DisplayObj, "pivot",['x','y'] ).step(0.01);
+        if(Debug){
+            if(Array.isArray(Debug)){
+                Debug.forEach(key => {
+                    f1.add(DisplayObj, key).step(0.01);
+                });
+            }else{ // sinon true ? utilise tous les key
+                Object.keys(DisplayObj).forEach(key => {
+                    const subKeys = Object.keys(DisplayObj[key]);
+                    f1.add(DisplayObj, key,subKeys).step(1);
+                });
+            }
+ 
+        };
         return gui;
     };
     //#endregion
