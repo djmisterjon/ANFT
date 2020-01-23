@@ -1,8 +1,6 @@
 /** Les events sont sois appeller directement, sois apeller sur un update */
 class _Messages{ //TODO: RENDU ICI , REMASTERISER LE MESSAGE AVEC TEXT CACHE
     /** @type {Object.<string, Array>} - Stock les items description cache */
-    static POOLDATA = {};
-    /** @type {Object.<string, _motionsTxt>} - Stock les items description cache */
     static POOL = {};
 
     constructor() {
@@ -184,10 +182,14 @@ class _Messages{ //TODO: RENDU ICI , REMASTERISER LE MESSAGE AVEC TEXT CACHE
     */
     show(messageId,target){
         this.cineMode(true);
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             const dataMessage = this.getDataMessage(messageId);
-            const Bubble = new _Bubble(dataMessage,target,resolve);
-            $stage.addChild(Bubble.child.Master);
+            for (let i=0, l=dataMessage.length; i<l; i++) {
+                const data = dataMessage[i];
+                const target = this.getTarget(data.target);
+                await this.message(data.motionsTxt, target);
+            };
+            resolve();
         }).then(()=>this.cineMode(false));
         /*return new Promise(async resolveEvent => {
             //await this.setup(messageId,target);
@@ -197,6 +199,14 @@ class _Messages{ //TODO: RENDU ICI , REMASTERISER LE MESSAGE AVEC TEXT CACHE
         });*/
     }
     
+    /** affiche un message bubble avec promise */
+    message(MotionsTxt, target){
+        return new Promise((resolve, reject) => {
+            const Bubble = new _Bubble(MotionsTxt, target, resolve);
+            $stage.addChild(Bubble.child.Master);
+        });
+    }
+
     /** mode cinema */
     cineMode(show=true){
         if(show){
@@ -260,7 +270,14 @@ class _Messages{ //TODO: RENDU ICI , REMASTERISER LE MESSAGE AVEC TEXT CACHE
             MasterContainer.removeChild(containerTxt);
 
     };
-
+    nextPage(){
+        if(this._currentPageIndex+1<this.dataMessage.length){
+            this.showPage(this._currentPageIndex+1);
+        }else{
+            //!end message
+   
+        }
+    }
     showPage(pageIndex,resolve){
         const data = this.data[pageIndex];
         const MotionsTxt = data.motionsTxt;
@@ -416,8 +433,16 @@ console.log1('$messages: ', $messages);
 
 /** Bubble interactive message */
 class _Bubble{
-    constructor(dataMessage,target,resolve) {
-        this.dataMessage = dataMessage;
+    /**Les type de bubble et comportement a afficher */
+    static TYPE = {
+        TALKFROM_RIGHT:0,
+        TALKFROM_LEFT:1,
+    }
+
+    /**@param {_motionsTxt} MotionsTxt */
+    constructor(MotionsTxt,target,resolve) {
+        /** sois un datapage[_motionsTxt,...] , ou _motionsTxt */
+        this.MotionsTxt = MotionsTxt;
         this.target = target;
         this.resolve = resolve;
         this._maxWidth = 300;
@@ -428,7 +453,7 @@ class _Bubble{
         this._pinX = 0;
         this._pinY = 0;
         this._radian = 0;
-        this._currentPageIndex = -1;
+        this._currentPageIndex = 0;
         /** Hauteur y de la tete du target pour talk */
         this._headPosY = 0;
         /** pour animations de la bubble */
@@ -453,24 +478,16 @@ class _Bubble{
     }
 
     //#region [GetterSetter]
-    get targetX() { return $players.p0.p.position3d.x-this.child.Master.position3d.x; }
-    get targetY() { return $players.p0.p.position3d.y-this.child.Master.position3d.y; }
-    get targetZ() { return $players.p0.p.position3d.z-this.child.Master.position3d.z; }
-    /** @returns {_motionsTxt} - renvoi le motions text affiche */
-    get motionsTxt(){ return this.dataMessage[this._currentPageIndex].motionsTxt };
+
     //#endregion
 
     //#region [Initialize]
     initialize() {
         this.initialize_base();
-        this.initialize_interactions()
+        this.initialize_interactions();
         $app.ticker.add(this.update,this,PIXI.UPDATE_PRIORITY.UTILITY);
-       //this.child = this.childrenToName()
-        /*setInterval(()=>{
-            this.target && this.update();
-        }, 16);*/
-        this.nextPage();
-    };
+        this.showPage(this._currentPageIndex);
+    }
         
     initialize_base() {
         const dataBase = $loader.DATA2.XboxButonsHelper
@@ -512,26 +529,15 @@ class _Bubble{
     //#region [Interactive]
     /** @param {PIXI.interaction.InteractionEvent} e -*/
     pointerup_Bubble(e){
-        this.nextPage();
+        this.Destroy();
+        this.resolve && this.resolve()
     }
     //#endregion
-    
-    nextPage(){
-        if(this._currentPageIndex+1<this.dataMessage.length){
-            this.showPage(this._currentPageIndex+1);
-        }else{
-            //!end message
-            this.Destroy();
-            this.resolve && this.resolve()
-
-        }
-    }
 
     /** affiche un index de page */
     showPage(pageIndex){
-        const data = this.dataMessage[pageIndex];
-        this.clearPage();
-        this.setupPage(pageIndex, data.motionsTxt, data.target);
+        //this.clearPage();
+        this.setupPage();
         this.playPage();
     }
 
@@ -555,15 +561,15 @@ class _Bubble{
             this.target.s.state.setAnimation(5, 'talk1', false)
             this.target.s.state.addEmptyAnimation(5,0.1,0)
         }
-        this.motionsTxt.start(true);
-    
+        this.MotionsTxt.start(true);
     }
 
     /** prepare la bulles avec la nouvelle page */
-    setupPage(pageIndex, MotionsTxt, targetId){
-        this._currentPageIndex = pageIndex;
-        this._targetId = targetId;
-
+    setupPage(){
+        //this._currentPageIndex = pageIndex;
+        //this._targetId = targetId;
+        const MotionsTxt = this.MotionsTxt;
+        const Target = this.target;
         const maxWidth = this._maxWidth = MotionsTxt.width+50;
         const maxHeight = this._maxHeight = MotionsTxt.height+50;
         this.quadCurv = {
@@ -579,21 +585,19 @@ class _Bubble{
         });
         this.child.Button_A.position.set(maxWidth,maxHeight);
         this.child.Button_B.position.set(maxWidth+20,maxHeight-40);
-        switch (targetId) {
-            case 'p0': this.target = $players.p0 ;break;
-            case 'p1': this.target = $players.p1 ;break;
-            //TODO: MORE A FAIR GLOBAL DANS SYSTEM
-            default:break;
-        }
-        this._headPosY = this.target.p.height/2;
+
+        this._headPosY = Target.p.height/2;
         const MessagesContainer = this.child.MessagesContainer;
             MessagesContainer.addChild(MotionsTxt);
     }
 
     /** clear page message */
     clearPage(){
+        const MotionsTxt = this.MotionsTxt;
         const MessagesContainer = this.child.MessagesContainer;
         MessagesContainer.removeChildren();
+        MotionsTxt && MotionsTxt.Destroy();
+
     }
 
     draw_Bubble(){
@@ -707,6 +711,10 @@ class _Bubble{
     Destroy(){
         this.clearPage();
         $app.ticker.remove(this.update,this);
+        gsap.killTweensOf(this.child.Master);
+        gsap.killTweensOf(this.child.Bubble);
+        gsap.killTweensOf(this.child.BubblePin);
+        gsap.killTweensOf(this.child.MessagesContainer);
         const Master = this.child.Master;
         Master.destroy({children:true});
     }

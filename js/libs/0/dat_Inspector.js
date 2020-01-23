@@ -1006,13 +1006,12 @@ class Inspectors {
                     case 'select-one': value = isFinite(input.value)?+input.value:input.value; break;
                     default:value=input.value;break;
                 }
-                input._props?this.target[this._proprety][input._props] = value : this.target[this._proprety] = value;
+                input._props? this.target[this._proprety][input._props] = value : this.target[this._proprety] = value;
                 if(this.__sliders[input.id]){ // update progress bar
                     const percent = ((value - this._min) * 100) / (this._max - this._min)
                     this.__sliders[input.id].firstElementChild.style.width = `${percent}%`;
-                };
-       
-                this._onchange (this.target,this._proprety);
+                }
+                this._onchange (this.target, this._proprety);
                 this.parentInspectors.__folders[this._folderName]._onchange (this.target,this._proprety);
                 this.parentInspectors._onchange (this.target,this._proprety);
             };

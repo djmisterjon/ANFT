@@ -211,6 +211,10 @@ class _motionsTxt extends PIXI.Container{
         this.initialize();
     };
 
+    //#region [GetterSetter]
+    /** indicateur si ces class motionsTxt */
+    get isMotionsTxt() { return true };
+    //#endregion
     initialize(){
         this.initialize_regex();
         this.initialize_metric();
@@ -393,7 +397,7 @@ class _motionsTxt extends PIXI.Container{
                     yoyoEase: true,
                     stagger: 0.2
                 });
-        };
+        }
 
         //!motions blur
         if('option motionsFx :motionsSprite'){
@@ -408,22 +412,26 @@ class _motionsTxt extends PIXI.Container{
         }
         //this.child.motionsTexture.renderable = false;
         return this;
-    };
+    }
 
     /** clear les instance actuel */
     clear(){
-        gsap.killTweensOf(this.child.Master.children)
-    };
+        gsap.killTweensOf(this.child.Master.children);
+    }
 
-    /** clone une instance */
-    clone(){
-
-    };
+    /** @param {Boolean} perma  - Destroy child ?*/
+    Destroy(perma=false){
+        this.clear();
+        if(perma){
+            this.destroy({children:true});
+            this.child = null;
+        }
+    }
 
     debug(enable){
         if(!enable){return};
-       const bound =  this.child.Master.getBounds(true);
-       const MasterRec = new PIXI.Graphics();
+        const bound =  this.child.Master.getBounds(true);
+        const MasterRec = new PIXI.Graphics();
             MasterRec.lineStyle(2, 0xffffff, 1);
             MasterRec.drawRect(bound.x,bound.y,bound.width,bound.height);
             this._wordWrap && MasterRec.drawRect(bound.x,bound.y,this._wordWrap,bound.height);
@@ -454,5 +462,5 @@ class _motionsTxt extends PIXI.Container{
        MasterRec.hitArea = MasterRec.getBounds()
        MasterRec.on("pointerup", ()=>{gsap.to(this.scale, {x:'+=0.5',y:'+=0.5'})})
 
-    };
+    }
 };

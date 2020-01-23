@@ -142,6 +142,7 @@ class _events{
             tl.add(() => {
                 master.pause();
                 const bag = $objs.LOCAL[16];
+                const Bubble = new _Bubble( $texts.MotionsTxt('___holdClick'), bag ); // todo creer un manager alert
                 //$messages.create('Intro_WakeUp').then( ()=>master.resume() ); //todo: un message parralle
                 $mouse._scanDisable = false; // permet le scan pour le bag
                 let waitBagIdentify = setInterval(() => {
