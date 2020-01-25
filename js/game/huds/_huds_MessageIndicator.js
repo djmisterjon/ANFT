@@ -110,8 +110,8 @@ class _Huds_MessageIndicator extends _Huds_Base{
 
     add_quest(id){
         const title = new PIXI.Text('Nouvelle Quete dans journal',$systems.styles[9]);
-        //todo: rendu ici _Texts.POOL .d .t... , revoir le cache si ok
-        const extraTxt = new PIXI.Text(_Texts.POOL[id].title._originalString.toUpperCase(),$systems.styles[4]);
+        //see dataString_quests pour tag
+        const extraTxt = new PIXI.Text($texts.getStringById(id,'n').toUpperCase(),$systems.styles[4]);
         extraTxt.anchor.set(0.5);
         this.poolData.push({title,extraTxt});
     };

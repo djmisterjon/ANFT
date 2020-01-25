@@ -233,7 +233,7 @@ class _events{
                     };
                 }, 200);
             });
-            tl.add(()=>{
+            tl.add(()=>{ // wait open menu inventaire
                 master.pause();
                 const PinOpt = $gui.PinBar.child.PinOption[4]; // option inventaire items
                 PinOpt.child.Orb.d.filters = [$systems.PixiFilters.OutlineFilterx8Green];
@@ -241,6 +241,7 @@ class _events{
                 let waitMenueOpened = setInterval(() => {
                     if($gui.Items.renderable){ // si option activer
                         Bubble.Destroy();
+                        PinOpt.child.Orb.d.filters = null;
                         clearInterval(waitMenueOpened);
                         master.resume();
                     };

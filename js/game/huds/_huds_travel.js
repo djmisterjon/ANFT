@@ -114,8 +114,8 @@ class _Huds_Travel extends _Huds_Base {
             .eventCallback("onUpdate", ()=>{
                 const x = ($mouse.xx-Gear_TopGlobalXY.x)/20;
                 const y = ($mouse.yy-Gear_TopGlobalXY.y)/20;
-                Gear_Top.x = x;
-                Gear_Top.y = y;
+                Gear_Top.x+= (x-Gear_Top.x)*0.07;
+                Gear_Top.y+= (y-Gear_Top.y)*0.07;
             });
     };
 
@@ -123,8 +123,9 @@ class _Huds_Travel extends _Huds_Base {
     _pointerout(e) {
         TweenLite.to(this.child.Master.scale, 0.3  , { x:1, y:1, ease: Power3.easeOut });
         const Gear_Top = this.child.Gear_Top; //FIXME: test
-        gsap.killTweensOf("travelGear_Top_rotation")
-        gsap.to(Gear_Top, 1, {x:0,y:0, ease:Power4.easeOut})
+        gsap.getById('travelGear_Top_rotation') && gsap.getById('travelGear_Top_rotation').kill();
+        this.startIdleRotation();
+        gsap.to(Gear_Top, 1.2, {x:0,y:0, ease:Power2.easeOut})
     };
 
     /** @param {PIXI.interaction.InteractionEvent} e -*/
@@ -205,14 +206,18 @@ class _Huds_Travel extends _Huds_Base {
         this.renderable = true;
         gsap.fromTo(this.scale, 1.5, {x:0,y:0,},{x:1,y:1, ease:Elastic.easeOut.config(1.2, 0.5)} );
         if("option animate travelSlots"){ //todo: si option anime, idle rotation
-            const Gear_Bottom = this.child.Gear_Bottom;
-            const Gear_Top = this.child.Gear_Top;
-            const Gear_backDeco = this.child.Gear_backDeco;
-            gsap.to(Gear_Bottom  , 190 , { rotation:Gear_Bottom  .rotation-Math.PI*2, ease: Power0.easeNone, repeat:-1 })
-            gsap.to(Gear_backDeco, 190 , { rotation:Gear_backDeco.rotation+Math.PI*2, ease: Power0.easeNone, repeat:-1 })
-            gsap.to(Gear_Top     , 90, { rotation:Gear_Top     .rotation+Math.PI*2, ease: Power0.easeNone, repeat:-1 })
+            this.startIdleRotation();
         };
     };
+
+    startIdleRotation(){
+        const Gear_Bottom = this.child.Gear_Bottom;
+        const Gear_Top = this.child.Gear_Top;
+        const Gear_backDeco = this.child.Gear_backDeco;
+        gsap.to(Gear_Bottom  , 190 , { rotation:Gear_Bottom  .rotation-Math.PI*2, ease: Power0.easeNone, repeat:-1 })
+        gsap.to(Gear_backDeco, 190 , { rotation:Gear_backDeco.rotation+Math.PI*2, ease: Power0.easeNone, repeat:-1 })
+        gsap.to(Gear_Top     , 90, { rotation:Gear_Top     .rotation+Math.PI*2, ease: Power0.easeNone, repeat:-1 })
+    }
 
     hide(){
 

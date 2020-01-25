@@ -46,7 +46,7 @@ class _camera {
         this._far = -100000;
         this._orthographic = false;
         /** cache default easing */
-        this._ease = Elastic.easeOut.config(1, 0.46);
+        this._ease = Sine.easeOut //Elastic.easeOut.config(1, 0.46);
         /** camera preset setup */
         this.cameraSetup = {
             default:{ _zoom:0.58, _ang:-0.2, _perspective:-0.52},
@@ -118,6 +118,7 @@ class _camera {
             //const tween = TweenLite.getTweensOf(this)[0];
            // if(!vars.vars._ang,_perspective){}
            //if(!tween){
+               //TODO: DES GENS PARLE DE MOTIONSICKNESS A REVOIR LES OPTIONS
                 const speed = 60;
                 const ScrollX = ((this._screenW/2)-$mouse.xx)/10 - this.view.pivot3d._x;
                 const ScrollY = -((this._screenH/2)-$mouse.yy)-this.view.pivot3d._z;

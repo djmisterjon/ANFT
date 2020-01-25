@@ -148,8 +148,8 @@ class _Texts{
 
     //#region [Method]
     /** @return {String} - cherche et return String data from DB */
-    getStringById(id){
-        return _Texts.POOL[id];
+    getStringById(id,tag=''){
+        return _Texts.POOL[id+tag];
     };
 
     /** Creer un MotionsText Container selon un ID */
