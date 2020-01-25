@@ -333,6 +333,7 @@ class _motionsTxt extends PIXI.Container{
     initialize_sprites(){
         const matrix = this.matrix;
         const Master = new PIXI.Container().setName('Master');
+        Master.alpha = 0;
         for (let i=0, l=matrix.length; i<l; i++) {
             const textMatrix = matrix[i];
             if(textMatrix.tag === "N"){continue}
@@ -369,7 +370,7 @@ class _motionsTxt extends PIXI.Container{
     };
 
     /** Action start la motions */
-    start(enableMotion=false,staggerSpeed=0.07){
+    start(enableMotion=false,staggerSpeed=0.08){
         gsap.fromTo(this.child.Master, 1, {alpha:0, y:-50},{alpha:1, y:0, ease:Expo.easeOut });
         enableMotion && this.startMotion(staggerSpeed);
         return this;
@@ -383,14 +384,14 @@ class _motionsTxt extends PIXI.Container{
             gsap.fromTo(List, 0.3,
                 { alpha:0 },
                 { alpha:1, ease: Power1.easeIn, stagger: staggerSpeed });
-            gsap.fromTo(List, 4,
+            gsap.fromTo(List, 2,
                 {
                     x:(i,o)=>o.position.zero._x,
                     y:(i,o)=>o.position.zero._y
                 },
                 {
-                    x:()=>`+=${Math.randomFrom(3,-3)}`,
-                    y:()=>`+=${Math.randomFrom(4,-4)}`,
+                    x:()=>`+=${Math.randomFrom(6,-6)}`,
+                    y:()=>`+=${Math.randomFrom(6,-6)}`,
                     ease: Power1.easeInOut, 
                     repeat: -1, 
                     yoyo: true,

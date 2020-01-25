@@ -142,11 +142,12 @@ class _events{
             tl.add(() => {
                 master.pause();
                 const bag = $objs.LOCAL[16];
-                const Bubble = new _Bubble( $texts.MotionsTxt('___holdClick'), bag ); // todo creer un manager alert
+                const Bubble = new _Bubble( $texts.MotionsTxt('___holdClick'), bag.child, null, _Bubble.TYPE.POINT_OBJ ); // todo creer un manager alert
                 //$messages.create('Intro_WakeUp').then( ()=>master.resume() ); //todo: un message parralle
                 $mouse._scanDisable = false; // permet le scan pour le bag
                 let waitBagIdentify = setInterval(() => {
                     if(bag._identified){
+                        Bubble.Destroy();
                         $mouse._scanDisable = true;
                         clearInterval(waitBagIdentify);
                         master.resume();
@@ -165,8 +166,10 @@ class _events{
                     $stage.scene.interactiveChildren = true;
                     gsap.to($camera.view.position3d, 1, {x:case28.child.p.position3d.x,y:0,z:case28.child.p.position3d.z, ease:Back.easeInOut.config(1.7) } );
                     gsap.to($camera, 1, {_zoom:0.5, ease:Power4.easeOut } );
+                    const Bubble = new _Bubble( $texts.MotionsTxt('___clickHere_move'), case28.child, null, _Bubble.TYPE.POINT_OBJ );
                     let waitNearBag = setInterval(() => { // lorsque asser proche du bag
                         if(p0.inCase === case28){
+                            Bubble.Destroy();
                             $stage.scene.interactiveChildren = false;
                             clearInterval(waitNearBag);
                             master.resume();
@@ -192,31 +195,38 @@ class _events{
             tl.add(() => {
                 master.pause();
                 const bag = $objs.LOCAL[16];
+                const Bubble = new _Bubble( $texts.MotionsTxt('___clickHere_takeObj'), bag.child, null, _Bubble.TYPE.POINT_OBJ );
                 let waitGetBag = setInterval(() => {
                  //TODO: fair un system de switch variable ou _destroy:true, de toute facon quelque chose , les ref ne son pas detruite
                 if(!bag.child){
+                        Bubble.Destroy();
                         $gui.Travel.sta = 0;
                         // affiche les guy du bag
                         $gui.PinBar.show();
                         $gui.Minimap.show();
                         $gui.GameSteps.show();
                         clearInterval(waitGetBag);
-                        $messages.show('SetupIntroPinBar').then( ()=>master.resume() );
+                        setTimeout(() => {
+                            $messages.show('SetupIntroPinBar').then( ()=>master.resume() );
+                        }, 1000);
                     }
                 }, 200);
             },'+=0.3');
             return tl.to({},{});
         };
-        function clickOnBagOptions() {
+        function clickOnBagOptions() { // le bag huds
             const tl = new TimelineMax({id:'clickOnBagOptions'});
             tl.add(() => {
                 master.pause();
                 $gui.GameSteps.setStep(0);
                 $camera.moveToTarget(p0);
                 // tuto pinbar bag
-                $gui.PinBar.child.Bag.d.filters = [$systems.PixiFilters.OutlineFilterx8Green];
+                const menueBag = $gui.PinBar.child.Bag;
+                menueBag.d.filters = [$systems.PixiFilters.OutlineFilterx8Green];
+                const Bubble = new _Bubble( $texts.MotionsTxt('___clickHere_bagMenue'), menueBag, null, _Bubble.TYPE.POINT_OBJ );
                 let waitClickBagOptions = setInterval(() => {
-                    if($gui.PinBar._optionsMode){ // si option activer
+                    if($gui.PinBar._pinOptionShowed){ // si option activer
+                        Bubble.Destroy();
                         clearInterval(waitClickBagOptions);
                         $gui.PinBar.child.Bag.d.filters = null;
                         master.resume();
@@ -225,9 +235,12 @@ class _events{
             });
             tl.add(()=>{
                 master.pause();
-                $gui.PinBar.optSlots[4].child.Orb.d.filters = [$systems.PixiFilters.OutlineFilterx8Green];
+                const PinOpt = $gui.PinBar.child.PinOption[4]; // option inventaire items
+                PinOpt.child.Orb.d.filters = [$systems.PixiFilters.OutlineFilterx8Green];
+                const Bubble = new _Bubble( $texts.MotionsTxt('___clickHere_bagMenue'), PinOpt, null, _Bubble.TYPE.POINT_OBJ );
                 let waitMenueOpened = setInterval(() => {
-                    if($gui.Items._show){ // si option activer
+                    if($gui.Items.renderable){ // si option activer
+                        Bubble.Destroy();
                         clearInterval(waitMenueOpened);
                         master.resume();
                     };

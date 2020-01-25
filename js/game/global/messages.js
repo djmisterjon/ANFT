@@ -25,7 +25,7 @@ class _Messages{ //TODO: RENDU ICI , REMASTERISER LE MESSAGE AVEC TEXT CACHE
          * 'ButtonsClose_xb':ContainerDN,
          * 'MessageBubble':PIXI.projection.Spine3d,
          * }} */
-        this.child;
+        this.child = null;
     };
 
     /** @returns {_players._p0} */
@@ -203,7 +203,6 @@ class _Messages{ //TODO: RENDU ICI , REMASTERISER LE MESSAGE AVEC TEXT CACHE
     message(MotionsTxt, target){
         return new Promise((resolve, reject) => {
             const Bubble = new _Bubble(MotionsTxt, target, resolve);
-            $stage.addChild(Bubble.child.Master);
         });
     }
 
@@ -283,7 +282,7 @@ class _Messages{ //TODO: RENDU ICI , REMASTERISER LE MESSAGE AVEC TEXT CACHE
         const MotionsTxt = data.motionsTxt;
         const target = this.getTarget(data.target);
         const MasterContainer = this.child.MasterContainer;
-            MasterContainer.position3d.set(target.p.position3d.x,-target.p.height,target.p.position3d.z);
+            MasterContainer.position3d.set(target.position3d.x,-target.height,target.position3d.z);
         const MessageBubble = this.child.MessageBubble;
         const mover = MessageBubble.skeleton.findBone('mover');
         const MessageRenderContainer = this.child.MessageRenderContainer;
@@ -437,14 +436,19 @@ class _Bubble{
     static TYPE = {
         TALKFROM_RIGHT:0,
         TALKFROM_LEFT:1,
+        POINT_OBJ:2,
     }
 
     /**@param {_motionsTxt} MotionsTxt */
-    constructor(MotionsTxt,target,resolve) {
+    constructor(MotionsTxt,target,resolve, bubbleType = _Bubble.TYPE.TALKFROM_LEFT) {
         /** sois un datapage[_motionsTxt,...] , ou _motionsTxt */
         this.MotionsTxt = MotionsTxt;
-        this.target = target;
+        this.target = target.p || target;
         this.resolve = resolve;
+        this._bubbleType = bubbleType;
+        this._isBattler = target.isPlayers || target.isMonsters;
+        /** indic si a linterieur de la scene3d ou layer menue  */
+        this._is3d =  !!this.target.position3d;
         this._maxWidth = 300;
         this._maxHeight = 150;
         this._targetId = null;
@@ -468,10 +472,6 @@ class _Bubble{
          * 'Button_A':PIXI.Sprite, 'Button_B':PIXI.Sprite,
          * }} */
         this.child = null;
-      // var rt = PIXI.RenderTexture.create(rx, ry);
-      // var sprite = PIXI.Sprite.from(rt);
-      // renderer.render(graphics, rt);
-
         this.initialize();
         //Inspectors.DisplayObj(this.quadCurv, true)
         //Inspectors.DisplayObj(this, ['_radian'])
@@ -487,12 +487,12 @@ class _Bubble{
         this.initialize_interactions();
         $app.ticker.add(this.update,this,PIXI.UPDATE_PRIORITY.UTILITY);
         this.showPage(this._currentPageIndex);
+        $stage.addChild(this.child.Master);
     }
         
     initialize_base() {
         const dataBase = $loader.DATA2.XboxButonsHelper
         const Master = new PIXI.Container().setName('Master');
-            Master.position.set(0);
             Master.filters = [$systems.PixiFilters.OutlineFilterx4Black];
             Master.parentGroup =  $displayGroup.group[5];
         //!button xbox
@@ -537,41 +537,19 @@ class _Bubble{
     /** affiche un index de page */
     showPage(pageIndex){
         //this.clearPage();
-        this.setupPage();
-        this.playPage();
-    }
-
-    /**joue la page et animation */
-    playPage(){
-        // todo: mettrand dans class message ?
-        gsap.fromTo(this.child.Bubble, 1.2, {rotation:1},{rotation:0, ease:Elastic.easeOut.config(1.2, 0.5) });
-        gsap.fromTo(this.child.Master.scale, 1, {x:1,y:0},{ 
-            x:1, y:1,
-        });
-        gsap.fromTo(this.child.Master.position, 1.2, {x:(1920/2),y:(1080/2)},{ 
-            x:Math.max((1920/2)-this._maxWidth-40,0), y: Math.max((1080/2)-this._maxHeight-this.target.p.height-40,0),
-            ease: Elastic.easeOut.config(0.7, 0.5)
-        });
-        gsap.fromTo(this.child.BubblePin.scale, 0.2, {x:0,y:0},{ 
-            x:1, y: 1,
-            delay:0.4,
-        });
-        $camera.moveToTarget(this.target,3,Power4.easeOut)
-        if(this.target instanceof _battler){
-            this.target.s.state.setAnimation(5, 'talk1', false)
-            this.target.s.state.addEmptyAnimation(5,0.1,0)
-        }
-        this.MotionsTxt.start(true);
+        this.setup();
+        this.show();
     }
 
     /** prepare la bulles avec la nouvelle page */
-    setupPage(){
+    setup(){
         //this._currentPageIndex = pageIndex;
         //this._targetId = targetId;
         const MotionsTxt = this.MotionsTxt;
         const Target = this.target;
         const maxWidth = this._maxWidth = MotionsTxt.width+50;
         const maxHeight = this._maxHeight = MotionsTxt.height+50;
+        this.setup_position();
         this.quadCurv = {
             t:{cpX:maxWidth   ,cpY:0        },
             r:{cpX:maxWidth+20,cpY:maxHeight},
@@ -579,16 +557,107 @@ class _Bubble{
             l:{cpX:-30        ,cpY:maxHeight},
         };
 
-        gsap.to(this, 0.7, { // marge 20
-            _maxWidth:maxWidth, _maxHeight: maxHeight,
-            ease: Elastic.easeOut.config(1.2, 0.5)
-        });
         this.child.Button_A.position.set(maxWidth,maxHeight);
         this.child.Button_B.position.set(maxWidth+20,maxHeight-40);
-
-        this._headPosY = Target.p.height/2;
+        if( this._isBattler ){
+            this._headPosY = Target.height/2; // si un chara, position de bouche
+        }
         const MessagesContainer = this.child.MessagesContainer;
             MessagesContainer.addChild(MotionsTxt);
+    }
+
+    /**Obtien position from 2d to 3d layers
+     * @param {Number} x - positon custom selon dir target
+     * @param {Number} y - position custom selon bouche du target
+     */
+    getLocalFrom(x=0,y=0,pin){
+        if(this._is3d){
+            const point3d = new PIXI.Point3d();
+            point3d.copy(this.target.position3d);
+            point3d.x+=x;
+            point3d.y+=y;
+            return $stage.toLocal(point3d,$camera.view,void 0,true)
+        }else{
+            const point = this.target.getGlobalPosition();
+            if(!pin){ // bubble est a un emplacement special, mais pin target la bonne position
+                const wy = $camera._screenH/2;
+                point.y = (point.y>wy)?point.y-wy:point.y+wy;
+            }
+            return point;
+        }
+    }
+
+    setup_position(){
+       //const pos = $stage.toLocal(point3d,$camera.view,void 0,true) //this.target.p.toLocal(BubblePin.getGlobalPosition());
+       //const pox = pos.x-Master.x//pos.x/$camera._zoom;
+       //const poy = pos.y-Master.y//(pos.y+this._headPosY)/$camera._zoom;
+       if(this._bubbleType === _Bubble.TYPE.POINT_OBJ){
+            const pos = this.getLocalFrom();
+            const Master = this.child.Master;
+            Master.position.setZero(pos.x,pos.y);
+       }else
+       if(this._bubbleType === _Bubble.TYPE.TALKFROM_LEFT){
+            const Master = this.child.Master;
+            const x = (1920/2)-this._maxWidth-this.target.width; //Math.max(($camera._screenW/2)-(this._maxWidth/2));
+            const y = 60//Math.max(($camera._screenH/2)-(this._maxHeight/2));
+            Master.position.setZero(x,y);
+       }else
+       if(this._bubbleType === _Bubble.TYPE.TALKFROM_RIGHT){
+
+       }
+
+    }
+
+    /**joue la page et animation */
+    show(){
+        // todo: mettrand dans class message ?
+        const Bubble = this.child.Bubble;
+        const BubblePin = this.child.BubblePin;
+        const Button_A = this.child.Button_A;
+        const Button_B = this.child.Button_B;
+        const tl = gsap.timeline();
+        tl.fromTo( Bubble.scale, 1, 
+            { x:0, y:0 },
+            { x:1, y:1,
+                ease: Elastic.easeOut.config(0.7, 0.9)
+        },0)
+        tl.fromTo( Bubble, 1, 
+            { rotation:0.3, },
+            { rotation:0, ease: Elastic.easeOut.config(1.2, 0.9) }
+        ,0.1);
+        tl.fromTo( BubblePin.scale, 0.3, 
+            { x:0, y:0 },
+            { x:1, y:1 }
+        ,0.4);
+        tl.fromTo( Button_A.scale, 0.3, 
+            { x:0, y:0 },
+            { x:1, y:1 ,ease: Elastic.easeOut.config(1.2, 0.5)}
+        ,0.5);
+        tl.fromTo( Button_B.scale, 0.3, 
+            { x:0, y:0 },
+            { x:1, y:1 ,ease: Elastic.easeOut.config(1.2, 0.7)}
+        ,0.6);
+        tl.add(()=>{
+            this.MotionsTxt.start(true);
+        },0.7);
+        
+       /* gsap.fromTo(this.child.Bubble, 1.2, {rotation:1},{rotation:0, ease:Elastic.easeOut.config(1.2, 0.5) });
+        gsap.fromTo(this.child.Master.scale, 1, {x:1,y:0},{ 
+            x:1, y:1,
+        });
+
+
+        gsap.fromTo(this.child.BubblePin.scale, 0.2, {x:0,y:0},{ 
+            x:1, y: 1,
+            delay:0.4,
+        });*/
+        
+        if(this._isBattler){
+            $camera.moveToTarget(this.target,3,Power4.easeOut)
+            this.target.s.state.setAnimation(5, 'talk1', false)
+            this.target.s.state.addEmptyAnimation(5,0.1,0)
+        }
+        
     }
 
     /** clear page message */
@@ -606,12 +675,13 @@ class _Bubble{
         const maxHeight = this._maxHeight;
         const curv1 = 20; //todo: dinamyc ?
         const Bubble = this.child.Bubble;
-        const jellyFroceXR = this._jellyFroceXR *4;
-        const jellyFroceXL = this._jellyFroceXL *4;
-        const jellyFroceYT = this._jellyFroceYT *4;
-        const jellyFroceYB = this._jellyFroceYB *4;
+        const jellyFroceXR = this._jellyFroceXR *10;
+        const jellyFroceXL = this._jellyFroceXL *10;
+        const jellyFroceYT = this._jellyFroceYT *10;
+        const jellyFroceYB = this._jellyFroceYB *10;
+        const color = this._bubbleType === _Bubble.TYPE.POINT_OBJ && 0x949494 || 0xffffff
         Bubble.clear();
-        Bubble.lineStyle(0).beginFill(0xffffff, 1);
+        Bubble.lineStyle(0).beginFill(color, 1);
         Bubble.moveTo(0,0)
         Bubble.quadraticCurveTo(this.quadCurv.t.cpX              , this.quadCurv.t.cpY+jellyFroceYB, maxWidth, 20          ); // top
         Bubble.quadraticCurveTo(this.quadCurv.r.cpX-jellyFroceXR , this.quadCurv.r.cpY             , maxWidth, maxHeight   ); //right
@@ -620,48 +690,52 @@ class _Bubble{
         Bubble.endFill();
     }
 
-    getDistanceFrom(p1,p2){
-        const deltaX = p1.x - p2.x;
-        const deltaY = p1.y - p2.y;
-        const deltaZ = p1.z - p2.z;
-        return {
-            d:Math.sqrt( deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ ),
-            a:-Math.atan2(p2.z - p1.z, p2.x - p1.x),
-        }
-    }
-
     draw_BubblePin(){
         const Master = this.child.Master; 
         const BubblePin = this.child.BubblePin;
-        const point3d = new PIXI.Point3d();
-        point3d.copy(this.target.p.position3d)
-        point3d.x-=35; // decal selon dir du player
-        point3d.y-=this._headPosY; // hauteur de la bouche
-        this.target.p.position3d
-        const pos = $stage.toLocal(point3d,$camera.view,void 0,true) //this.target.p.toLocal(BubblePin.getGlobalPosition());
+        const pos = this.getLocalFrom(-35,-this._headPosY,true); //this.target.p.toLocal(BubblePin.getGlobalPosition());
         const pox = pos.x-Master.x//pos.x/$camera._zoom;
         const poy = pos.y-Master.y//(pos.y+this._headPosY)/$camera._zoom;
         const ratioX = Master.x/$camera._screenW;
         const ratioY = Master.y/$camera._sceneH; 
-        this._pinX = (this._maxWidth-20)*ratioX;
+        this._pinX = this._maxWidth/2//(this._maxWidth)*ratioX;
         this._pinY = this._maxHeight-20;
 
+        const jellyFroceXR = this._jellyFroceXR *10;
+        const jellyFroceXL = this._jellyFroceXL *2;
+        const jellyFroceYT = this._jellyFroceYT *5;
+        const jellyFroceYB = this._jellyFroceYB *2;
+        //todo: refactoring 
         BubblePin.clear();
-        BubblePin.lineStyle(0).beginFill(0xffffff, 1);
-        //BubblePin.drawRect(0, 0, 30, 30)
-        BubblePin.moveTo(40,0)
-        BubblePin.quadraticCurveTo(-100, 140, pox-this._pinX, poy-this._pinY);
-        BubblePin.quadraticCurveTo(-140, 170, 0, 0);
-        //BubblePin.quadraticCurveTo(this._curvX, poy/this._curvY, pox, poy);
-        //BubblePin.moveTo(pox,poy+10)
-        //BubblePin.quadraticCurveTo(this._curvX, poy/this._curvY, 0, 0);
-        BubblePin.endFill();
-        BubblePin.position.set(this._pinX, this._pinY)//(this._pinX,this._pinY);
-
+        if(this._bubbleType === _Bubble.TYPE.POINT_OBJ){
+            BubblePin.lineStyle(0).beginFill(0x949494, 1);
+            BubblePin.moveTo(Math.max(20,20+jellyFroceXR),0);
+            BubblePin.lineTo(pox, poy);
+            BubblePin.lineTo(0, 0);
+            BubblePin.endFill();
+            BubblePin.position.set(5,5);
+        }else{
+            BubblePin.lineStyle(0).beginFill(0xffffff, 1);
+            BubblePin.moveTo(Math.max(40,40+jellyFroceXR),0);
+            BubblePin.quadraticCurveTo(-100+jellyFroceXR, 140+jellyFroceYB, pox-this._pinX+jellyFroceXR, poy-this._pinY);
+            BubblePin.quadraticCurveTo(-140+jellyFroceXL, 170+jellyFroceYT, -40-jellyFroceXL, 0);
+            BubblePin.endFill();
+            BubblePin.position.set(this._pinX+jellyFroceXR, this._pinY);
+        }
     }
 
     update(){
+        //! ease position
         const Master = this.child.Master;
+        const zeroX = Master.position.zero.x;
+        const zeroY = Master.position.zero.y;
+        const movementX = zeroX+($mouse.xx-zeroX)/10;
+        const movementY  = zeroY+($mouse.yy-zeroY)/10;
+        const x = (Master.x-movementX)*0.08;
+        const y = (Master.y-movementY)*0.08;
+            Master.position.x -= x;
+            Master.position.y -= y;
+
         const MessagesContainer = this.child.MessagesContainer;
             MessagesContainer.position.set(20+(-this._jellyFroceXR+this._jellyFroceXL)*1.5,20+(-this._jellyFroceYT+this._jellyFroceYB)*1.5);
         //! updata ease
@@ -669,7 +743,7 @@ class _Bubble{
         let _jellyFroceXL = this._jellyFroceXL || 0;
         let _jellyFroceYT = this._jellyFroceYT || 0;
         let _jellyFroceYB = this._jellyFroceYB || 0;
-        if($mouse.xx>Master.x+this._maxWidth){
+        /*if($mouse.xx>Master.x+this._maxWidth){
             _jellyFroceXL = _jellyFroceXL - _jellyFroceXL*0.1;
             _jellyFroceXR = (Master.x-$mouse.xx+this._maxWidth)*-0.03;
             //Master.x+= _jellyFroceXR;
@@ -698,10 +772,11 @@ class _Bubble{
             _jellyFroceYB = _jellyFroceYB - _jellyFroceYB*0.07;
             //Master.y+=(_jellyFroceYT+_jellyFroceYB);
         };
-        this._jellyFroceXR = _jellyFroceXR;
-        this._jellyFroceXL = _jellyFroceXL;
-        this._jellyFroceYT = _jellyFroceYT;
-        this._jellyFroceYB = _jellyFroceYB;
+        */
+        this._jellyFroceXR = -x;
+        this._jellyFroceXL = x;
+        this._jellyFroceYT = -y;
+        this._jellyFroceYB = y;
         
         this.draw_Bubble();
         this.draw_BubblePin();

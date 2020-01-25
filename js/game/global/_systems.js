@@ -62,7 +62,7 @@ class _systems{
          * @type {Array.<PIXI.TextStyle>} - 0=>7 */
         this.styles = [
             new PIXI.TextStyle({//id:0
-                fill: "#d8d8d8",fontFamily: "ArchitectsDaughter", 
+                fill: "#de8447",fontFamily: "ArchitectsDaughter", 
                 fontSize: 16, lineJoin: "bevel", miterLimit: 0, padding: 2, stroke: "white", stroke:"#292929", strokeThickness: 1,
             }),
             new PIXI.TextStyle({//id:1
