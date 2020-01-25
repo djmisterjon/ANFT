@@ -248,10 +248,13 @@ class _events{
             },'+=0.3');
             tl.add(()=>{
                 master.pause();
-                $gui.Items.orbsSlots[0].child.Orb.d.filters = [$systems.PixiFilters.OutlineFilterx8Green];
+                const OrbsDiffuserBG = $gui.Items.child.OrbsDiffusers[0].child.OrbsDiffuserBG;
+                    OrbsDiffuserBG.d.filters = [$systems.PixiFilters.OutlineFilterx8Green];
+                const Bubble = new _Bubble( $texts.MotionsTxt('___clickHere_SelectOrbInfuse'), OrbsDiffuserBG, null, _Bubble.TYPE.POINT_OBJ );
                 let waitOrbSelected = setInterval(() => {
-                    if($mouse.holding){ // si option activer
-                        $gui.Items.orbsSlots[0].child.Orb.d.filters = null;
+                    if($mouse.holding && $mouse.holding.isOrb){ // si option activer
+                        Bubble.Destroy();
+                        OrbsDiffuserBG.d.filters = null;
                         clearInterval(waitOrbSelected);
                         master.resume();
                     };
@@ -259,10 +262,13 @@ class _events{
             },'+=0.3');
             tl.add(()=>{
                 master.pause();
-                $gui.PinBar.pinSlots[0].child.BgSlot.d.filters = [$systems.PixiFilters.OutlineFilterx8Green];
+                const Pinslot = $gui.PinBar.child.Pinslot[0].child.SlotButton;
+                Pinslot.d.filters = [$systems.PixiFilters.OutlineFilterx8Green];
+                const Bubble = new _Bubble( $texts.MotionsTxt('___clickHere_orbToPinSlot'), Pinslot, null, _Bubble.TYPE.POINT_OBJ );
                 let waitOrbAddedInPinSlot = setInterval(() => {
-                    if($gui.PinBar.pinnedOrbs[0]){ // si orb dans pinSlot 0
-                        $gui.PinBar.pinSlots[0].child.BgSlot.d.filters = null;
+                    if(__PinSlot.OrbsInfused[0]){ // si orb infuser dans pinSlot 0
+                        Bubble.Destroy();
+                        Pinslot.d.filters = null;
                         clearInterval(waitOrbAddedInPinSlot);
                         master.resume();
                     };
@@ -270,32 +276,55 @@ class _events{
             },'+=0.3');
             tl.add(()=>{
                 master.pause();
-                $gui.Items.itemSlots[0].child.iconSlot.d.filters = [$systems.PixiFilters.OutlineFilterx8Green];
-                let waitItemAddedInPinSlot = setInterval(() => {
-                    if($gui.PinBar.pinnedItems[0]){ // si item dans pinSlot 0
-                        $gui.Items.itemSlots[0].child.iconSlot.d.filters = null;
-                        clearInterval(waitItemAddedInPinSlot);
+                const SlotItem = __ItemSlot.Pool[0].child.SlotItem;
+                SlotItem.d.filters = [$systems.PixiFilters.OutlineFilterx8Green];
+                const Bubble = new _Bubble( $texts.MotionsTxt('___clickHere_SelectGemDiceInfuse'), SlotItem, null, _Bubble.TYPE.POINT_OBJ );
+                let waitItemAddedtoMouse = setInterval(() => {
+                    if($mouse.holding && $mouse.holding.isItem){ // si item dans pinSlot 0
+                        Bubble.Destroy()
+                        SlotItem.d.filters = null;
+                        clearInterval(waitItemAddedtoMouse);
                         master.resume();
                     };
                 }, 200);
             },'+=0.3');
             tl.add(()=>{
                 master.pause();
-                $gui.Items.child.Xbutton_B.d.filters = [$systems.PixiFilters.OutlineFilterx8Green];
+                const Pinslot = $gui.PinBar.child.Pinslot[0].child.SlotButton;
+                Pinslot.d.filters = [$systems.PixiFilters.OutlineFilterx8Green];
+                const Bubble = new _Bubble( $texts.MotionsTxt('___clickHere_itemToPinSlot'), Pinslot, null, _Bubble.TYPE.POINT_OBJ );
+                let waitItemAddedInPinSlot = setInterval(() => {
+                    if(__PinSlot.ItemsInfused[0]){ // si item dans pinSlot 0
+                        Bubble.Destroy()
+                        Pinslot.d.filters = null;
+                        clearInterval(waitItemAddedInPinSlot);
+                        master.resume();
+                    };
+                }, 200);
+            },'+=0.3');
+            tl.add(()=>{ // close the inventaire
+                master.pause();
+                const Xbutton_B = $gui.Items.child.Xbutton_B;
+                Xbutton_B.d.filters = [$systems.PixiFilters.OutlineFilterx8Green];
+                const Bubble = new _Bubble( $texts.MotionsTxt('___clickHere_CloseMenueItem'), Xbutton_B, null, _Bubble.TYPE.POINT_OBJ );
                 let waitCloseMenueItem = setInterval(() => {
-                    if(!$gui.Items._show){
+                    if(!$gui.Items.renderable){
+                        Bubble.Destroy();
                         clearInterval(waitCloseMenueItem);
-                        $gui.Items.child.Xbutton_B.d.filters = null; // just au cas que on pass par une command ?
+                        Xbutton_B.d.filters = null; // just au cas que on pass par une command ?
                         $messages.show('endSetupIntro').then( ()=>master.resume() );
                     };
                 }, 200);
             },'+=0.3');
             tl.add(()=>{ // take the pinned orb
                 master.pause();
+                const Pinslot = $gui.PinBar.child.Pinslot[0].child.SlotButton;
+                Pinslot.d.filters = [$systems.PixiFilters.OutlineFilterx8Green];
+                const Bubble = new _Bubble( $texts.MotionsTxt('___clickHere_SelectPinSlotOrbItem'), Pinslot, null, _Bubble.TYPE.POINT_OBJ );
                 let waitTakePinnedOrb = setInterval(() => {
-                    $gui.PinBar.pinnedOrbs[0].child.Orb.d.filters = [$systems.PixiFilters.OutlineFilterx8Green];
                     if($mouse.holding){
-                        $gui.PinBar.pinnedOrbs[0].child.Orb.d.filters = null;
+                        Bubble.Destroy();
+                        Pinslot.d.filters = null;
                         clearInterval(waitTakePinnedOrb);
                         master.resume();
                     };
@@ -303,10 +332,13 @@ class _events{
             },'+=0.3');
             tl.add(()=>{ // put pined orb inside traver huds slot
                 master.pause();
+                const travelSlot = $gui.Travel.child.TravelSlot[0].child.Slot;
+                travelSlot.d.filters = [$systems.PixiFilters.OutlineFilterx8Green];
+                const Bubble = new _Bubble( $texts.MotionsTxt('___clickHere_addToTravelSlot'), travelSlot, null, _Bubble.TYPE.POINT_OBJ );
                 let waitPinnedOrbInTravelSlot = setInterval(() => {
-                    $gui.Travel.child.TravelSlots[0].child.Slot.d.filters = [$systems.PixiFilters.OutlineFilterx8Green];
-                    if( $gui.Travel.slotsContentsId[0]>-1 ){
-                        $gui.Travel.child.TravelSlots[0].child.Slot.d.filters = null;
+                    if( __TravelSlot.OrbsItemsInfused.filter(s=>s).length ){
+                        Bubble.Destroy();
+                        travelSlot.d.filters = null;
                         clearInterval(waitPinnedOrbInTravelSlot);
                         master.resume();
                     };
@@ -314,10 +346,13 @@ class _events{
             },'+=0.3');
             tl.add(()=>{ // wait pour roll
                 master.pause();
+                const Gear_Top = $gui.Travel.child.Gear_Top;
+                Gear_Top.d.filters = [$systems.PixiFilters.OutlineFilterx8Green];
+                const Bubble = new _Bubble( $texts.MotionsTxt('___clickHere_rollTravel'), Gear_Top, null, _Bubble.TYPE.POINT_OBJ );
                 let waitFirstRoll = setInterval(() => {
-                    $gui.Travel.child.CircleTop.d.filters = [$systems.PixiFilters.OutlineFilterx8Green];
                     if($gui.Travel.sta>0){
-                        $gui.Travel.child.CircleTop.d.filters = null;
+                        Gear_Top.d.filters = null;
+                        Bubble.Destroy();
                         clearInterval(waitFirstRoll);
                         $messages.show('startTurnIntroFirstTime').then( ()=>master.resume() );
                     };

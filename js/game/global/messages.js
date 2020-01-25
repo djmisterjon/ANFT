@@ -582,6 +582,7 @@ class _Bubble{
             if(!pin){ // bubble est a un emplacement special, mais pin target la bonne position
                 const wy = $camera._screenH/2;
                 point.y = (point.y>wy)?point.y-wy:point.y+wy;
+                point.x = point.x.clamp(40, $camera._screenW-this._maxWidth-40);
             }
             return point;
         }
@@ -707,6 +708,7 @@ class _Bubble{
         const jellyFroceYB = this._jellyFroceYB *2;
         //todo: refactoring 
         BubblePin.clear();
+        //TODO: CORRIGER AVEC UN CLAMP. Et calcul un radia pour rotation
         if(this._bubbleType === _Bubble.TYPE.POINT_OBJ){
             BubblePin.lineStyle(0).beginFill(0x949494, 1);
             BubblePin.moveTo(Math.max(20,20+jellyFroceXR),0);

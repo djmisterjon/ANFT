@@ -235,7 +235,7 @@ class _Huds_PinBar extends _Huds_Base {
 
 /**@class creer les pinslots qui contien les pinOrbs et items */
 class __PinSlot extends PIXI.Container {
-    /** @type {Array.<_SpriteOrb>} */
+    /** @type {Array.<_SpriteOrb>} - Orbs infuser dans les slots par id*/
     static OrbsInfused = [];
     /** @type {Array.<_SpriteItem>} */
     static ItemsInfused = [];

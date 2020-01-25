@@ -291,10 +291,11 @@ class _Menue_Items extends _Huds_Base {
 class __OrbDiffuser extends PIXI.Container {
     constructor(id,filterType,color) {
         super();
+        this.name = 'OrbsDiffusers';
         this._id = id;
         this._filterType = filterType;
         this._color = color;
-        this.child = {};
+        this.child = null;
         this.initialize();
     };
 
