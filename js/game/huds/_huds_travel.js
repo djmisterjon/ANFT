@@ -23,6 +23,8 @@ class _Huds_Travel extends _Huds_Base {
         this._travelValueUsed = 0;
         /** list des pinSlotId attache au slots */
         this.slotsContentsId = new Array(3);
+        /** Indicateur si show ou hide */
+        this._showed = false;
         /** @type {{ 'Master':ContainerDN, 'Gear_Center':ContainerDN, 'Gear_Top':ContainerDN, 
          * 'FlashLight':ContainerDN, 'Gear_backDeco':ContainerDN, 'Gear_Bottom':ContainerDN,
          * 'TravelPointTxt':PIXI.Text, 'TravelSlot':Array.<__TravelSlot>,  }} */
@@ -31,11 +33,13 @@ class _Huds_Travel extends _Huds_Base {
     };
     //#region [GetterSetter]
     /** return stamina left from result */
-    get sta() { return this._stamina}//this.result && this.result.total-this._staminaUse || 0 }; // return only UI
+    get sta() { 
+        return this._stamina;//this.result && this.result.total-this._staminaUse || 0 }; // return only UI
+    }
     set sta(value) { 
         this._stamina = value;
         this.updateTxtValue();
-    };
+    }
     //#endregion
 
     //#region [Initialize]
@@ -44,7 +48,7 @@ class _Huds_Travel extends _Huds_Base {
         this.child = this.childrenToName();
         this.initialize_interactions();
         this.position.set(200,885);
-    };
+    }
 
     /**build main frame */
     initialize_main(){
@@ -72,10 +76,10 @@ class _Huds_Travel extends _Huds_Base {
         for (let i=0; i<7; i++) { //todo make classes
             const TravelSlot = new __TravelSlot(i);
             TravelSlots[i] = TravelSlot;
-        };
+        }
         //# data2\GUI\huds\travel\SOURCE\images\hTravel_Gearing.png
         const Gear_backDeco = $objs.ContainerDN(dataBase,'hTravel_Gearing','Gear_backDeco');
-            Gear_backDeco.position.set(-154,-96);
+            Gear_backDeco.position.setZero(-154,-96);
             Gear_backDeco.scale.set(0.5);
             Gear_backDeco.d.anchor.set(0.5);
             Gear_backDeco.n.anchor.set(0.5);
@@ -84,49 +88,57 @@ class _Huds_Travel extends _Huds_Base {
             TravelPointTxt.scale.set(0.7)
             TravelPointTxt.anchor.set(0.5);
         //!end
-        Master.addChild(Gear_backDeco,Gear_Bottom,FlashLight,Gear_Center,...TravelSlots,TravelPointTxt,Gear_Top);
-        this.addChild(Master);
+        Master.addChild(Gear_Bottom,FlashLight,Gear_Center,...TravelSlots,TravelPointTxt,Gear_Top);
+        this.addChild(Gear_backDeco,Master);
     };
 
     initialize_interactions() {
         const Gear_Top = this.child.Gear_Top;
-        this.interactive = true;
-        this.hitArea = Gear_Top.getBounds();
-        this.hitArea.pad(-10);
-        this.on('pointerover'      , this._pointerover ,this);
-        this.on('pointerout'       , this._pointerout  ,this);
-        this.on('pointerdown'      , this._pointerdown ,this);
-        this.on('pointerup'        , this._pointerup   ,this);
-        this.on('pointerupoutside' , this._pointerup   ,this);
-    };
+        const Master = this.child.Master;
+        Master.interactive = true;
+        Master.hitArea = Gear_Top.getBounds();
+        Master.hitArea.pad(-100);
+        Master.on('pointerover'      , this._pointerover ,this);
+        Master.on('pointerout'       , this._pointerout  ,this);
+        Master.on('pointerdown'      , this._pointerdown ,this);
+        Master.on('pointerup'        , this._pointerup   ,this);
+        Master.on('pointerupoutside' , this._pointerup   ,this);
+        const Gear_backDeco = this.child.Gear_backDeco;
+        Gear_backDeco.interactive = true;
+        Gear_backDeco.on('pointerover' , this._pointerover_Gear_backDeco ,this);
+        Gear_backDeco.on('pointerout'  , this._pointerout_Gear_backDeco  ,this);
+        Gear_backDeco.on('pointerup'   , this._pointerup_Gear_backDeco   ,this);
+    }
     //#endregion
 
     //#region [Interactive]
     /** @param {PIXI.interaction.InteractionEvent} e -*/
     _pointerover(e) {
-        TweenLite.to(this.child.Master.scale, 1  , { x:1.1, y:1.1, ease: Power2.easeInOut });
-        const Gear_Top = this.child.Gear_Top; //FIXME: test
-        const xx = $mouse.xx+(Gear_Top.width/2);
-        const yy = $mouse.yy+(Gear_Top.height/2);
-        const Gear_TopGlobalXY = Gear_Top.getGlobalPosition(undefined,true);
+        const Master = this.child.Master;
+        const Gear_Top = this.child.Gear_Top;
+        const Gear_backDeco = this.child.Gear_backDeco;
+        const point = Gear_Top.getGlobalPosition(undefined,true);
+        gsap.to(Gear_backDeco, 0.4, {rotation:`+=${0.2}`});
+        gsap.to(Master.scale, 0.3  , { x:1.1, y:1.1, ease: Back.easeOut.config(1.1) });
         gsap.fromTo(Gear_Top, 10, { rotation:Gear_Top.rotation, }, 
             { id:"travelGear_Top_rotation", rotation: Gear_Top.rotation-Math.PI*2, ease: Power0.easeNone, repeat:-1 })
             .eventCallback("onUpdate", ()=>{
-                const x = ($mouse.xx-Gear_TopGlobalXY.x)/20;
-                const y = ($mouse.yy-Gear_TopGlobalXY.y)/20;
+                const x = ($mouse.xx-point.x)/20;
+                const y = ($mouse.yy-point.y)/20;
                 Gear_Top.x+= (x-Gear_Top.x)*0.07;
                 Gear_Top.y+= (y-Gear_Top.y)*0.07;
-            });
-    };
+            })
+    }
 
     /** @param {PIXI.interaction.InteractionEvent} e -*/
     _pointerout(e) {
-        TweenLite.to(this.child.Master.scale, 0.3  , { x:1, y:1, ease: Power3.easeOut });
-        const Gear_Top = this.child.Gear_Top; //FIXME: test
         gsap.getById('travelGear_Top_rotation') && gsap.getById('travelGear_Top_rotation').kill();
-        this.startIdleRotation();
-        gsap.to(Gear_Top, 1.2, {x:0,y:0, ease:Power2.easeOut})
-    };
+        const Master = this.child.Master;
+        const Gear_Top = this.child.Gear_Top;
+        this.idleRotation();
+        gsap.to(Master.scale, 0.3  , { x:1, y:1, ease: Power3.easeOut });
+        gsap.to(Gear_Top, 1.2, {x:0,y:0, ease:Power2.easeOut});
+    }
 
     /** @param {PIXI.interaction.InteractionEvent} e -*/
     _pointerdown(e) {
@@ -158,7 +170,7 @@ class _Huds_Travel extends _Huds_Base {
                 fx.child.child.a.loop = false;
                 fx.child.child.a.animationSpeed = 0.4;
                 this.addChild(fx.child);
-        },0.2); //1
+        },0.2)
         tl.add(()=>{
             //! test fx deleteme
             const fx = $objs.create($loader.DATA2.travelEnergyFx,'FxEnergieB');
@@ -169,24 +181,22 @@ class _Huds_Travel extends _Huds_Base {
                 fx.child.child.a.loop = false;
                 fx.child.child.a.animationSpeed = 0.5;
                 this.addChild(fx.child);
-        },1.5);
+        },1.5)
         tl.add(()=>{
             if(!canRoll){
                 return this.cancelRoll(canRoll);
             }
             this._ready = true;
-        },1);
+        },1)
         tl.add(()=>{
-            gsap.fromTo(this.child.FlashLight, 1, { rotation:-0.3, },{ rotation:0, ease:Bounce.easeOut, }) //deleteme
+            gsap.fromTo(this.child.FlashLight, 1, { rotation:-0.3, },{ rotation:0, ease:Bounce.easeOut, });
             gsap.to(this.child.TravelSlot.map((s)=>s.position), 0.6, { x:(i,o)=>o.zero.x, y:(i,o)=>o.zero.y, ease:Elastic.easeOut.config(1, 0.3) });
             gsap.to(this.child.TravelSlot.map((s)=>s.scale), 0.6, { x:1, y:1, ease:Elastic.easeOut.config(1, 0.3) });
-            
             this._ready = false;
             this.startRoll();
-        },1.5);
-    };
+        },1.5)
+    }
 
-    /** @param {PIXI.interaction.InteractionEvent} e -*/
     _pointerup(e) {
         const shake = gsap.getById('shakeRoll');
         if(shake){
@@ -195,33 +205,74 @@ class _Huds_Travel extends _Huds_Base {
                 this.startRoll();
             }else{
                 
-            };
+            }
         }
-    };
+    }
+
+    /** @param {PIXI.interaction.InteractionEvent} e -*/
+    _pointerover_Gear_backDeco(e){
+        const Gear_backDeco = this.child.Gear_backDeco;
+        Gear_backDeco.d.filters = [$systems.PixiFilters.OutlineFilterx4white];
+    }
+    _pointerout_Gear_backDeco(){
+        const Gear_backDeco = this.child.Gear_backDeco;
+        Gear_backDeco.d.filters = null;
+    }
+    _pointerup_Gear_backDeco(){
+        this._showed? this.hide() : this.show();
+    }
     //#endregion
     
     //#region [Method]
     /**Affiche le huds */
     show(){
+        this._showed = true;
         this.renderable = true;
-        gsap.fromTo(this.scale, 1.5, {x:0,y:0,},{x:1,y:1, ease:Elastic.easeOut.config(1.2, 0.5)} );
-        if("option animate travelSlots"){ //todo: si option anime, idle rotation
-            this.startIdleRotation();
-        };
-    };
-
-    startIdleRotation(){
-        const Gear_Bottom = this.child.Gear_Bottom;
-        const Gear_Top = this.child.Gear_Top;
+        const Master = this.child.Master;
         const Gear_backDeco = this.child.Gear_backDeco;
-        gsap.to(Gear_Bottom  , 190 , { rotation:Gear_Bottom  .rotation-Math.PI*2, ease: Power0.easeNone, repeat:-1 })
-        gsap.to(Gear_backDeco, 190 , { rotation:Gear_backDeco.rotation+Math.PI*2, ease: Power0.easeNone, repeat:-1 })
-        gsap.to(Gear_Top     , 90, { rotation:Gear_Top     .rotation+Math.PI*2, ease: Power0.easeNone, repeat:-1 })
+        const Gear_Center = this.child.Gear_Center;
+        const Gear_Bottom = this.child.Gear_Bottom;
+        gsap.to(Master, 0.7, {x:0, ease:Back.easeOut.config(1) });
+        gsap.to(Gear_Bottom, 0.7, {rotation:`+=${Math.PI}`, ease:Back.easeOut.config(1) });
+        gsap.fromTo(Gear_Center, 1, {rotation:-Math.PI},{rotation:0});
+        gsap.fromTo(Gear_Center.scale, 0.7, {x:0.3,y:0.3},{x:1,y:1, ease:Power2.easeInOut });
+        gsap.to(Gear_backDeco, 0.7, {
+            x:Gear_backDeco.position.zero.x, rotation:`-=${Math.PI*2}`, 
+            ease:Back.easeOut.config(1) 
+        }).eventCallback("onComplete", ()=>{
+            this.idleRotation();
+            Gear_Center.interactive = true;
+        })
     }
 
     hide(){
+        this._showed = false;
+        const Master = this.child.Master;
+        const Gear_backDeco = this.child.Gear_backDeco;
+        const Gear_Center = this.child.Gear_Center;
+        Gear_Center.interactive = false;
+        this.idleRotation(false);
+        gsap.to(Master, 0.7, {x:-Master.width, ease:Back.easeOut.config(1.2) });
+        gsap.to(Gear_backDeco, 0.7, {x:-270, rotation:`+=${Math.PI*2}`, ease:Back.easeOut.config(1.2) });
+    }
 
-    };
+    idleRotation(active=true){
+        if(!"option animate travelSlots"){ return };
+        const Master = this.child.Master;
+        const Gear_Bottom = this.child.Gear_Bottom;
+        const Gear_Top = this.child.Gear_Top;
+        const Gear_backDeco = this.child.Gear_backDeco;
+        if(active){
+            gsap.to(Gear_Bottom  , 190 , { rotation:Gear_Bottom  .rotation-Math.PI*2, ease: Power0.easeNone, repeat:-1 });
+            gsap.to(Gear_backDeco, 190 , { rotation:Gear_backDeco.rotation+Math.PI*2, ease: Power0.easeNone, repeat:-1 });
+            gsap.to(Gear_Top     , 90, { rotation:Gear_Top     .rotation+Math.PI*2, ease: Power0.easeNone, repeat:-1 });
+        }else{
+            gsap.killTweensOf(Master);
+            gsap.killTweensOf(Gear_Bottom);
+            gsap.killTweensOf(Gear_backDeco);
+            gsap.killTweensOf(Gear_Top);
+        }
+    }
 
     addToSlot(travelSlotId,pinSlotId,holding=$mouse.holding){
         if( this.slotsContentsId.contains(pinSlotId) ){ // si a deja un pinSlotId attacher? clear car 1 seul pinSlot par travelSlot
@@ -235,7 +286,7 @@ class _Huds_Travel extends _Huds_Base {
         this.TravelSlots[travelSlotId].addToSlot(pinSlotId);
         this.slotsContentsId[travelSlotId] = pinSlotId;
         $mouse.clear();
-    };
+    }
 
 
     /** return true, if we can roll stamina with current slot setup or other status */
@@ -245,22 +296,18 @@ class _Huds_Travel extends _Huds_Base {
             return false;
         }
         return true;
-    };
+    }
 
     /** cancel un roll 
      * @param {Boolean} canRoll - Si canRoll ne produit pas alert!, sinon expliquer les raisons du cantRoll
     */
     cancelRoll(canRoll){
-        const shake = gsap.getById('shakeRoll');
-        shake.kill();
+        const shake = gsap.getById('shakeRoll') && gsap.getById('shakeRoll').kill();
         gsap.fromTo(this.child.Gear_Center.scale, 0.6, { x: 0.8, y: 0.8 },{ x: 1, y: 1 } );
         gsap.fromTo(this.child.FlashLight, 1, { rotation:-0.3, },{ rotation:0, ease:Bounce.easeOut, }) //deleteme
         gsap.to(this.child.TravelSlot.map((s)=>s.position), 0.6, { x:(i,o)=>o.zero.x, y:(i,o)=>o.zero.y, ease:Elastic.easeOut.config(1, 0.3) });
         gsap.to(this.child.TravelSlot.map((s)=>s.scale), 0.6, { x:1, y:1, ease:Elastic.easeOut.config(1, 0.3) });
-        //! rotation des gear todo: reprendre l'animations
-        gsap.to(this.child.Gear_Bottom   , 2 , { rotation:`+=${-Math.PI}` })
-        gsap.to(this.child.Gear_backDeco , 2 , { rotation:`-=${-Math.PI}` })
-        gsap.to(this.child.Gear_Top      , 2 , { rotation:`+=${-Math.PI}` })
+        this.idleRotation();
         if(!canRoll){
             //alert('plz add min x1 gemDice');
         }
@@ -279,7 +326,7 @@ class _Huds_Travel extends _Huds_Base {
         const result = this.result = this.computeRoll();
         result.values.push($players.p0.STA);
         this.onCompletteRoll(result);
-      };
+    }
 
     /** Calcul le stamina et l'affectation des slots
      * @typedef {{colorsOrb: string, colorsItem:string, values:number}} ResultTravel
