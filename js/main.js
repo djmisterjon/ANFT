@@ -32,6 +32,7 @@ window.onload = function() {
         await loadJS('js/libs/0' );
         await loadJS('js/libs/1' );
         await loadJS('js/libs/2' );
+        await loadJS('js/libs/poly' );
         //# core
         await loadJS('js/game');
         //! editor

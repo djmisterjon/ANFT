@@ -53,6 +53,7 @@ class _Huds_Travel extends _Huds_Base {
     /**build main frame */
     initialize_main(){
         const dataBase = $loader.DATA2.Hud_Travels;
+        const dataBase2 = $loader.DATA2.travelEnergyFx;
         const Master = new PIXI.Container().setName("Master");
         //# data2\GUI\huds\travel\SOURCE\images\hTravel_Gearing.png
         const Gear_Bottom = $objs.ContainerDN(dataBase,'hTravel_Gearing','Gear_Bottom');
@@ -87,6 +88,14 @@ class _Huds_Travel extends _Huds_Base {
          const TravelPointTxt = new PIXI.Text('setup'.toUpperCase(),$systems.styles[10]).setName('TravelPointTxt');
             TravelPointTxt.scale.set(0.7)
             TravelPointTxt.anchor.set(0.5);
+        //# FX1 Big circle
+            /*const FX1 = $objs.ContainerDN(dataBase2,'FXEnergieA','FX1');
+                FX1.child.parentGroup = $displayGroup.group[0]
+                FX1.child.child.a.anchor.set(0.5);
+                //fx.child.child.a.tint = 0xb5a900
+                FX1.child.scale.set(0.9);
+                FX1.child.child.a.loop = true;
+                FX1.child.child.a.animationSpeed = 0.4;*/
         //!end
         Master.addChild(Gear_Bottom,FlashLight,Gear_Center,...TravelSlots,TravelPointTxt,Gear_Top);
         this.addChild(Gear_backDeco,Master);
@@ -132,7 +141,7 @@ class _Huds_Travel extends _Huds_Base {
 
     /** @param {PIXI.interaction.InteractionEvent} e -*/
     _pointerout(e) {
-        gsap.getById('travelGear_Top_rotation') && gsap.getById('travelGear_Top_rotation').kill();
+        gsap.killTweenById('travelGear_Top_rotation');
         const Master = this.child.Master;
         const Gear_Top = this.child.Gear_Top;
         this.idleRotation();
@@ -184,7 +193,7 @@ class _Huds_Travel extends _Huds_Base {
         },1.5)
         tl.add(()=>{
             if(!canRoll){
-                return this.cancelRoll(canRoll);
+                return this.cancelRoll(false);
             }
             this._ready = true;
         },1)
@@ -198,13 +207,11 @@ class _Huds_Travel extends _Huds_Base {
     }
 
     _pointerup(e) {
-        const shake = gsap.getById('shakeRoll');
-        if(shake){
-            shake.kill();
+        if(gsap.killTweenById('shakeRoll')){
             if(this._ready){ 
                 this.startRoll();
-            }else{
-                
+            }else{ // cancel
+                this.cancelRoll(true);
             }
         }
     }
@@ -302,17 +309,17 @@ class _Huds_Travel extends _Huds_Base {
      * @param {Boolean} canRoll - Si canRoll ne produit pas alert!, sinon expliquer les raisons du cantRoll
     */
     cancelRoll(canRoll){
-        const shake = gsap.getById('shakeRoll') && gsap.getById('shakeRoll').kill();
+        gsap.killTweenById('shakeRoll');
         gsap.fromTo(this.child.Gear_Center.scale, 0.6, { x: 0.8, y: 0.8 },{ x: 1, y: 1 } );
         gsap.fromTo(this.child.FlashLight, 1, { rotation:-0.3, },{ rotation:0, ease:Bounce.easeOut, }) //deleteme
         gsap.to(this.child.TravelSlot.map((s)=>s.position), 0.6, { x:(i,o)=>o.zero.x, y:(i,o)=>o.zero.y, ease:Elastic.easeOut.config(1, 0.3) });
         gsap.to(this.child.TravelSlot.map((s)=>s.scale), 0.6, { x:1, y:1, ease:Elastic.easeOut.config(1, 0.3) });
         this.idleRotation();
         if(!canRoll){
-            //alert('plz add min x1 gemDice');
+            $mouse.showHelpBox('___cancelRoll');
         }
-        $mouse.showHelpBox('___cancelRoll');
     }
+    
 
     /** roll dice */
     startRoll() {
