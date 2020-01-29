@@ -7743,10 +7743,12 @@ var pixi_spine;
                 var target = slot.currentSprite || slot.currentMesh;
                 if (name_4.endsWith(nameSuffix)) {
                     target.parentGroup = group;
+                    target.setName('n');
                     list_n.push(target);
                 }
                 else if (target) {
                     target.parentGroup = outGroup;
+                    target.setName('d');
                     list_d.push(target);
                 }
             }

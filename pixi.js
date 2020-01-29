@@ -7322,7 +7322,6 @@ var PIXI = (function (exports) {
 	 * This is an abstract class and should not be used on its own; rather it should be extended.
 	 *
 	 * @class
-	 * @extends PIXI.utils.EventEmitter
 	 * @memberof PIXI
 	 */
 	var DisplayObject = /*@__PURE__*/(function (EventEmitter) {

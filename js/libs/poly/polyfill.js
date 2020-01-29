@@ -152,14 +152,22 @@ PIXI.Container.prototype.childrenToName = function childrenToName()
 {
     const Child = {};
     const bufferNames = []; // names buffer for check existe instead hasOwnProperty _child.name
-    const pool = [this.children];
     if(this.name){
         (Child[this.name] = this);//if parent source tree have name, take it
     }
+    if(this.child){// humm ?
+        if(!Object.keys(this.child).length){
+            throw 'Error un child:{} est asign vide, mettre a null'; // deleteme: debug 
+        }
+        return Child;
+    }
+    const pool = [this.children];
+
     let childrens; // childrens array
     while (childrens = pool.shift()) {
         for (let i=0, l=childrens.length; i<l; i++) {
             const _child = childrens[i];
+            
             const childName = _child.name;
             if(childName){ // if the Child have .name?
                 if( bufferNames.indexOf(childName)>-1 ){ // if name alrealy exist in buffer, make array []

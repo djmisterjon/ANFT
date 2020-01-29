@@ -14,9 +14,19 @@ Voir le Stages
 // ┌-----------------------------------------------------------------------------┐
 // GLOBAL $objs CLASS: _objs
 //└------------------------------------------------------------------------------┘
-class DataObj_Chara{
-    constructor(data) {
-       
-    };
+class _DataObj_Characteres extends _DataObj_Base{
+    /**
+     * @param {String} dataBaseName
+     * @param {String} textureName
+     * @param {_Factory} factory
+     */
+    constructor(dataBaseName,textureName,factory) {
+        super(dataBaseName,textureName,factory);
+
+    }
+
+    initialize_super(){
+        
+    }
   
 }

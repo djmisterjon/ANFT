@@ -150,7 +150,7 @@ class _PME_TOAST extends PIXI.Container{
                     dataObj.initializeFactory();
                     dataObj.removeFromRegister();
                     $PME.remove_toMouse(dataObj);
-                    const _dataObj = $objs.createFrom(dataObj.clone(true));
+                    const _dataObj = $objs.create(dataObj.clone(true));
                     $objs.addToGlobalRegister(_dataObj,$objs.GLOBAL.findEmptyIndex());
                     $objs.addtoLocalRegister (_dataObj,$objs.LOCAL .findEmptyIndex());
                     _dataObj.asignFactory(dataObj.factory);
@@ -229,7 +229,7 @@ class _PME_TOAST extends PIXI.Container{
             const F = gui.addFolder(`[${KEY.toUpperCase()}] FACTORY`).slider(); // ex: P FACTORY
             ['s','a','l','d','n'].contains(KEY) && F.close();
             //!propreties
-            Factory.FLATTERS.propreties.base.concat(Factory.FLATTERS.propreties.layers).forEach(key=>{
+            _Factory.FLATTERS.propreties.base.concat(_Factory.FLATTERS.propreties.layers).forEach(key=>{
                 if(target[key] !==undefined){
                     addData(F,target,key);
                 };
@@ -244,7 +244,7 @@ class _PME_TOAST extends PIXI.Container{
             
             //!obeservable
             FF = F.addFolder(`${KEY}.OBSERVABLES`).slider().onChange(onChange);
-            Factory.FLATTERS.Observable.ALL.sort((a, b) => a.localeCompare(b)).forEach(key=>{
+            _Factory.FLATTERS.Observable.ALL.sort((a, b) => a.localeCompare(b)).forEach(key=>{
                 if(target[key] !==undefined){
                     addData(FF,target,key,['x','y','z']);
                 };
@@ -347,7 +347,7 @@ class _PME_TOAST extends PIXI.Container{
                 //! sub foldering.
                 //# display
                 FF = F.addFolder(`${KEY}.display`);
-                Factory.FLATTERS.propreties.base.concat(Factory.FLATTERS.propreties.layers).forEach(key=>{
+                _Factory.FLATTERS.propreties.base.concat(_Factory.FLATTERS.propreties.layers).forEach(key=>{
                     if(dataObj.child[KEY][key] !==undefined){
                         addData(FF,KEY,key);
                     };
@@ -355,7 +355,7 @@ class _PME_TOAST extends PIXI.Container{
                 if(dataObj.dataBase.isSpineSheets){
                     //# spines
                     FF = F.addFolder(`${KEY}.spine`);
-                    Factory.FLATTERS.propreties.spines.forEach(key=>{
+                    _Factory.FLATTERS.propreties.spines.forEach(key=>{
                         if(dataObj.child[KEY][key] !==undefined){
                             addData(FF,KEY,key);
                         };
@@ -365,7 +365,7 @@ class _PME_TOAST extends PIXI.Container{
                 if(dataObj.dataBase.isAnimationSheets){
                     //# animations
                     FF = F.addFolder(`${KEY}.animations`);
-                    Factory.FLATTERS.propreties.animations.forEach(key=>{
+                    _Factory.FLATTERS.propreties.animations.forEach(key=>{
                         if(dataObj.child[KEY][key] !==undefined){
                             addData(FF,KEY,key);
                         };
@@ -373,7 +373,7 @@ class _PME_TOAST extends PIXI.Container{
                 };
 
                 //# obeservacle
-                Factory.FLATTERS.Observable.ALL.sort((a, b) => a.localeCompare(b)).forEach(key=>{
+                _Factory.FLATTERS.Observable.ALL.sort((a, b) => a.localeCompare(b)).forEach(key=>{
                     if(dataObj.child[KEY][key] !==undefined){
                         var FF = F.addFolder(`.${key}`);
                         FF.closed = false;

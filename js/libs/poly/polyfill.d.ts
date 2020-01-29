@@ -169,13 +169,13 @@ declare namespace PIXI {
         /**@type {Point} ObservablePoint cache*/
         zero: Point;
     }
-    interface Point{
+    interface PointLike{
         /**
          * Store tous les observable dans .zero
          *
          * @return {ObservablePoint}
          */
-        setZero(): this;
+        setZero(x?: number, y?: number, z?: number): this;
 
         /**@type {Point} ObservablePoint cache*/
         zero: Point;

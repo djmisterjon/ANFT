@@ -1,4 +1,3 @@
-/**@extends PIXI.Container */
 class _Scene_Base extends PIXI.projection.Container3d {
     constructor() {
         super();
@@ -59,8 +58,11 @@ class _Scene_Base extends PIXI.projection.Container3d {
     initialize_objets(objs =  this.DATA._objs){
         if(objs){
             for (let i=0, l=objs.length; i<l; i++) {
-                const dataObj = $objs.createFromId(objs[i].g._globalId.value);
-                this.addChild(dataObj.child);
+                //TODO: RENDRE CA PLUS PRORPE
+                const id = objs[i].g._globalId.value;
+                const dataObj = $objs.GLOBAL[id];
+                $objs.addtoLocalRegister(dataObj);
+                this.addChild(dataObj.p);
             };
         };
     };

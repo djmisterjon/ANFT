@@ -91,18 +91,20 @@ console.log1('$players: ', $players);
 
         /** initialize tous les elements */
         initialize_sprites(){
-            const dataObj = this.dataObj = $objs.create(this.dataBase,'idle'); //TODO: passer un type player ou chare ? qui defeni tosu ca ?
-            this.setupAnimations(dataObj);
+            //TODO: peut etre ajouter un nouveau container, pour mettre des FX speciaux au players
+            const ContainerSpine = $objs.create(null,this.dataBase,'idle').setName('ContainerSpine');
+            this.child = ContainerSpine.childrenToName();
+            //this.setupAnimations(dataObj);
              //TODO: EXPERIMENTAL wink eyes, use spine events random
-             const spine = dataObj.child.s;
-            setInterval(function(){
+             //const spine = dataObj.child.s;
+            /*setInterval(function(){
                 const allowWink = Math.random() >= 0.5;
                 allowWink && spine.state.setAnimation(2, 'wink1', false); 
-            }, 1250);
+            }, 1250);*/
 
-            dataObj.child.p.parentGroup = $displayGroup.group[1];
-            dataObj.child.s.scale3d.set(0.4);
-            dataObj.child.s.scale3d.setZero();
+            //dataObj.child.p.parentGroup = $displayGroup.group[1];
+            //dataObj.child.s.scale3d.set(0.4);
+            //dataObj.child.s.scale3d.setZero();
         };
 
         initialize_listeners() {
@@ -139,7 +141,7 @@ console.log1('$players: ', $players);
               }
             };
         
-            this.s.state.addListener({
+            this.child.ContainerSpine.s.state.addListener({
                 event: checkEvent,
             });
         };
@@ -201,7 +203,7 @@ console.log1('$players: ', $players);
         };
         
         //initialisation dun parcour via un click 
-        initialisePath(pathBuffer = DataObj_Case.ActivePath.slice()) {
+        initialisePath(pathBuffer = _DataObj_Case.ActivePath.slice()) {
             $stage.interactiveChildren = false;
             this._isMoving = true;
             this._autoMove = true; 
@@ -213,7 +215,7 @@ console.log1('$players: ', $players);
         };
         
         /**
-         * @param {DataObj_Case} Case - force saute sur une case
+         * @param {_DataObj_Case} Case - force saute sur une case
          * @returns {PIXI.spine.core.TrackEntry} */
         moveToNextPath(Case) { //TODO: RENDU ICI, this.inCase APARET TROP TO ToT?
             const LOCAL = $objs.LOCAL;
@@ -242,7 +244,7 @@ console.log1('$players: ', $players);
     
         event_startMove() {
             $audio._sounds.jump_todofd2gt.play().Volume(0.4); //DELETEME: a fair un son vocal
-            const to = this.toCase.child.position3d;
+            const to = this.toCase.p.position3d;
             this.toCase && gsap.to(this.p.position3d, 1*(1/this.s.state.timeScale), { x:to.x, y:to.y,z:to.z-15, ease: Power3.easeOut });
             //!camera
             this._autoMove && $camera.moveToTarget(this.toCase,undefined,undefined,`movingCasesDir${this._dirX}`);
@@ -252,7 +254,7 @@ console.log1('$players: ', $players);
             $audio._sounds.JMP_A.play("JMP_A1");
             $gui.Travel.addValue(-1); //TODO: a mettre dans $huds.Travel.reduceFromCase() ?
             //!this.toCase.zero && this.toCase.zeroSet(); // FIXME:  a mettre au debut
-            TweenMax.to(this.toCase.child.scale3d, 0.35, {
+            TweenMax.to(this.toCase.p.scale3d, 0.35, {
                 x:0.6, ease: Expo.easeOut, repeat: 1, yoyo: true, yoyoEase:Elastic.easeOut.config(1.5, 0.6),
             });
         };
@@ -282,6 +284,8 @@ console.log1('$players: ', $players);
     class _player1 extends _battler {
         constructor(data,id) {
             super(id,data,'p',1);
+            /** @type {{ 'ContainerSpine':_Container_Spine }} */
+            this.child = null;
             this.initialize();
         };
         
@@ -297,12 +301,9 @@ console.log1('$players: ', $players);
 
         /** initialize tous les elements */
         initialize_sprites(){
-            const dataObj = this.dataObj = $objs.create(this.dataBase,'idle'); //TODO: passer un type player ou chare ? qui defeni tosu ca ?
-            this.setupAnimations(dataObj);
-            dataObj.child.p.parentGroup = $displayGroup.group[1];
-            dataObj.child.p.position3d.y = -100;
-            dataObj.child.s.scale3d.set(0.4);
-            dataObj.child.s.scale3d.setZero();
+            //TODO: peut etre ajouter un nouveau container, pour mettre des FX speciaux au players
+            const ContainerSpine = $objs.create(null,this.dataBase,'idle').setName('ContainerSpine');
+            this.child = ContainerSpine.childrenToName();
         };
         //#endregion
 

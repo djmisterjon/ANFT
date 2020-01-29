@@ -120,7 +120,7 @@ class __StatesBar extends PIXI.Container {
         /** id du player actuelement afficher */
         this._actorId = 0;
         /** @type {{ BarBgTop:_objs.ContainerDN, BarFillTop:_objs.ContainerDN, BarCornerTop:_objs.ContainerDN, stateTxtValue:PIXI.Text}} */
-        this.child = {};
+        this.child = null;
         this.initialize();
     };
     //#region [GetterSetter]

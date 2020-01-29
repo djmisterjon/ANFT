@@ -13,6 +13,8 @@ class _battler  {
     constructor(id,data,type,iconId) {
         /** type de chara excel [p,m] */
         this._type = type;
+        /**@type {_DataObj_Case} */
+        this.toCase = null;
         /** id for icons dataBase */
         this._iconId = iconId;
         this._level =  1;
@@ -34,7 +36,7 @@ class _battler  {
         this.data = data;
         /** battler direction Axe X */
         this._dirX = 6;
-        /**@type {DataObj_Case} store current player case */
+        /**@type {_DataObj_Case} store current player case */
         this.inCase = null;
         this.evo = $systems.extractEvo(data.statesBase);//this.extractEvo(this.data.statesBase);
         /** ID battler en combat */
@@ -43,6 +45,8 @@ class _battler  {
         this._battleTime = 0;
         /** nom de l'action selectionner pour ce combatant: attack,def,mbook...*/
         this._combatAction = null;
+        /** @type {{ 'ContainerSpine':_Container_Spine }} */
+        this.child = null;
         /** list les states actif sur le battler
          * @type {{ hp:String,mp:String,hg:String,hy:String,atk:String,def:String,sta:String,int:String,lck:String,expl:String,mor:String,}} */
         this.states = {
@@ -94,17 +98,21 @@ class _battler  {
     };
 
     /** @returns {PIXI.projection.Container3d} */
-    get p(){ return this.dataObj.child.p }
+    get p(){ return this.child.ContainerSpine }
     /** @returns {PIXI.projection.Spine3d} */
-    get s(){ return this.dataObj.child.s }
+    get s(){ return this.child.ContainerSpine.s }
     /** @returns {PIXI.Sprite} */
-    get d(){ return this.dataObj.child.d };// spine arrays
+    get d(){ return this.child.ContainerSpine.d };// spine arrays
     /** @returns {PIXI.Sprite} */
-    get n(){ return this.dataObj.child.n };// spine arrays
+    get n(){ return this.child.ContainerSpine.n };// spine arrays
 
     
     /** initialise battler data */
     initialize_battler(level = 1){
+        const height = this.data.info._default_heigth[0];
+        const ratio = height/this.s.height;
+        this.s.scale3d.setZero(ratio);
+        this.p.parentGroup = $displayGroup.group[1];
         this.initialize_stats(level,true);
         //this.debug();
     };
@@ -261,9 +269,9 @@ class _battler  {
 
     /** Instant transfer to case*/
     transferToCase(caseId) {
-        const dataObj = isFinite(caseId)?$objs.CASES_L[ caseId ]:caseId;
+        const dataObj = $objs.CASES_L[ caseId ];
         if(dataObj){
-            this.p.position3d.copy(dataObj.child.position3d);
+            this.p.position3d.copy(dataObj.p.position3d);
             this.p.position3d.z-=15; //fix case pivot
             this.inCase = dataObj;
             dataObj._battlerID = this._battlerID; // permet de retrouver le battler sur la cases.
@@ -307,8 +315,8 @@ class _battler  {
     };
 
     /** check if need reverse between 2 sprite3d */
-    needReversX(b=this.toCase.child, a=this.inCase.child ) {
-        return (this._dirX===4 && b.position3d._x>a.position3d._x) || (this._dirX===6 && b.position3d._x<a.position3d._x);
+    needReversX(b=this.toCase.p, a=this.inCase.p ) {
+        return (this._dirX===4 && b.position3d.x>a.position3d.x) || (this._dirX===6 && b.position3d.x<a.position3d.x);
     };
     /** effectu un reverse avec animations si besoin */
     reversX() {
@@ -320,7 +328,7 @@ class _battler  {
 
     /** return le battler a ca position de case */
     backToCase(Case=this.inCase){
-        const to = Case.child.p.position3d;
+        const to = Case.p.p.position3d;
         this.s.state.setAnimation(3, "backAfterAtk", false, 0);
         this.s.state.addEmptyAnimation(3,0.3,0);
         TweenLite.to(this.p.position3d, 1, { x:to.x,z:to.z, ease: Power4.easeOut });

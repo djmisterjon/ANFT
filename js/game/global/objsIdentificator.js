@@ -1,4 +1,5 @@
 /** creer des ObjsIdentificator pour interaction */
+// devrai seulement
 class _ObjsIdentificator {
     //#region [Static]
     static create(dataObj){
@@ -27,6 +28,7 @@ class _ObjsIdentificator {
 
     //#endregion
 
+    /**@param {_DataObj_Case|_DataObj_Door} dataObj */
     constructor(dataObj) {
         this._dataObjId = dataObj._globalId;
         /** @type {{ 'Master':PIXI.Container, 'IdenCircle':ContainerDN, 'IdenIcon':ContainerDN, }} */
@@ -62,14 +64,14 @@ class _ObjsIdentificator {
             IdenIcon.n.anchor.set(0.5);
             IdenIcon.scale.set(2.5); // todo: utiliser un width car icons et xbox button ne son pas a meme echelle
         //!transform fix
-        const ratio = 0.15/dataObj.child.p.scale3d.x;
+        const ratio = 0.15/dataObj.link.p.scale3d.x;
         Master.scale3d.set(ratio);
         Master.scale3d.setZero();
-        Master.position3d.set(0,-dataObj.child.p.height/2,0);
+        Master.position3d.set(0,-dataObj.link.p.height/2,0);
         //!end
         Master.addChild(IdenCircle,IdenIcon);
         this.child = Master.childrenToName();
-    };
+    }
 
     initialize_interaction(){
         const Master = this.child.Master;

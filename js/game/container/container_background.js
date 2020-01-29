@@ -18,7 +18,7 @@ class Container_Background extends _Container_Base {
 
     initialize_base () {
         // TODO: les bg pourrai etre parfoi decouper en arrays dans textures packer
-        const dataObj = this.dataObj;
+        const dataObj = this.DataObj;
         const dataBase = dataObj.dataBase;
         const textureName = dataObj.textureName;
 
@@ -38,7 +38,7 @@ class Container_Background extends _Container_Base {
 
     asignDataObjValues() {
         super.asignDataObjValues();
-        const dataObj = this.dataObj;
+        const dataObj = this.DataObj;
         if(!dataObj.textureName){
             // si pas de texture? ces un background vide, que on ajust a lecrant
             this.d.scale.set($app.screen.width/10, $app.screen.height/10); 

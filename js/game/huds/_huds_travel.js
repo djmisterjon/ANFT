@@ -171,25 +171,27 @@ class _Huds_Travel extends _Huds_Base {
         { x: 0.6, y: 0.6, ease: SlowMo.ease.config(0.2, 0.75, false) },0.1);
         tl.add(()=>{
             //! test fx deleteme
-            const fx = $objs.create($loader.DATA2.travelEnergyFx,'FXEnergieA');
-                fx.child.parentGroup = $displayGroup.group[0]
-                fx.child.child.a.anchor.set(0.5);
+            const fx = $objs.create(null,$loader.DATA2.travelEnergyFx,'FXEnergieA');
+                fx.parentGroup = $displayGroup.group[0]
+                fx.a.anchor.set(0.5);
                 //fx.child.child.a.tint = 0xb5a900
-                fx.child.scale.set(0.9);
-                fx.child.child.a.loop = false;
-                fx.child.child.a.animationSpeed = 0.4;
-                this.addChild(fx.child);
+                fx.scale.set(0.9);
+                fx.a.loop = false;
+                fx.a.animationSpeed = 0.4;
+                fx.a.play();
+                this.addChild(fx);
         },0.2)
         tl.add(()=>{
             //! test fx deleteme
-            const fx = $objs.create($loader.DATA2.travelEnergyFx,'FxEnergieB');
-                fx.child.parentGroup = $displayGroup.group[0]
-                fx.child.child.a.anchor.set(0.5);
+            const fx = $objs.create(null,$loader.DATA2.travelEnergyFx,'FxEnergieB');
+                fx.parentGroup = $displayGroup.group[0]
+                fx.a.anchor.set(0.5);
                 //fx.child.child.a.tint = 0xb5a900
-                fx.child.scale.set(1.5);
-                fx.child.child.a.loop = false;
-                fx.child.child.a.animationSpeed = 0.5;
-                this.addChild(fx.child);
+                fx.scale.set(1.5);
+                fx.a.loop = false;
+                fx.a.animationSpeed = 0.5;
+                fx.a.play();
+                this.addChild(fx);
         },1.5)
         tl.add(()=>{
             if(!canRoll){

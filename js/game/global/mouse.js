@@ -26,7 +26,7 @@ class _mouse extends PIXI.Container{
         /** indicateur si on proceed au scan des objet */
         this._proceedScan = false;
         /** child elements items,spine,trail*/
-        this.child = {};
+        this.child = null;
         /** Active controler */
         this._xboxController = false;
         /** disable/enable mouse event */
@@ -359,9 +359,9 @@ class _mouse extends PIXI.Container{
             //TODO REFACTORISER CA pour identifier les objet events et interactivable
             if(o.renderable){ // renderable par culling
                 if(this.hitTest(scanSelector._boundsRect,o.getBounds())){ //succed
-                    if(o.dataObj&& o.dataObj._identifiable){ // si obj peut etre identifier
+                    if(o.DataObj&& o.DataObj._identifiable){ // si obj peut etre identifier
                         //todo: call system identification
-                        o.dataObj.doIdentification();
+                        o.DataObj.doIdentification();
                     }
                 }
             }

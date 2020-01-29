@@ -62,7 +62,7 @@ class _combats {
     
     //#region [rgba(255, 255, 255, 0.07)]
     /**initialise les etapes de combats, le setup du combat est passer en options.
-     * @param {DataObj_Case} dataObj 
+     * @param {_DataObj_Case} dataObj 
      * @param {Promise<Token>} resolve promise to the token.
      * */
     initialize(dataObj,resolve){
@@ -105,7 +105,7 @@ class _combats {
     };
     /** calcule et trouve les case potentiel en combat pouvant etre utiliser selon le culling */
     intitialize_combatCases(){
-        this.cases = $objs.CASES_L.filter(c => c.child.renderable );
+        this.cases = $objs.CASES_L.filter(c => c.p.renderable );
         //!passe les case visible ne mode combat
         this.cases.forEach(Case => {
             Case.setCombatMode(true);
@@ -728,7 +728,7 @@ class _combats {
                 tl.call(() => {
                     source.s.state.setEmptyAnimation(3,1)
                 } ,null,null,'0');
-                tl.to(sourcePos, 0.5, { x:source.inCase.child.p.position3d.x,z:source.inCase.child.p.position3d.z, ease: Power4.easeOut },0.5 );
+                tl.to(sourcePos, 0.5, { x:source.inCase.p.p.position3d.x,z:source.inCase.p.p.position3d.z, ease: Power4.easeOut },0.5 );
                 tl.to($camera, 0.5, {_focus:1750, ease:Expo.easeOut },0.5);
                 tl.to($camera, 0.5, {_perspective:-0.7, ease:Expo.easeOut },0.5);
                 tl.to($camera, 0.5, {_zoom:0.64, ease:Expo.easeOut },0.5 );

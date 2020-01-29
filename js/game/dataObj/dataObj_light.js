@@ -14,11 +14,19 @@ Voir le Stages
 // ┌-----------------------------------------------------------------------------┐
 // GLOBAL $objs CLASS: _objs
 //└------------------------------------------------------------------------------┘
-class DataObj_Light extends _DataObj_Base{
-    constructor(dataBaseName,textureName,dataValues,register) {
-        super(dataBaseName,textureName,dataValues,register);
-    };
+class _DataObj_Light extends _DataObj_Base{
+    /**
+     * @param {String} dataBaseName
+     * @param {String} textureName
+     * @param {_Factory} factory
+     */
+    constructor(dataBaseName,textureName,factory) {
+        super(dataBaseName,textureName,factory);
 
+    }
+    initialize_super(){
+        
+    }
     getDataValues (fromCage) {
         const dataValues = super.getDataValues(fromCage); // get default dataValues
         dataValues.l = this.getParentValues_light (fromCage);

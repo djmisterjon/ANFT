@@ -34,8 +34,8 @@ class _events{
         const p1 = $players.p1;
         function iniSetup() {
             const tl = new TimelineMax({id:'iniSetup'});
-            const bedPos = bed.child.p.position3d;
-            const tablePos = table.child.p.position3d;
+            const bedPos = bed.p.p.position3d;
+            const tablePos = table.p.p.position3d;
             tl.add(() => { //FIXME: OK FUCK HELL .CALL MAKE BAD SHIT HERE
                 //gsap.killTweensOf($camera.view.position3d);
                 //gsap.killTweensOf($camera);
@@ -68,11 +68,11 @@ class _events{
             const tl = new TimelineMax({id:'P1MoveToP0'});
             const chair = $objs.LOCAL[13];
             const bag = $objs.LOCAL[16];
-            tl.to(p1.p.position3d, 0.4, {x:chair.child.p.position3d.x+30, ease:Power4.easeIn },0); 
+            tl.to(p1.p.position3d, 0.4, {x:chair.p.p.position3d.x+30, ease:Power4.easeIn },0); 
             tl.add(() => { p1.s.state.setAnimation(4, "moveHalf", false) });
-            tl.to(chair.child.p.euler, 0.6, {z:Math.PI/2, ease:Bounce.easeOut }, 'hitChair' );
-            tl.to(bag.child.p.euler, 0.8, {z:Math.PI/2, ease:Bounce.easeOut }, 'hitChair' );
-            tl.to(bag.child.p.position3d, 0.7, {x:'+=90',y:0, ease:Power4.easeOut }, 'hitChair' );
+            tl.to(chair.p.p.euler, 0.6, {z:Math.PI/2, ease:Bounce.easeOut }, 'hitChair' );
+            tl.to(bag.p.p.euler, 0.8, {z:Math.PI/2, ease:Bounce.easeOut }, 'hitChair' );
+            tl.to(bag.p.p.position3d, 0.7, {x:'+=90',y:0, ease:Power4.easeOut }, 'hitChair' );
             tl.to($camera.view.position3d, 0.6, { x: '+=100', ease: RoughEase.ease.config({ template:  Circ.easeOut, strength: 1, points: 8, taper: "out", randomize: false, clamp:  true}) },'hitChair');
             tl.to($camera, 0.6, {_zoom:0.3, ease:Elastic.easeOut.config(1, 0.5)},'hitChair');
             tl.add(() => { p1.s.state.setAnimation(4, "reversX", false) },'hitChair');
@@ -142,7 +142,7 @@ class _events{
             tl.add(() => {
                 master.pause();
                 const bag = $objs.LOCAL[16];
-                const Bubble = new _Bubble( $texts.MotionsTxt('___holdClick'), bag.child, null, _Bubble.TYPE.POINT_OBJ ); // todo creer un manager alert
+                const Bubble = new _Bubble( $texts.MotionsTxt('___holdClick'), bag.p, null, _Bubble.TYPE.POINT_OBJ ); // todo creer un manager alert
                 //$messages.create('Intro_WakeUp').then( ()=>master.resume() ); //todo: un message parralle
                 $mouse._scanDisable = false; // permet le scan pour le bag
                 let waitBagIdentify = setInterval(() => {
@@ -164,9 +164,9 @@ class _events{
                     const bag = $objs.LOCAL[16];
                     const case28 = $objs.LOCAL[28];
                     $stage.scene.interactiveChildren = true;
-                    gsap.to($camera.view.position3d, 1, {x:case28.child.p.position3d.x,y:0,z:case28.child.p.position3d.z, ease:Back.easeInOut.config(1.7) } );
+                    gsap.to($camera.view.position3d, 1, {x:case28.p.p.position3d.x,y:0,z:case28.p.p.position3d.z, ease:Back.easeInOut.config(1.7) } );
                     gsap.to($camera, 1, {_zoom:0.5, ease:Power4.easeOut } );
-                    const Bubble = new _Bubble( $texts.MotionsTxt('___clickHere_move'), case28.child, null, _Bubble.TYPE.POINT_OBJ );
+                    const Bubble = new _Bubble( $texts.MotionsTxt('___clickHere_move'), case28.p, null, _Bubble.TYPE.POINT_OBJ );
                     let waitNearBag = setInterval(() => { // lorsque asser proche du bag
                         if(p0.inCase === case28){
                             Bubble.Destroy();
@@ -188,17 +188,17 @@ class _events{
                 gsap.getById('moveToTarget').kill(); // just en ca de debugage
                 $messages.show('LookTheObjInteraction').then( ()=>{
                     $stage.scene.interactiveChildren = true;
-                    gsap.to($camera.view.position3d, 0.5, {x:bag.child.p.position3d.x,y:0,z:bag.child.p.position3d.z, ease:Power4.easeOut } );
+                    gsap.to($camera.view.position3d, 0.5, {x:bag.p.p.position3d.x,y:0,z:bag.p.p.position3d.z, ease:Power4.easeOut } );
                     master.resume();
                 } );
             });
             tl.add(() => {
                 master.pause();
                 const bag = $objs.LOCAL[16];
-                const Bubble = new _Bubble( $texts.MotionsTxt('___clickHere_takeObj'), bag.child, null, _Bubble.TYPE.POINT_OBJ );
+                const Bubble = new _Bubble( $texts.MotionsTxt('___clickHere_takeObj'), bag.p, null, _Bubble.TYPE.POINT_OBJ );
                 let waitGetBag = setInterval(() => {
                  //TODO: fair un system de switch variable ou _destroy:true, de toute facon quelque chose , les ref ne son pas detruite
-                if(!bag.child){
+                if(!bag.p){
                         Bubble.Destroy();
                         $gui.Travel.sta = 0;
                         // affiche les guy du bag

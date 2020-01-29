@@ -694,7 +694,7 @@ class _Bubble{
     draw_BubblePin(){
         const Master = this.child.Master; 
         const BubblePin = this.child.BubblePin;
-        const pos = this.getLocalFrom(-35,-this._headPosY,true); //this.target.p.toLocal(BubblePin.getGlobalPosition());
+        const pos = this.getLocalFrom(this._isBattler&&-35||0,-this._headPosY,true); //this.target.p.toLocal(BubblePin.getGlobalPosition());
         const pox = pos.x-Master.x//pos.x/$camera._zoom;
         const poy = pos.y-Master.y//(pos.y+this._headPosY)/$camera._zoom;
         const ratioX = Master.x/$camera._screenW;

@@ -1,10 +1,15 @@
 {
     "compilerOptions": {
-        "target": "es2016",
-        "module": "commonJS",
-        "checkJs": true
+        "target": "es2020",
+        "module": "es6",
+        "checkJs": true,
+        "lib": [
+            "DOM",
+            "ES5",
+            "ScriptHost",
+            "es2015.promise"
+        ],
     },
-    "exclude": ["node_modules", "**/node_modules/*"],
-    
-    "comment":["allowSyntheticDefaultImports: true"]
+    "exclude": ["node_modules","js/libs/2/pixi-projection-spine.js","js/libs/1/_pixi-spine.js", "**/node_modules/*"],
+    "comment":["allowSyntheticDefaultImports: true", "exlu proj car problem intelisence !!!!"]
 }

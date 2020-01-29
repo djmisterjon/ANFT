@@ -44,14 +44,13 @@ class Scene_Title extends _Scene_Base {
             new PIXI.filters.OutlineFilter(2, 0xff1ae0,4),
         ];
         ['CnewGame','Cloadgame','Coptions','Ccredit'].forEach((textureName,i) => {
-            const newGame = $objs.create(dataBase, textureName).child; //new PIXI.Text(txt,$systems.styles[3]);
-            newGame.name = textureName;
-            newGame.scale3d.set(1.4);
-            ChoiceContainer.addChild(newGame);
-            newGame.y = 0+145*i;
-            newGame.x = 765;
-            newGame.interactive = true;
-            newGame.on('pointerover' , ()=>{
+            const newGame = $objs.create(null,dataBase, textureName).setName(textureName);
+                newGame.scale3d.set(1.4);
+                newGame.y = 0+145*i;
+                newGame.x = 765;
+                newGame.interactive = true;
+                ChoiceContainer.addChild(newGame);
+                newGame.on('pointerover' , ()=>{
                 newGame.child.a.filters = [filters[i]];
                 filters[i].padding = 30;
                 TweenLite.fromTo(filters[i], 0.3,{thickness:10}, {thickness:1, ease:Power4.easeInOut }) 
@@ -70,14 +69,14 @@ class Scene_Title extends _Scene_Base {
             });
         });
 
-        const TitlebgFx = $objs.create(dataBase, 'titlebgFx').child;
+        const TitlebgFx = $objs.create(null,dataBase, 'titlebgFx');
         TitlebgFx.position3d.x = 450;
         TitlebgFx.position3d.y = -280;
         TitlebgFx.scale3d.set(2);
         TitlebgFx.child.a.filters = [filters[4]];
         filters[4].resolution = 0.1;
 
-        const logoTitle = $objs.create(dataBase2, 'logoTitle').child;
+        const logoTitle = $objs.create(null,dataBase2, 'logoTitle');
         logoTitle.position3d.x = -700;
         logoTitle.position3d.y = -750;
         logoTitle.position3d.z = 100;

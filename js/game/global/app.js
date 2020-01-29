@@ -18,8 +18,7 @@ class _app extends PIXI.Application {
             resolution: 1,
             sharedTicker:true,
             backgroundColor: 0x4f4f4f,
-
-            // powerPreference: SLI&CrossFire GPU, TODO: study me
+            powerPreference:'high-performance',// SLI&CrossFire GPU, TODO: study me
           });
           document.body.appendChild(this.view);
     };

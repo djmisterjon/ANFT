@@ -488,7 +488,7 @@ class __ExtraInformations extends PIXI.Container{
         /** @type {{ 'BarTop':ContainerDN, 'BarBottom':ContainerDN,
          * 'ItemValue':PIXI.Text, 'ItemWeight':PIXI.Text, 
          * 'TotalWeightTxt':PIXI.Text, 'TotalItemsTxt':PIXI.Text, 'TotalTrouverTxt':PIXI.Text, 'TitleTxt':PIXI.Text, 'ItemIcon':PIXI.Text, }} */
-        this.child = {};
+        this.child = null;
         this.initialize();
     };
 
@@ -624,7 +624,7 @@ class __SliderBar extends PIXI.Container{
         /** page total mapper */
         this._totalLine = 0;
         /** @type {{ 'slider_blackLine':ContainerDN, 'Slider_redLine':ContainerDN, 'ButtonTop':ContainerDN, 'ButtonDw':ContainerDN, 'ButtonScroll':ContainerDN, 'TxtPage':PIXI.Text, }} */
-        this.child = {};
+        this.child = null;
         this.initialize();
     };
     //#region [GetterSetter]

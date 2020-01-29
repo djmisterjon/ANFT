@@ -14,9 +14,18 @@ Voir le Stages
 // ┌-----------------------------------------------------------------------------┐
 // GLOBAL $objs CLASS: _objs
 //└------------------------------------------------------------------------------┘
-class DataObj_MapItem{
-    constructor(data) {
-       
-    };
-  
+class _DataObj_MapItem extends _DataObj_Base{
+    /**
+     * @param {String} dataBaseName
+     * @param {String} textureName
+     * @param {_Factory} factory
+     * @memberof _DataObj_Wall
+     */
+    constructor(dataBaseName,textureName,factory) {
+        super(dataBaseName,textureName,factory);
+
+    }
+    initialize_super(){
+        
+    }
 }

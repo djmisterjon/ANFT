@@ -15,19 +15,18 @@ class _Container_Animation extends _Container_Base {
         get totalFrames() { return this.d.totalFrames };
         set totalFrames(value) { return this.d.totalFrames };
 
-
  // create,build basic textures need for ContainerAnimations
-    initialize_base (dataObj=this.dataObj) {
-        //const dataObj = this.dataObj;
-        const dataBase = dataObj.dataBase;
-        const textureName = dataObj._textureName;
-        const td = dataObj.dataBase.data.animations[textureName].map(tn=>dataObj.dataBase.textures[tn])
-        const tn = dataBase.textures_n && dataObj.dataBase.data.animations[textureName].map(tn=>dataObj.dataBase.textures_n[tn])
+    initialize_base () {
+        const DataObj = this.DataObj;
+        const dataBase = DataObj.dataBase;
+        const textureName = DataObj._textureName;
+        const td = dataBase.data.animations[textureName].map(d=>dataBase.textures[d])
+        const tn = dataBase._normal && dataBase.data.animations[textureName].map(n=>dataBase.textures[n])
         const a = new PIXI.extras.AnimatedSprite(td).setName('a');
             a.parentGroup = $displayGroup.DiffuseGroup;
             a.loop = true;
             a.animationSpeed = 0.3;
-            a.gotoAndPlay(0);
+            //a.gotoAndPlay(0);//deleteme:
             this.addChild(a);
         if(tn){
             const n = new PIXI.Sprite(tn[0]).setName('n');

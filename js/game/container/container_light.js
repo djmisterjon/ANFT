@@ -14,7 +14,7 @@ class Container_light extends _Container_Base {
     get l() { return this.Sprites.l || false };
 
     initialize_base () {
-        const dataObj = this.dataObj;
+        const dataObj = this.DataObj;
         const dataBase = dataObj.dataBase;
         const textureName = dataObj.textureName;
         const td = dataObj.dataBase.textures   [textureName.d ];

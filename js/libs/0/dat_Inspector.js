@@ -114,15 +114,15 @@ class Inspectors {
 
 
     //#region [Static]
-    static DataObj(DataObj = new DataObj_Case() ){
+    static DataObj(DataObj = new _DataObj_Case() ){
         const name = `${DataObj.constructor.name}_${DataObj._globalId}-${DataObj._localId}`;
         if(this.GUI[name]){return console.error('Un inspector est deja ouvert avec ce Id: ',name)};
         const Gui = new Inspectors(name);
-        const onChange = DataObj.child.Debug? Gui.onChange( ()=>{$PME.update_debug(DataObj)} ) : void 0;
+        const onChange = DataObj.p.Debug? Gui.onChange( ()=>{$PME.update_debug(DataObj)} ) : void 0;
 
         //Gui.onChange() = (e)=>{ this.update_debug(dataObj,e) }; TODO:
         //![P] ParentContainer
-        if(DataObj.child){
+        if(DataObj.p){
             function add(F,DisplayObject,k) {
                 switch (k) {
                     case 'position3d':case 'pivot3d':
@@ -190,44 +190,44 @@ class Inspectors {
             const CKeys = ['p','s','a','l','d','n']; // _Container_Base keys
             for (let i=0, l=CKeys.length; i<l; i++) {
                 const key = CKeys[i];
-                const DisplayObject = DataObj.child[key];
+                const DisplayObject = DataObj.p[key];
                 if(DisplayObject){
                     const F = Gui.addFolder(`[${key.toUpperCase()}] FACTORY DisplayObject`).slider();
                     //!propreties Container
                     if(DisplayObject instanceof _Container_Base){
-                        Factory.FLATTERS.propreties.container.forEach(k=>{
+                        _Factory.FLATTERS.propreties.container.forEach(k=>{
                             add(F,DisplayObject,k);
                         });
                     };
                     //!propreties Sprites ,d,n
                     if(DisplayObject instanceof PIXI.Sprite){
-                        Factory.FLATTERS.propreties.sprite.forEach(k=>{
+                        _Factory.FLATTERS.propreties.sprite.forEach(k=>{
                             add(F,DisplayObject,k);
                         });
                     };
                     //!propreties Spine
                     if(DisplayObject instanceof _Container_Spine){
-                        Factory.FLATTERS.propreties.spines.forEach(k=>{
+                        _Factory.FLATTERS.propreties.spines.forEach(k=>{
                             add(F,DisplayObject,k);
                         });
                     };
                     //!propreties Animation
                     if(DisplayObject instanceof _Container_Animation){
-                        Factory.FLATTERS.propreties.animations.forEach(k=>{
+                        _Factory.FLATTERS.propreties.animations.forEach(k=>{
                             add(F,DisplayObject,k);
                         });
                     };
                     //!propreties proj
                     if(DisplayObject.proj){
                         const FF = F.addFolder(`${key}.PROJECTIONS`);
-                        Factory.FLATTERS.propreties.proj.forEach(k=>{
+                        _Factory.FLATTERS.propreties.proj.forEach(k=>{
                             add(FF,DisplayObject,k);
                         });
                     };
                     //!obeservable
                     if(DisplayObject instanceof PIXI.DisplayObject){
                         const FF = F.addFolder(`${key}.OBSERVABLES`).slider();
-                        Factory.FLATTERS.Observable.ALL.sort((a, b) => a.localeCompare(b)).forEach(k=>{
+                        _Factory.FLATTERS.Observable.ALL.sort((a, b) => a.localeCompare(b)).forEach(k=>{
                             add(FF,DisplayObject,k);
                         });
                     }

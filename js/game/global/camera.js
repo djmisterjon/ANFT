@@ -154,7 +154,7 @@ class _camera {
             if(!container.renderable){this._cullingCount++};
 
             if(container.renderable && container.dataObj){//!test door alpha
-                if(container.dataObj._type === _DataObj_Base.TYPE.door){
+                if(container.dataObj._type === _DataBase.CATEGORY.Door){
                     //!method 1
                     /*if(bounds.y+bounds.height/2 >= this._screenH/2 ){
                         container.alpha = 0.1;
@@ -189,7 +189,8 @@ class _camera {
             if(typeof setup === 'string'){
                 setup = this.cameraSetup[setup];
             }
-            const to = target.p?target.p.position3d : Number.isFinite(target)?$players.getSourceFromID(target).p.position3d : target.child.position3d;
+            const c = target.p || target.link;
+            const to = c.position3d;
 
             const tl = new TimelineMax({id:'moveToTarget'});
                 tl.to(this, speed, {

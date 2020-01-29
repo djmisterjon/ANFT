@@ -1,31 +1,27 @@
-/*:
-// PLUGIN □────────────────────────────────□OBJS SPRITES , ANIMATIONS, SPINES, EVENTS ...□───────────────────────────────┐
-* @author □ Jonathan Lepage (dimisterjon),(jonforum) 
-* @plugindesc Manage ,create game objs and events for Scene stage
-* V.1.0
-* License:© M.I.T
-└───────────────────────────────────────────────────────────────────────────────────────────────────┘
 
-*/
-// ┌-----------------------------------------------------------------------------┐
-// GLOBALFROM $objs CLASS: dataObj_case HERITAGE:dataObj_base
-//└------------------------------------------------------------------------------┘
-class DataObj_Case extends _DataObj_Base{
+class _DataObj_Case extends _DataObj_Base {
+    //#region [Static]
     /** store le SpidersSucces pour le pathfinding */
     static SpidersSucces = null;
     /** lorsque click sur cases, commence le parcour selon les les path */
     static ActivePath = [];
+    //#endregion
 
+    /**
+     *Creates an instance of _DataObj_Case.
+     * @param {string} _dataBaseName
+     * @param {string} _textureName
+     * @param {_Factory} factory
+     * @memberof _DataObj_Case
+     */
     constructor(_dataBaseName,_textureName, factory) {
         super(_dataBaseName,_textureName, factory);
         /** allow generate random on new game */
         this._randomAllowed = true;
-        /** type du DataObj */
-        this._type = _DataObj_Base.TYPE.cases;
         /** couleur type de la case */
-        this._color = null;
+        this._color = '';
         /** prime type de la case */
-        this._bounty = null;
+        this._bounty = '';
         /** les data generer pour le bounty si besoin (combat,golds...) */ //TODO: DOI ETRE UN ID
         this._bountyData = Infinity; //TODO: CREER UN POOL POUR LES BOUNTYDATA
         /** connextion des paths */
@@ -36,56 +32,66 @@ class DataObj_Case extends _DataObj_Base{
         this.input = [];
         /**battlers id onCase: identifier le id du battlers pour combat */
         this._battlerID = null;
-    };
+        /** @type {{ 'CaseColor': PIXI.projection.Sprite3d, 'CaseBounty':PIXI.projection.Sprite3d }} */
+        this.child = null;
+    }
 
+    //#region [GetterSetter]
+    /** obtien couleur du case*/
     get color() {
         return this._color;
     }
+    /** Change la couleur du case */
     set color(value) {
         this._color = value;
-        this.child.child.CaseColor.tint = this._color? $systems.colorsSystem[this._color] : 0xffffff;
-    };
+        this.p.child.CaseColor.tint = this._color? $systems.colorsSystem[this._color] : 0xffffff;
+    }
+    /** return texture bounty, ou vierge default */
     get bounty() {
-        return this._bounty;
+        return this._bounty || 'caseEvent_hide';
     }
     set bounty(value) {
         this._bounty = value;
         const texture = $loader.DATA2.CasesBounties.textures[this._bounty];
-        this.child.child.CaseBounty.texture = texture;
-    };
+        this.p.child.CaseBounty.texture = texture;//todo: voir comment cible le childrentoname ?
+    }
+    //#endregion
 
-    isCases(){return true};
-    
-    /** from _Container_Base.initialize, initialize des sprites ou extra selon type, si besoin! */
+    //#region [Initialize]
+    initialize(){
+        this.initialize_base();
+        this.initialize_interactive()
+    }
     initialize_base(){
         const dataBase = this.dataBase;
         const dataBase2 = $loader.DATA2[ 'CasesBounties' ];
         //cage color 
-        const CaseColor = new PIXI.projection.Sprite3d(dataBase.textures.cColor);
+        const CaseColor = new PIXI.projection.Sprite3d(dataBase.textures.cColor).setName('CaseColor');
             CaseColor.anchor.set(0.5);
             CaseColor.position3d.set(0,-80,0)
             this._color && (CaseColor.tint = $systems.colorsSystem[this._color]);
             CaseColor.parentGroup = PIXI.lights.diffuseGroup;
-        const CaseBounty = new PIXI.projection.Sprite3d(dataBase2.textures[this._bounty] || $systems.gameBounties.default );
+        const CaseBounty = new PIXI.projection.Sprite3d(dataBase2.textures[this.bounty] ).setName('CaseBounty');
             CaseBounty.anchor.set(0.5,1);
             CaseBounty.position3d.set(0,-80,0);
             CaseBounty.parentGroup = PIXI.lights.diffuseGroup;
             CaseBounty.euler.x = Math.PI/3;
-        this.child.addChild(CaseColor,CaseBounty);
-        this.child.child.CaseColor = CaseColor;
-        this.child.child.CaseBounty = CaseBounty;
-    };
+        this.p.addChild(CaseColor,CaseBounty);
+    }
+    /** Interaction de base qui peuvent appeller les super interaction*/
+    initialize_interactive(){
+        const Container = this.p;
+        Container.interactive = true; 
+        Container.on('pointerover' , this.pointerover ,this);
+        Container.on('pointerout'  , this.pointerout  ,this);
+        Container.on("pointerdown" , this.pointerdown ,this);
+        Container.on('pointerup'   , this.pointerup   ,this);
+    }
+    //#endregion
 
-    /** initialize interaction pour les cases */
-    initialize_interactive(c=this.child){
-        c.interactive = true; 
-        c.on('pointerover' , this.pointerover_cases ,this);
-        c.on('pointerout'  , this.pointerout_cases  ,this);
-        c.on("pointerdown"   , this.pointerdown_cases,this);
-        c.on('pointerup'   , this.pointerup_cases   ,this);
-    };
-
-    pointerover_cases (e) {
+    //#region [Interactive]
+    /**@param {PIXI.interaction.InteractionEvent} e */
+    pointerover (e) {
         const ee = e.currentTarget; // this.child.container
         $audio._sounds.BT_A.play("BT_A07").Speed(1.4).Volume(0.2);
         ee.d._filters = [ $systems.PixiFilters.OutlineFilterx4white ];
@@ -97,9 +103,8 @@ class DataObj_Case extends _DataObj_Base{
         }
         this.showXboxInput();
         this.showSelector();
-    };
-    
-    pointerout_cases(e) {
+    }
+    pointerout(e) {
         const ee = e.currentTarget; // this.child.container
         ee.d._filters = null;
         if($combats._started){ //FIXME: probleme en mode combat. Il faut permet ca en  mode `move`, mais pas en mode attack
@@ -111,50 +116,51 @@ class DataObj_Case extends _DataObj_Base{
         this.hideSelector();
     };
     
-    pointerdown_cases(e) {
+    pointerdown(e) {
         const ee = e.currentTarget; // this.child.container
         if(this.__Selector){
             TweenLite.fromTo(this.__Selector.scale3d, 0.4, {x:1.2,y:1.2},{x:1,y:1, ease:Back.easeOut.config(1.7)})
         }
-    };
+    }
 
-    pointerup_cases(e) {
+    pointerup(e) {
         const c = e.currentTarget;
         if($combats._started){ //FIXME: probleme en mode combat. Il faut permet ca en  mode `move`, mais pas en mode attack
             return $combats.selectTarget(this._battlerID);
         }else
-        if(DataObj_Case.SpidersSucces && $gui.Travel.sta>0) {
+        if(_DataObj_Case.SpidersSucces && $gui.Travel.sta>0) {
             // start move path
-            DataObj_Case.ActivePath = DataObj_Case.SpidersSucces.travel.splice($gui.sta); // remove les path selon stamina possible
+            _DataObj_Case.ActivePath = _DataObj_Case.SpidersSucces.travel.splice($gui.sta); // remove les path selon stamina possible
             $players.p0.initialisePath();
             this.playFX_landing();
-            this.pointerout_cases(e);
+            this.pointerout(e);
         };
-    };
+    }
+    //#endregion
 
     /**Affiche le chemin des cases selon les spiders */
     showCasesPath(){
-        if(DataObj_Case.SpidersSucces){
-            const SpidersSucces = DataObj_Case.SpidersSucces;
+        if(_DataObj_Case.SpidersSucces){
+            const SpidersSucces = _DataObj_Case.SpidersSucces;
             const LOCAL = $objs.LOCAL; // getter
             for (let i=0, l=SpidersSucces.travel.length; i<l; i++) {
                 const id = SpidersSucces.travel[i];
                 const dataObj = LOCAL[id];
                 const f = i<$gui.Travel.sta+1? $systems.PixiFilters.OutlineFilterx8Green : $systems.PixiFilters.OutlineFilterx8Red
-                dataObj.child.d.filters = [f];
+                dataObj.p.d.filters = [f];
                 TweenLite.fromTo(f, 0.3, {thickness:0},{thickness:5,ease:Power4.easeOut});
             };
         }
     };
     /**clear chemin des cases spiders */
     clearCasesPath(){
-        if(DataObj_Case.SpidersSucces){
-            DataObj_Case.SpidersSucces.travel.forEach(id => {
+        if(_DataObj_Case.SpidersSucces){
+            _DataObj_Case.SpidersSucces.travel.forEach(id => {
                 const LOCAL = $objs.LOCAL; // getter
                 const dataObj = LOCAL[id];
-                dataObj.child.d.filters = null;
+                dataObj.p.d.filters = null;
             });
-            DataObj_Case.SpidersSucces = null;
+            _DataObj_Case.SpidersSucces = null;
         }
     };
 
@@ -168,7 +174,7 @@ class DataObj_Case extends _DataObj_Base{
         xButton_A.d.anchor.set(0.5);
         xButton_A.n.anchor.set(0.5);
         xButton_A.position.set(0);
-        const value = DataObj_Case.SpidersSucces && `Cost: ${DataObj_Case.SpidersSucces.travel.length}` || `SELECT TARGET`;
+        const value = _DataObj_Case.SpidersSucces && `Cost: ${_DataObj_Case.SpidersSucces.travel.length}` || `SELECT TARGET`;
         const txt_A = new PIXI.Text(value,$systems.styles[0]);
             txt_A.name = 'txt_A';
             txt_A.anchor.set(1,0.5);
@@ -176,7 +182,7 @@ class DataObj_Case extends _DataObj_Base{
             xButton_A.addChild(txt_A);
             xButton_A.euler.x = Math.PI/2;
             xButton_A.position3d.z = -200;
-        this.child.addChild(xButton_A);
+        this.p.addChild(xButton_A);
         this.input = [xButton_A];
     };
     
@@ -184,7 +190,7 @@ class DataObj_Case extends _DataObj_Base{
     hideXboxInput(){
         if(this.input.length){
             this.input.forEach(c => {
-                this.child.removeChild(c);
+                this.p.removeChild(c);
                 c.destroy();
             });
             this.input = [];
@@ -200,7 +206,7 @@ class DataObj_Case extends _DataObj_Base{
         Selector.position3d.y = -65
         Selector.euler.x = -0.15
        // Selector.proj.euler.pitch = 0.2
-        this.child.addChildAt(Selector,0);
+        this.p.addChildAt(Selector,0);
         TweenLite.fromTo(Selector.scale3d, 0.2, {x:0,y:0},{x:1,y:1, ease:Back.easeOut.config(1.7)})
         TweenMax.to(Selector.proj.euler, 4, {z:Math.PI*2, ease:Linear.easeNone, repeat:-1});
         this.__Selector = Selector;
@@ -216,7 +222,7 @@ class DataObj_Case extends _DataObj_Base{
 
     /** lorsque hover une cases, calcul un chemin du player vers la case selectionner */
     initializePathFinding(target){
-        return DataObj_Case.SpidersSucces = this.computePathTo(target); // si on un spider valide
+        return _DataObj_Case.SpidersSucces = this.computePathTo(target); // si on un spider valide
     };
 
     /** calcule chemin cases */
@@ -233,7 +239,7 @@ class DataObj_Case extends _DataObj_Base{
         };
         const LOCAL = $objs.LOCAL; // getter
         const START = $players.p0.inCase._localId+'';
-        const END = target.dataObj._localId+'';
+        const END = target.DataObj._localId+'';
         //# spider: pour chaque direction, le spider ce duplique.
         let Spiders = [new SPIDER(0,START)]; // les spiders vivant
         let SpidersSucces = null; // le premier spider arriver a destination
@@ -283,12 +289,12 @@ class DataObj_Case extends _DataObj_Base{
     playFX_landing(){
         const textureName = "casesHitsG";
         const dataBase = $loader.DATA2.caseFXhit1;
-        const fx = $objs.create(dataBase,'casesHitsG');
-        fx.child.parentGroup = $displayGroup.group[0]
-        fx.child.child.a.anchor.set(0.5);
-        fx.child.child.n.anchor.set(0.5);
-        fx.child.position3d.z = -25;
-        this.child.addChildAt(fx.child,0);
+        const fx = $objs.create(null,dataBase,'casesHitsG');
+        fx.parentGroup = $displayGroup.group[0]
+        fx.a.anchor.set(0.5);
+        fx.n.anchor.set(0.5);
+        fx.position3d.z = -25;
+        this.p.addChildAt(fx,0);
     };
 
     // defenir couleur number ou 'string'
@@ -333,8 +339,8 @@ class DataObj_Case extends _DataObj_Base{
         if(this._visited){
             // malus , retour sur case visited
         }else{
-            const CaseColor  = this.child.child.CaseColor ;
-            const CaseBounty = this.child.child.CaseBounty;
+            const CaseColor  = this.p.child.CaseColor ;
+            const CaseBounty = this.p.child.CaseBounty;
             $audio._sounds.TRA_A.play("TRA_A29");
             $players.p0.s.state.addAnimation(3, "visiteCase", false,0);
             CaseBounty.parentGroup = $displayGroup.group[2];
@@ -435,8 +441,8 @@ class DataObj_Case extends _DataObj_Base{
     /** Passe en mode combat, lorsque un combat est initialiser */
     setCombatMode(value){
         value = value?0:1;
-        this.child.child.CaseColor.alpha = value;
-        this.child.child.CaseBounty.alpha = value;
+        this.p.child.CaseColor.alpha = value;
+        this.p.child.CaseBounty.alpha = value;
     };
 
     /** start event from type*/

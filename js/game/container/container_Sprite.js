@@ -11,14 +11,21 @@
 */
 
 class _Container_Sprite extends _Container_Base {
+    /**
+     *Creates an instance of _Container_Spine.
+     * @param {_DataObj_Base} dataObj
+     * @memberof _Container_Spine
+    */
     constructor(dataObj) {
         super(dataObj);
-    };
+    }
 
-    initialize_base (dataObj=this.dataObj) {
-        const dataBase = dataObj.dataBase;
-        const d = new PIXI.projection.Sprite3d(dataBase.textures[dataObj._textureName]).setName('d');
-        const n = new PIXI.projection.Sprite3d(dataBase.textures_n[dataObj._textureName]).setName('n');
+    //#region [Initialize]
+    initialize_base () {
+        const DataObj=this.DataObj;
+        const dataBase = DataObj.dataBase;
+        const d = new PIXI.projection.Sprite3d(dataBase.textures[DataObj._textureName]).setName('d');
+        const n = new PIXI.projection.Sprite3d(dataBase.textures_n[DataObj._textureName]).setName('n');
         d.parentGroup = PIXI.lights.diffuseGroup;
         n.parentGroup = PIXI.lights.normalGroup;
         d.anchor.set(0.5,1);
@@ -28,10 +35,11 @@ class _Container_Sprite extends _Container_Base {
         // certain type objet on des sprites special et config special, verifier dans les method du dataObj
         //dataObj.on_createBases && dataObj.on_createBases(this); //TODO: CASES
         //dataObj.on_createBases && dataObj.on_createBases(this,dataBase);
-    };
+    }
+    //#endregion
 
     // extend special Base sprites type: cases
-    createBases_case(dataObj=this.dataObj){
+    createBases_case(dataObj=this.DataObj){
         //TODO: VERIFIER SI ON PEUT METTRE DANS  this.Sprites.d plutot
         this._isCase = true; // help fast flags for affine projection
         const dataBase = dataObj.dataBase; // getter

@@ -11,12 +11,20 @@
 // GLOBALFROM $objs CLASS: dataObj_case HERITAGE:dataObj_base
 //└------------------------------------------------------------------------------┘
 /** isometric wall */
-class DataObj_Wall extends _DataObj_Base{
-    constructor(_dataBaseName,_textureName, factory) {
-        super(_dataBaseName,_textureName, factory);
+class _DataObj_Wall extends _DataObj_Base{
+    /**
+     * @param {String} dataBaseName
+     * @param {String} textureName
+     * @param {_Factory} factory
+     */
+    constructor(dataBaseName,textureName,factory) {
+        super(dataBaseName,textureName,factory);
 
     };
-    
+    initialize(){
+        this.initialize_base();
+        this.initialize_interactive()
+    }
     /** from _Container_Base.initialize, initialize des sprites ou extra selon type, si besoin! */
     initialize_base(){
         const dataBase = this.dataBase;
@@ -40,7 +48,7 @@ class DataObj_Wall extends _DataObj_Base{
 
                 
                 
-            this.child.p.addChild(tileW0_L,tileW0_R);
+            this.p.p.addChild(tileW0_L,tileW0_R);
         };
     };
 

@@ -14,17 +14,19 @@ Voir le Stages
 // ┌-----------------------------------------------------------------------------┐
 // GLOBAL $objs CLASS: _objs
 //└------------------------------------------------------------------------------┘
-class _objs{
+class _Objs{
+        /** @type {Array.<_DataObj_Base>} */
+    static DataObjs = []; 
     constructor() {
         /** @type {Array.<_DataObj_Base>} */
         this.GLOBAL = []; // obj global du jeux
-        /**@type {Array.<_DataObj_Base>} */
+        /** @type {Array.<_DataObj_Base>} */
         this.LOCAL = []; // objet local du jeux, dans scene
     };
     /** get list of Global game case */
-    get CASES_G() { return this.GLOBAL.filter(o=>{ return o instanceof DataObj_Case })};
+    get CASES_G() { return this.GLOBAL.filter(o=>{ return o.isCase  })};
     /**get list of Local cases Scene */
-    get CASES_L() { return this.LOCAL.filter(o=>{ return o instanceof DataObj_Case })};
+    get CASES_L() { return this.LOCAL.filter(o=>{ return o.isCase  })};
 
     /** * List des combatModes selon lavancer des turn de combat  & 
     * @typedef {Object} __ContainerDN
@@ -39,7 +41,7 @@ class _objs{
      * @returns {ContainerDN}
     */
     ContainerDN(dataBase,textureName, name = textureName) {
-        if(!dataBase.textures[textureName]){ throw console.error('mauvais dataBase, ne contien pas de texture nommer:',textureName)};
+        if(!dataBase.textures[textureName]){ throw `Fatal error textureName ${textureName}`};
         const c = new PIXI.Container().setName(name);
         const d = c.d = new PIXI.Sprite(dataBase.textures[textureName]);
         const n = c.n = new PIXI.Sprite(dataBase.textures_n[textureName]);
@@ -47,90 +49,131 @@ class _objs{
         n.parentGroup = PIXI.lights.normalGroup;
         c.addChild(d,n);
         return c;
-    };
+    }
 
-    /** Creer un dataObj jeux */
-    create(dataBase,_textureName,type){ //TODO: VOIR SI ON PEUT PASSER UN BOOLEAN A FACTORY POUR dataObj.initializeFactory(factory); , SINON CREATE MANUEL
-        const dataObj = this.getClassDataObj(dataBase._category,dataBase._dataBaseName,_textureName)
-        const container = this.getClassContainer(dataBase._type, dataObj);
+    /**
+     * Creer un Container selon le dataObj 
+     * @param {!_DataObj_Base} [dataObj] //TODO: creer un typeDef jummeler
+     * @param {_DataBase} [dataBase]
+     * @param {String} [textureName]
+     */
+    create(dataObj, dataBase, textureName){
+        if(!dataObj){
+            dataObj = this.dataObjFromDataBase(dataBase, textureName);
+        }
+        //const container = this.create_Container(dataObj.dataBase._type,dataObj);
+        //dataObj.asignFactory(); //TODO: container.asignFactory() PLUTOT ! pourrait avoir des probleme si on ini pas factory avant?: events ...
+        //this.addtoLocalRegister(dataObj);
+        const Container = this.create_Container(dataObj.dataBase, dataObj);
+        return Container;
+    }
+
+    /** Creer un DataObj from  dataBase
+     * @param {_DataBase} dataBase - le dataBase
+     * @param {String} textureName - displayObj[texture name] Spine[skinName] animation[aniName]
+     * @param {String} name - this.name pour child reference
+    */
+    dataObjFromDataBase(dataBase, textureName, name = textureName){ //TODO: VOIR SI ON PEUT PASSER UN BOOLEAN A FACTORY POUR dataObj.initializeFactory(factory); , SINON CREATE MANUEL
+        const dataBaseName = dataBase._dataBaseName;
+        const category = dataBase._category;
+        const dataObj = this.create_DataObj(category,dataBaseName,textureName);
         return dataObj;
-    };
+    }
 
-    /**@returns {_DataObj_Base} creer un container et attche au dataOnj */
-    createFrom(dataObj){
-        const container = this.getClassContainer(dataObj.dataBase._type,dataObj);
-        dataObj.asignFactory(); //TODO: container.asignFactory() PLUTOT ! pourrait avoir des probleme si on ini pas factory avant?: events ...
-        this.addtoLocalRegister(dataObj);
-        return dataObj;
-    };
+    /** creer un dataObj from Factory data
+     * @param {FACTORY} factory
+    */
+    dataObjFromFactory(factory){
+        const dataBaseName = factory.g._dataBaseName.value;
+        const textureName = factory.g._textureName.value;
+        const category = $loader.DATA2[factory.g._dataBaseName.value]._category; 
+        const dataObj = this.create_DataObj(category,dataBaseName,textureName,factory); //(dataBase._category,data.g._dataBaseName.value, data.g._textureName.value, factory);//TODO: a ton vraiment besoin de passer en argument factory
+        /**
+        Probleme ces que factory doi etre just pour les save game ou lediteur
+        Ensuite pour la progression en jeux on map ca sur dataObj
+        les prites pourait etre grarder dans les dataObj, juste besoin de creer une method appeller invalidate=>validate
+        Ce qui detrui les textures detache les texture, et tous autre elements
+         */
+        const container = this.create(dataObj);
 
-    /** creer un dataObj to Global avec un parse data*/
-    createDataObj(data,needRegister){
-        const dataBase = $loader.DATA2[data.g._dataBaseName.value]; // on recupere le dataBase;
-        
-        const factory = Factory.parseFrom(data); //FIXME: NOT WORK fine, on doi parser les data json en factory data pour les methodes
-        const dataObj =this.getClassDataObj(dataBase._category,data.g._dataBaseName.value, data.g._textureName.value, factory);//TODO: a ton vraiment besoin de passer en argument factory
-        dataObj.asignFactory(factory);
+        //factory.assignTo(dataObj);
+        //dataObj.asignFactory(factory);
         this.addToGlobalRegister(dataObj);
        //this.addtoLocalRegister(dataObj, data._localId);
         return dataObj;
-    };
+    }
 
     /** get existed global dataObj and return createFrom */
     createFromId(globalId){
         const dataObj = this.GLOBAL[globalId];
-        return this.createFrom(dataObj);
-    };
+        return this.create(dataObj);
+    }
 
 
-    /** return une class container selon le type de dataBase*/
-    getClassContainer(_type,dataObj){
-        switch (_type) {
-            case _DataBase.TYPE._Container_Sprite: return new _Container_Sprite    (dataObj); break;
-            case _DataBase.TYPE._Container_Spine: return new _Container_Spine     (dataObj); break;
+    
+    /**
+     * Create a Container selon le type dataBase pour les objet jeux
+     *
+     * @param {_DataBase} dataBase
+     * @param {String} textureName
+     * @param {String} name
+     * @returns {(_Container_Sprite|_Container_Spine|_Container_Animation|_Container_Base)} creer une nouvelle class et la return
+     * @memberof _Objs
+     */
+    create_Container(dataBase, dataObj){
+        const type = dataBase._type;
+        switch (type) {
+            case _DataBase.TYPE._Container_Sprite   : return new _Container_Sprite    (dataObj); break;
+            case _DataBase.TYPE._Container_Spine    : return new _Container_Spine     (dataObj); break;
             case _DataBase.TYPE._Container_Animation: return new _Container_Animation (dataObj); break;
-            case _DataBase.TYPE._Container_Base: return new _Container_Base     (dataObj); break;
-            default: throw console.error('quelque chose cloche ici'); break;
+            case _DataBase.TYPE._Container_Base     : return new _Container_Base      (dataObj); break;
+            default: throw "FATAL ERROR TYPE"; break;
         };
-    };
+    }
 
-    /**@returns {_DataObj_Base} creer une nouvelle class et la return*/
-    getClassDataObj(category,dataBaseName,textureName,factory){
+    /**
+     * @param {String} category
+     * @param {String} dataBaseName
+     * @param {String} textureName
+     * @param {FACTORY} factory
+     * @returns {_DataObj_Case|_DataObj_Door} creer une nouvelle class et la return*/
+    create_DataObj(category,dataBaseName,textureName,factory){
         switch (category) {
-            case 'Case'  : return new DataObj_Case    (dataBaseName,textureName, factory) ;break;
-            case 'Door'   : return new DataObj_Door    (dataBaseName,textureName, factory) ;break;
-            case 'chara'  : return new DataObj_Chara   (dataBaseName,textureName, factory) ;break;
-            case 'tree'   : return new DataObj_Tree    (dataBaseName,textureName, factory) ;break;
-            case 'mapItem': return new DataObj_MapItem (dataBaseName,textureName, factory) ;break;
-            case 'Light'  : return new DataObj_Light   (dataBaseName,textureName, factory) ;break;
-            case 'Wall'   : return new DataObj_Wall    (dataBaseName,textureName, factory) ;break;
-            default       : return new _DataObj_Base   (dataBaseName,textureName, factory) ;break;
+            case _DataBase.CATEGORY.Case       : return new _DataObj_Case         (dataBaseName,textureName,factory) ;break;
+            case _DataBase.CATEGORY.Door       : return new _DataObj_Door         (dataBaseName,textureName,factory) ;break;
+            case _DataBase.CATEGORY.Characteres: return new _DataObj_Characteres (dataBaseName,textureName,factory) ;break;
+            case _DataBase.CATEGORY.Trees      : return new _DataObj_Tree         (dataBaseName,textureName,factory) ;break;
+            case _DataBase.CATEGORY.Wall       : return new _DataObj_Wall        (dataBaseName,textureName,factory) ;break;
+            default                            : return new _DataObj_Base        (dataBaseName,textureName,factory) ;break;
         };
-    };
+    }
 
     //#region [rgba(65, 10, 0,0.1)]
     //!REGISTER
     /** Add objet to register */
-    addToGlobalRegister(dataObj,_globalId){
-        if( Number.isFinite(_globalId) ){
-            dataObj._globalId = _globalId;
+    addToGlobalRegister(dataObj){
+        const globalId = dataObj._globalId;
+        if(!Number.isFinite(globalId) || this.GLOBAL[globalId]){
+            throw `Error on register ${globalId}`;
         }
-        if( Number.isFinite(dataObj._globalId) ){
-            this.GLOBAL[dataObj._globalId ] = dataObj;
-            return true;
-        }
-        throw console.error('cant add register',dataObj,_globalId);
-    };
+        this.GLOBAL[globalId] = dataObj;
+    }
 
     /** ajoute au local register de la scene */
     addtoLocalRegister(dataObj,_localId){
         if( Number.isFinite(_localId) ){
+            if(this.LOCAL[_localId]){
+                throw `FATAL Error _localId alrealy exist!: ${_localId}`
+            }
             dataObj._localId = _localId;
         }
         if(Number.isInteger(dataObj._localId)){
+            if(this.LOCAL[dataObj._localId]){
+                throw `FATAL Error _localId alrealy exist!: ${dataObj._localId}`
+            }
             this.LOCAL[dataObj._localId] = dataObj;
         };
-    };
+    }
     //endregion
 
      //#region [rgba(10, 50, 0,0.1)]
@@ -148,11 +191,14 @@ class _objs{
             let _sheets     = sceneData._sheets     ;
             if(_objs){
                 for (let i=0, l=_objs.length; i<l; i++) {
-                    const e = this.createDataObj(_objs[i]);
+                    console.log('i: ', i);
+                    const data = _objs[i];
+                    const factory = _Factory.parseFrom(data);
+                    const e = this.dataObjFromFactory(factory);
                 };
             };
        };
-    };
+    }
 
     /** Apply randomizore on objts game */
     initialize_newGame(options){
@@ -169,7 +215,7 @@ class _objs{
                 //dataObj._bountyData = [$monsters.generate(0),$monsters.generate(0),$monsters.generate(1),$monsters.generate(2),$monsters.generate(3),$monsters.generate(0)];//todo: ajouter indicateur de dificultet pour heviter trop de monstre puissant ?
             }
         });
-    };
+    }
 
     /** clear les objet pendant un changement scene */
     clear(){
@@ -184,5 +230,5 @@ class _objs{
 
 };// END CLASS
 /** objetManager */
-let $objs = new _objs();
+let $objs = new _Objs();
 console.log1('$objs: ', $objs);

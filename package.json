@@ -13,9 +13,9 @@
     "pixi-filters": "^2.7.1",
     "pixi-layers": "^0.2.2",
     "pixi-lights": "^2.0.3",
+    "pixi-spine": "^1.5.21",
     "pixi-projection": "^0.2.8",
     "pixi-sound": "^3.0.3",
-    "pixi-spine": "~1.5.7",
     "pixi.js": "^4.8.7",
     "recursive-readdir": "^2.2.2"
   },

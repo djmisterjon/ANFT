@@ -14,7 +14,7 @@ PIXI.DisplayObject.prototype.setZero = function setZero() {
     return this;
 };
 
-PIXI.ObservablePoint.prototype.setZero = function setZero(x,y,z) {
+PIXI.ObservablePoint.prototype.setZero = function setZero(x,y,z=1) {
     arguments.length && this.set(...arguments);
     Object.defineProperty(this, 'zero', { enumerable:false, value: this.clone() });
     return this;

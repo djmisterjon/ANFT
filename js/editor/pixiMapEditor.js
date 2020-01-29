@@ -47,16 +47,16 @@ class _PME extends _PME_TOAST {
         $objs.LOCAL.forEach(dataObj=>{
             dataObj.remove_interaction && dataObj.remove_interaction(); // remove les interaction du jeux
             dataObj.asignFactory(); // reasign le factory par default;
-            dataObj.child.renderable = true; // car culling peut les avoir disable
-            dataObj.child.visible = true;// car culling peut les avoir disable
+            dataObj.p.renderable = true; // car culling peut les avoir disable
+            dataObj.p.visible = true;// car culling peut les avoir disable
             this.create_debug(dataObj);
-            dataObj.child.interactive = true;
-            dataObj.child.on('pointermove'      , this.pointermove_sprite      , this);
-            dataObj.child.on('pointerover'      , this.pointerover_sprite      , this);
-            dataObj.child.on('pointerout'       , this.pointerout_sprite       , this);
-            dataObj.child.on('pointerdown'      , this.pointerdown_sprite      , this);
-            dataObj.child.on('pointerup'        , this.pointerup_sprite        , this);
-            dataObj.child.on('pointerupoutside' , this.pointerupoutside_sprite , this);
+            dataObj.p.interactive = true;
+            dataObj.p.on('pointermove'      , this.pointermove_sprite      , this);
+            dataObj.p.on('pointerover'      , this.pointerover_sprite      , this);
+            dataObj.p.on('pointerout'       , this.pointerout_sprite       , this);
+            dataObj.p.on('pointerdown'      , this.pointerdown_sprite      , this);
+            dataObj.p.on('pointerup'        , this.pointerup_sprite        , this);
+            dataObj.p.on('pointerupoutside' , this.pointerupoutside_sprite , this);
             this.update_debug(dataObj)
         })
     };
@@ -545,7 +545,7 @@ class _PME extends _PME_TOAST {
         if(cRight){
             return this.showTilesLibs(ee); // will close tiles
         }
-        const dataObj = $objs.createFrom(ee.dataObj.clone(true));
+        const dataObj = $objs.create(ee.dataObj.clone(true));
         dataObj.asignFactory(ee.dataObj.factory);
         $objs.addToGlobalRegister(dataObj,$objs.GLOBAL.findEmptyIndex());
         $objs.addtoLocalRegister (dataObj,$objs.LOCAL .findEmptyIndex());
@@ -590,7 +590,7 @@ class _PME extends _PME_TOAST {
         if(isInMouse){
             if(cLeft){ // <== 
                 this.remove_toMouse(ee.dataObj);
-                const dataObj = $objs.createFrom(ee.dataObj.clone(true));
+                const dataObj = $objs.create(ee.dataObj.clone(true));
                 dataObj.asignFactory(ee.dataObj.factory);
                 $objs.addToGlobalRegister(dataObj,$objs.GLOBAL.findEmptyIndex());
                 $objs.addtoLocalRegister (dataObj,$objs.LOCAL .findEmptyIndex());
@@ -777,9 +777,9 @@ class _PME extends _PME_TOAST {
             this._debugMode = !this._debugMode
         }
         $objs.LOCAL.forEach(c => {
-            if(c && c.child.Debug){
-                c.child.Debug.bg && (c.child.Debug.bg.renderable = this._debugMode)
-                c.child.Debug.piv && (c.child.Debug.piv.renderable = this._debugMode)
+            if(c && c.p.Debug){
+                c.p.Debug.bg && (c.p.Debug.bg.renderable = this._debugMode)
+                c.p.Debug.piv && (c.p.Debug.piv.renderable = this._debugMode)
             }
         });
     };
@@ -902,13 +902,13 @@ class _PME extends _PME_TOAST {
             dataObj.initializeFactory();
             this.create_debug(dataObj);
             this.activeNormals(dataObj,null);
-            list.push(dataObj.child);
+            list.push(dataObj.link);
             // interactions
-            dataObj.child.interactive = true;
+            dataObj.link.interactive = true;
             //dataObj.child.on('pointerdown', this.pDW_Library_tile_mask , this);
-            dataObj.child.on('pointerover', this.pointerover_tile , this);
-            dataObj.child.on('pointerout' , this.pointerout_tile, this);
-            dataObj.child.on('pointerup'  , this.pointerup_tile , this);
+            dataObj.link.on('pointerover', this.pointerover_tile , this);
+            dataObj.link.on('pointerout' , this.pointerout_tile, this);
+            dataObj.link.on('pointerup'  , this.pointerup_tile , this);
             //dataObj.child.on('mousewheel'     , this.pWEEL_Library_tile_mask , this);
         });
         this.computeTilesPosition(list);
@@ -1086,10 +1086,10 @@ class _PME extends _PME_TOAST {
             ee.slot.color.set(1,1,0.1,1); // (r, g, b, a)
             ee.scale.set(1.5,-1.5);
             $objs.LOCAL.forEach(dataObj => {
-                const isCase = dataObj instanceof DataObj_Case;
-                dataObj.child.interactive = isCase;
-                dataObj.child.d && (dataObj.child.d.renderable = isCase);
-                dataObj.child.s && (dataObj.child.s.renderable = isCase);
+                const isCase = dataObj instanceof _DataObj_Case;
+                dataObj.p.interactive = isCase;
+                dataObj.p.d && (dataObj.p.d.renderable = isCase);
+                dataObj.p.s && (dataObj.p.s.renderable = isCase);
             });
             this.refreshPath();
         }else{
@@ -1117,13 +1117,13 @@ class _PME extends _PME_TOAST {
         let BufferTxtDist = []; // buffer pour ecrire txt dist 1 seul foi
         CASES_L.forEach(dataObj => {
             // reset
-            dataObj.child.Debug.path.removeChildren();
-            dataObj.child.Debug.path.graficConection = [];
-            dataObj.child.Debug.path.texts = [];
+            dataObj.p.Debug.path.removeChildren();
+            dataObj.p.Debug.path.graficConection = [];
+            dataObj.p.Debug.path.texts = [];
             if(this._pathMode){
                 // dra local and global id.
                 const txtGL = new PIXI.Text(`G:${dataObj._globalId}\nL:${dataObj._localId}`,{fontSize:32,fill:0xffffff,strokeThickness:4,stroke:0x000000});
-                dataObj.child.Debug.path.addChild(txtGL);
+                dataObj.p.Debug.path.addChild(txtGL);
                 
                 Object.keys(dataObj.pathConnexion).forEach(id => { // connextion id to sprite ID
                     const dist = dataObj.pathConnexion[id];
@@ -1132,18 +1132,18 @@ class _PME extends _PME_TOAST {
                     .moveTo(0,0).bezierCurveTo(0, 70, dist, 70, dist, 0)//.lineTo(dist.d, 0)
                     .endFill();
                     const lineSprite = new PIXI.projection.Sprite3d ( $app.renderer.generateTexture( line,1,2 ) );
-                        lineSprite.rotation = this.getDistanceFrom(dataObj.child,LOCAL[id].child).a; //!
+                        lineSprite.rotation = this.getDistanceFrom(dataObj.p,LOCAL[id].child).a; //!
                         lineSprite.euler.x = -Math.PI/2;
-                        lineSprite.scale3d.set(~~1/dataObj.child.scale3d.x);
+                        lineSprite.scale3d.set(~~1/dataObj.p.scale3d.x);
                         if(!BufferTxtDist.contains(Math.abs(dist))){
                             BufferTxtDist.push(Math.abs(dist));
                             const txt = new PIXI.Text(`Dist: ~${~~dist}`,{fill:"white"});
-                            const reverseX = dataObj.child.position3d.x>LOCAL[id].child.position3d.x? -0.4:0.4;
+                            const reverseX = dataObj.p.position3d.x>LOCAL[id].child.position3d.x? -0.4:0.4;
                             txt.anchor.set(0.5);
                             txt.scale.set(reverseX,-0.4);
                             txt.position.set(dist/2,50);
                             lineSprite.addChild(txt)
-                            dataObj.child.Debug.path.addChild(lineSprite);
+                            dataObj.p.Debug.path.addChild(lineSprite);
                         }
          
                 });
@@ -1263,7 +1263,7 @@ class _PME extends _PME_TOAST {
     /** clear la scene map et tous objet */
     clearScene(){
         $objs.LOCAL.forEach(obj=>{
-            obj && $stage.scene.removeChild(obj.child);
+            obj && $stage.scene.removeChild(obj.p);
             $objs.LOCAL[obj._localId] = null;
             $objs.GLOBAL[obj._globalId] = null;
         });

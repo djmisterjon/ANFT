@@ -14,16 +14,24 @@ Voir le Stages
 // ┌-----------------------------------------------------------------------------┐
 // GLOBAL $objs CLASS: _objs
 //└------------------------------------------------------------------------------┘
-class DataObj_Door extends _DataObj_Base{
-    constructor(_dataBaseName,_textureName, factory) {
-       super(_dataBaseName,_textureName, factory);
+class _DataObj_Door extends _DataObj_Base {
+    /**
+     * @param {String} dataBaseName
+     * @param {String} textureName
+     * @param {_Factory} factory
+     */
+    constructor(dataBaseName,textureName,factory) {
+       super(dataBaseName,textureName,factory);
         /** type du DataObj */
-        this._type = _DataObj_Base.TYPE.door;
+        this._type = _DataBase.CATEGORY.Door;
         /** Idcase du transfer */
         this._transfer = Infinity;
-    };
-
-
+    }
+    //#region [Initialize]
+    initialize(){
+        this.initialize_base();
+        this.initialize_interactive()
+    }
     /** from _Container_Base.initialize, initialize des sprites ou extra selon type, si besoin! */
     initialize_base(){ //TODO: ENVOYER DANS _Container_Base ?
         const dataBase = this.dataBase;
@@ -34,8 +42,18 @@ class DataObj_Door extends _DataObj_Base{
             Door.d.anchor.set(1);
             Door.n.anchor.set(1);
             Door.position3d.set(Door.d.width/2,-25,1)
-        this.child.addChild(Door);
-    };
+        this.p.addChild(Door);
+    }
+    /** Interaction de base qui peuvent appeller les super interaction*/
+    initialize_interactive(){
+        const Container = this.p;
+        Container.interactive = true; 
+        Container.on('pointerover' , this.pointerover ,this);
+        Container.on('pointerout'  , this.pointerout  ,this);
+        Container.on("pointerdown" , this.pointerdown ,this);
+        Container.on('pointerup'   , this.pointerup   ,this);
+    }
+    //#endregion
 
     //#region [Interactive]
     /** @param {PIXI.interaction.InteractionEvent} e 
@@ -43,17 +61,17 @@ class DataObj_Door extends _DataObj_Base{
     */
     pointerover_fromIdentificator(e,ObjsIdentificator){
         
-    };
+    }
 
     /** @param {PIXI.interaction.InteractionEvent} e 
       * @param {_ObjsIdentificator} ObjsIdentificator
     */
     pointerout_fromIdentificator(e,ObjsIdentificator){
         this._doorOpen = false;
-        const display = this.child;
+        const display = this.p;
         const Door =  display.child.Door
         gsap.to(Door.euler, 0.3,{y:0, ease:Elastic.easeOut.config(1, 0.9) });
-    };
+    }
 
     /** @param {PIXI.interaction.InteractionEvent} e 
       * @param {_ObjsIdentificator} ObjsIdentificator
@@ -64,14 +82,12 @@ class DataObj_Door extends _DataObj_Base{
             ObjsIdentificator.Destroy();
             $stage.goto('Scene_Map1')
         }else{
-            const display = this.child;
+            const display = this.p;
             const Door =  display.child.Door
             gsap.to(Door.euler, 1,{y:-Math.PI/1.2, ease:Elastic.easeOut.config(1, 0.9) });
         }
         this._doorOpen = true;
-    };
-
-
+    }
     //#endregion
 
 
