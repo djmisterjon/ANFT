@@ -31,7 +31,7 @@ class _PME extends _PME_TOAST {
     /** initialise l'editeur */
     initialize(){
         $stage.scene.interactiveChildren = true;
-        $gui.hideAll();
+        $gui.setRendering(false);
         (async () => {
             await this.load_Editor();
             await this.load_libs  ();
@@ -590,7 +590,7 @@ class _PME extends _PME_TOAST {
         if(isInMouse){
             if(cLeft){ // <== 
                 this.remove_toMouse(ee.dataObj);
-                const dataObj = $objs.create(ee.dataObj.clone(true));
+                const dataObj = $objs.create(null, ee.dataObj.clone(true));
                 dataObj.asignFactory(ee.dataObj.factory);
                 $objs.addToGlobalRegister(dataObj,$objs.GLOBAL.findEmptyIndex());
                 $objs.addtoLocalRegister (dataObj,$objs.LOCAL .findEmptyIndex());
@@ -681,8 +681,9 @@ class _PME extends _PME_TOAST {
 
     };
 
+    /**@param {_DataObj_Base} dataObj*/
     create_debug(dataObj){
-        const C = dataObj.child;
+        const C = dataObj.p;
         const [W,H] = [C.width,C.height];
         function drawRec(x, y, w, h, c, a, r, l_c_a) {
             const rec = new PIXI.Graphics();
@@ -803,7 +804,7 @@ class _PME extends _PME_TOAST {
         return console.log('update_fastMode: ', 'TODO:');
         // compute diff
         //const diff = new PIXI.Point(($mouse.x-this.FASTMODES.freeze.x), ($mouse.y-this.FASTMODES.freeze.y));
-        const C = dataObj.child;
+        const C = dataObj.p;
         switch (this.FASTMODES._mode) { // ["p","y","w","s","r","u"]
             case "p": // pivot from position"
                 cage.pivot.set(this.FASTMODES.zero.pivot.x-diff.x, this.FASTMODES.zero.pivot.y-diff.y);
@@ -897,19 +898,19 @@ class _PME extends _PME_TOAST {
         const list = [];
         const textures = dataBase.textures? Object.keys(dataBase.textures) : dataBase.data.skins.map(s=>s.name);
         textures.forEach(textureName => {
-            const dataObj = $objs.create(dataBase,textureName); //$objs.newContainer_dataBase(dataBase,textureName,true);
-            //dataObj.child.parentGroup = $displayGroup.group[1]; //TODO: linker au mode global de l'editeur
+            const dataObj = $objs.create(null,dataBase,textureName); //$objs.newContainer_dataBase(dataBase,textureName,true);
+            //dataObj.p.parentGroup = $displayGroup.group[1]; //TODO: linker au mode global de l'editeur
             dataObj.initializeFactory();
             this.create_debug(dataObj);
             this.activeNormals(dataObj,null);
             list.push(dataObj.link);
             // interactions
             dataObj.link.interactive = true;
-            //dataObj.child.on('pointerdown', this.pDW_Library_tile_mask , this);
+            //dataObj.p.on('pointerdown', this.pDW_Library_tile_mask , this);
             dataObj.link.on('pointerover', this.pointerover_tile , this);
             dataObj.link.on('pointerout' , this.pointerout_tile, this);
             dataObj.link.on('pointerup'  , this.pointerup_tile , this);
-            //dataObj.child.on('mousewheel'     , this.pWEEL_Library_tile_mask , this);
+            //dataObj.p.on('mousewheel'     , this.pWEEL_Library_tile_mask , this);
         });
         this.computeTilesPosition(list);
     };
@@ -941,30 +942,30 @@ class _PME extends _PME_TOAST {
         //!dataObj.factory && dataObj.initializeFactory();
         this.create_debug(dataObj);
         //this.create_Debug(_dataObj);
-        dataObj.child.interactive = true;
-        dataObj.child.on('pointermove'      , this.pointermove_sprite      , this);
-        dataObj.child.on('pointerover'      , this.pointerover_sprite      , this);
-        dataObj.child.on('pointerout'       , this.pointerout_sprite       , this);
-        dataObj.child.on('pointerdown'      , this.pointerdown_sprite      , this);
-        dataObj.child.on('pointerup'        , this.pointerup_sprite        , this);
-        dataObj.child.on('pointerupoutside' , this.pointerupoutside_sprite , this);
-        $stage.scene.addChild(dataObj.child);
+        dataObj.p.interactive = true;
+        dataObj.p.on('pointermove'      , this.pointermove_sprite      , this);
+        dataObj.p.on('pointerover'      , this.pointerover_sprite      , this);
+        dataObj.p.on('pointerout'       , this.pointerout_sprite       , this);
+        dataObj.p.on('pointerdown'      , this.pointerdown_sprite      , this);
+        dataObj.p.on('pointerup'        , this.pointerup_sprite        , this);
+        dataObj.p.on('pointerupoutside' , this.pointerupoutside_sprite , this);
+        $stage.scene.addChild(dataObj.p);
         // set positon to mouse
         let pos = this.interaction.mouse.getLocalPosition($stage.scene.Background, new PIXI.Point(), this.interaction.mouse.global);
-        dataObj.child.position3d.set(pos.x,0,-pos.y);
+        dataObj.p.position3d.set(pos.x,0,-pos.y);
         return dataObj;
     };
 
     /** ajoute un dataObj a la sourie */
     add_toMouse(dataObj,protectRigtClickhDelete){ // attache to mouse update
         this.protectRigtClickhDelete = !!protectRigtClickhDelete;
-        this.setObjsInteractive(false,dataObj.child);
+        this.setObjsInteractive(false,dataObj.p);
         this.hideEditor();
        
         Inspectors.DataObj(dataObj)
         this.enlargeHitZone(dataObj);
         this.inMouse = dataObj;
-        dataObj.child.parentGroup = $displayGroup.group[1]; // DELETEME:
+        dataObj.p.parentGroup = $displayGroup.group[1]; // DELETEME:
         this.update_debug(dataObj);
        //if(this.remove_toMouse(this.inMouse) && ignor){ return };
        //this.setObjsInteractive(false);
@@ -975,7 +976,7 @@ class _PME extends _PME_TOAST {
         
         
         //force current sprite inMouse interactivity
-        //dataObj.child.interactive = true;
+        //dataObj.p.interactive = true;
     };
     remove_toMouse(dataObj,doFactory){ // detach from mouse
         this.inMouse = null;
@@ -1005,20 +1006,20 @@ class _PME extends _PME_TOAST {
        //cage.Debug.hitZone.clear();
        //cage.Debug.hitZone.lineStyle(2, 0xff0000, 1).drawRect(LB.x, LB.y, LB.width, LB.height);
         if(remove){
-            dataObj.child.hitArea = null;
-            dataObj.child.removeChild(dataObj.child.Debug.hitArea);
-            delete dataObj.child.Debug.hitArea;
+            dataObj.p.hitArea = null;
+            dataObj.p.removeChild(dataObj.p.Debug.hitArea);
+            delete dataObj.p.Debug.hitArea;
             //cage.hitArea = null;
         }else{
-            const LB = dataObj.child.getLocalBounds();
+            const LB = dataObj.p.getLocalBounds();
             LB.pad(1920,1080);
-            dataObj.child.hitArea = LB;
+            dataObj.p.hitArea = LB;
             //TODO: METRE DANS DEBUG
-            const hitZone = dataObj.child.Debug.hitArea = new PIXI.Graphics();
+            const hitZone = dataObj.p.Debug.hitArea = new PIXI.Graphics();
             hitZone.name = "debug-hitZone";
             hitZone.lineStyle(3, 0xffffff, 1).drawRect(LB.x, LB.y, LB.width, LB.height);
             hitZone.endFill();
-            dataObj.child.addChild(hitZone);
+            dataObj.p.addChild(hitZone);
         }
     };
 
@@ -1098,9 +1099,9 @@ class _PME extends _PME_TOAST {
             ee.slot.color.set(1,1,1,1); // (r, g, b, a)
             ee.scale.set(1,-1);
             $objs.LOCAL.forEach(dataObj => {
-                dataObj.child.interactive = true;
-                dataObj.child.d && (dataObj.child.d.renderable = true);
-                dataObj.child.s && (dataObj.child.s.renderable = true);
+                dataObj.p.interactive = true;
+                dataObj.p.d && (dataObj.p.d.renderable = true);
+                dataObj.p.s && (dataObj.p.s.renderable = true);
             });
             /** on recrit le factory des cases pour update path */
             $objs.CASES_L.forEach(dataObj=>{
@@ -1158,7 +1159,7 @@ class _PME extends _PME_TOAST {
             this.pathBuffer.push(dataObj);
             // create debug number
             const txt = new PIXI.Text(this.pathBuffer.length,{fontSize:42,fill:0xff0000,strokeThickness:8,stroke:0x000000});
-            dataObj.child.Debug.path.addChild(txt);
+            dataObj.p.Debug.path.addChild(txt);
         };
     };
     
@@ -1237,26 +1238,26 @@ class _PME extends _PME_TOAST {
     };
 
     update_debug(dataObj){
-       //dataObj.child.Debug.piv.pivot3d.x = -dataObj.child.pivot3d.x;
-       //dataObj.child.Debug.piv.pivot3d.y = -dataObj.child.pivot3d.y;
-       //dataObj.child.Debug.piv.pivot3d.z = -dataObj.child.pivot3d.z;
-        dataObj.child.Debug.piv.position3d.copy(dataObj.child.pivot3d);
-       // dataObj.child.Debug.bg.position3d.copy(dataObj.child.pivot3d);
+       //dataObj.p.Debug.piv.pivot3d.x = -dataObj.p.pivot3d.x;
+       //dataObj.p.Debug.piv.pivot3d.y = -dataObj.p.pivot3d.y;
+       //dataObj.p.Debug.piv.pivot3d.z = -dataObj.p.pivot3d.z;
+        dataObj.p.Debug.piv.position3d.copy(dataObj.p.pivot3d);
+       // dataObj.p.Debug.bg.position3d.copy(dataObj.p.pivot3d);
         
     };
 
     /** disable normal dun dataObj, car dans libs on veut pas de normal */
     activeNormals(dataObj,value){
         if(dataObj.dataBase.isSpineSheets){
-            const slots = dataObj.child.s.hackAttachmentGroups("_n",value&&PIXI.lights.normalGroup, value&&PIXI.lights.diffuseGroup);
+            const slots = dataObj.p.s.hackAttachmentGroups("_n",value&&PIXI.lights.normalGroup, value&&PIXI.lights.diffuseGroup);
             slots[1].forEach(s=>{
                 s.renderable = false;
             })
         }
         if(dataObj.dataBase.isSpriteSheets){
-            dataObj.child.d.parentGroup = value&&PIXI.lights.diffuseGroup;
-            dataObj.child.n.parentGroup = value&&PIXI.lights.normalGroup;
-            dataObj.child.n.renderable = value;
+            dataObj.p.d.parentGroup = value&&PIXI.lights.diffuseGroup;
+            dataObj.p.n.parentGroup = value&&PIXI.lights.normalGroup;
+            dataObj.p.n.renderable = value;
         }
 
     };

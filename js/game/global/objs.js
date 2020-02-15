@@ -22,11 +22,58 @@ class _Objs{
         this.GLOBAL = []; // obj global du jeux
         /** @type {Array.<_DataObj_Base>} */
         this.LOCAL = []; // objet local du jeux, dans scene
+        /** @type {Array.<_DataObj_Case>} */
+        this.CASES_G = []; // case global en jeux
+        /** @type {Array.<_DataObj_Case>} */
+        this.CASES_L = []; // case local en jeux
     };
-    /** get list of Global game case */
-    get CASES_G() { return this.GLOBAL.filter(o=>{ return o.isCase  })};
-    /**get list of Local cases Scene */
-    get CASES_L() { return this.LOCAL.filter(o=>{ return o.isCase  })};
+    //#region [GetterSetter]
+    /** @returns {Array.<_DataObj_Case>} - get list of Global game case */
+    //get CASES_G() { return this.GLOBAL.filter(o=>{ return o.isCase  })};
+    /** @returns {Array.<_DataObj_Case>} - get list of LocalScene game case */
+    //get CASES_L() { return this.LOCAL.filter(o=>{ return o.isCase  })};
+    //#endregion
+
+    //#region [Initialize]
+     /** SceneBoot preConstruits Tous les dataObj parse du loader, dans le jeux tous est OBJS */ 
+     initialize(){
+        //# Creer tous les dataBase
+       // const dataScenes = [].concat(...Object.keys($loader.DATA.scene).filter(sceneName => sceneName.contains('Scene_Map')).map(n=>$loader.DATA.scene[n]._objs));
+       const scenesNames = Object.keys($loader.DATA.scene);
+       for (let i=0, l=scenesNames.length; i<l; i++) {
+            const sceneName = scenesNames[i];
+            const sceneData = $loader.DATA.scene[sceneName];
+            let _background = sceneData._background ;
+            let _objs       = sceneData._objs       ;
+            let _lights     = sceneData._lights     ;
+            let _sheets     = sceneData._sheets     ;
+            if(_objs){
+                for (let i=0, l=_objs.length; i<l; i++) {
+                    const data = _objs[i];
+                    const factory = _Factory.parseFrom(data);
+                    const e = this.dataObjFromFactory(factory);
+                };
+            };
+       };
+    }
+
+    /** Apply randomizore on objts game */
+    initialize_newGame(options){
+        const cases = this.CASES_G.filter(c=>c._randomAllowed); // get only cases allowed to randomize
+        //! TODO: generate random cases propreties : from map influence, planet,galaxi, need ref id inside dataObj
+        const colors = $systems.colorsSystem.keys;
+        const bounty = $systems.gameBounties.passive;
+        cases.forEach((dataObj,i) => {
+            //# _color
+            dataObj._color = dataObj.color || colors[~~(Math.random()*colors.length)];
+            //# _bounty
+            dataObj._bounty = dataObj.bounty || bounty[1] // bounty[~~(Math.random()*bounty.length)];//DELETEME: HACK DEBUG:
+            if(dataObj._bounty === 'caseEvent_monsters'){ //TODO: CREER UN POOL DE BOUNTY DATA
+                //dataObj._bountyData = [$monsters.generate(0),$monsters.generate(0),$monsters.generate(1),$monsters.generate(2),$monsters.generate(3),$monsters.generate(0)];//todo: ajouter indicateur de dificultet pour heviter trop de monstre puissant ?
+            }
+        });
+    }
+    //#endregion
 
     /** * List des combatModes selon lavancer des turn de combat  & 
     * @typedef {Object} __ContainerDN
@@ -56,8 +103,9 @@ class _Objs{
      * @param {!_DataObj_Base} [dataObj] //TODO: creer un typeDef jummeler
      * @param {_DataBase} [dataBase]
      * @param {String} [textureName]
+     * @param {boolean} [skipDataBase]
      */
-    create(dataObj, dataBase, textureName){
+    create(dataObj, dataBase, textureName, skipDataBase=false){
         if(!dataObj){
             dataObj = this.dataObjFromDataBase(dataBase, textureName);
         }
@@ -65,6 +113,8 @@ class _Objs{
         //dataObj.asignFactory(); //TODO: container.asignFactory() PLUTOT ! pourrait avoir des probleme si on ini pas factory avant?: events ...
         //this.addtoLocalRegister(dataObj);
         const Container = this.create_Container(dataObj.dataBase, dataObj);
+        Container.initialize(skipDataBase);
+        dataObj.asignFactory();
         return Container;
     }
 
@@ -88,6 +138,7 @@ class _Objs{
         const textureName = factory.g._textureName.value;
         const category = $loader.DATA2[factory.g._dataBaseName.value]._category; 
         const dataObj = this.create_DataObj(category,dataBaseName,textureName,factory); //(dataBase._category,data.g._dataBaseName.value, data.g._textureName.value, factory);//TODO: a ton vraiment besoin de passer en argument factory
+        if(dataObj.isCase){return console.log1('case not create for debug delete me');}
         /**
         Probleme ces que factory doi etre just pour les save game ou lediteur
         Ensuite pour la progression en jeux on map ca sur dataObj
@@ -152,70 +203,33 @@ class _Objs{
     //!REGISTER
     /** Add objet to register */
     addToGlobalRegister(dataObj){
-        const globalId = dataObj._globalId;
-        if(!Number.isFinite(globalId) || this.GLOBAL[globalId]){
-            throw `Error on register ${globalId}`;
+        if(Number.isFinite(dataObj._globalId)){
+            this.GLOBAL[dataObj._globalId] = dataObj;
+            if(dataObj.isCase){
+                this.CASES_G[dataObj._globalCaseId] = dataObj;
+            }
+        }else{
+            throw `FATAL Error corrupt GlobalID not number ${dataObj._globalId}`
         }
-        this.GLOBAL[globalId] = dataObj;
     }
 
     /** ajoute au local register de la scene */
-    addtoLocalRegister(dataObj,_localId){
-        if( Number.isFinite(_localId) ){
-            if(this.LOCAL[_localId]){
-                throw `FATAL Error _localId alrealy exist!: ${_localId}`
-            }
-            dataObj._localId = _localId;
-        }
-        if(Number.isInteger(dataObj._localId)){
-            if(this.LOCAL[dataObj._localId]){
-                throw `FATAL Error _localId alrealy exist!: ${dataObj._localId}`
-            }
+    addtoLocalRegister(dataObj){
+        if(Number.isFinite(dataObj._localId)){
             this.LOCAL[dataObj._localId] = dataObj;
-        };
+            if(dataObj.isCase){
+                this.CASES_L[dataObj._localCaseId] = dataObj;
+            }
+        }else{
+            throw `FATAL Error corrupt GlobalID not number ${dataObj._localId}`
+        }
+    }
+    /** suprim du register un dataObj*/
+    removeFromRegister(dataObj){
+        this.GLOBAL[dataObj._globalId] && this.GLOBAL.splice(dataObj._globalId,1, void 0);
+        this.LOCAL[dataObj._localId] && this.LOCAL.splice(dataObj._localId,1, void 0);
     }
     //endregion
-
-     //#region [rgba(10, 50, 0,0.1)]
-     /** SceneBoot preConstruits Tous les dataObj parse du loader, dans le jeux tous est OBJS */ 
-    initialize(){
-        //# Creer tous les dataBase
-       // const dataScenes = [].concat(...Object.keys($loader.DATA.scene).filter(sceneName => sceneName.contains('Scene_Map')).map(n=>$loader.DATA.scene[n]._objs));
-       const scenesNames = Object.keys($loader.DATA.scene);
-       for (let i=0, l=scenesNames.length; i<l; i++) {
-            const sceneName = scenesNames[i];
-            const sceneData = $loader.DATA.scene[sceneName];
-            let _background = sceneData._background ;
-            let _objs       = sceneData._objs       ;
-            let _lights     = sceneData._lights     ;
-            let _sheets     = sceneData._sheets     ;
-            if(_objs){
-                for (let i=0, l=_objs.length; i<l; i++) {
-                    console.log('i: ', i);
-                    const data = _objs[i];
-                    const factory = _Factory.parseFrom(data);
-                    const e = this.dataObjFromFactory(factory);
-                };
-            };
-       };
-    }
-
-    /** Apply randomizore on objts game */
-    initialize_newGame(options){
-        const cases = this.CASES_G.filter(c=>c._randomAllowed); // get only cases allowed to randomize
-        //! TODO: generate random cases propreties : from map influence, planet,galaxi, need ref id inside dataObj
-        const colors = $systems.colorsSystem.keys;
-        const bounty = $systems.gameBounties.passive;
-        cases.forEach((dataObj,i) => {
-            //# _color
-            dataObj._color = dataObj.color || colors[~~(Math.random()*colors.length)];
-            //# _bounty
-            dataObj._bounty = dataObj.bounty || bounty[1] // bounty[~~(Math.random()*bounty.length)];//DELETEME: HACK DEBUG:
-            if(dataObj._bounty === 'caseEvent_monsters'){ //TODO: CREER UN POOL DE BOUNTY DATA
-                //dataObj._bountyData = [$monsters.generate(0),$monsters.generate(0),$monsters.generate(1),$monsters.generate(2),$monsters.generate(3),$monsters.generate(0)];//todo: ajouter indicateur de dificultet pour heviter trop de monstre puissant ?
-            }
-        });
-    }
 
     /** clear les objet pendant un changement scene */
     clear(){
@@ -225,10 +239,11 @@ class _Objs{
        //    o.child = null;
        //};
         this.LOCAL = [];
+        this.CASES_L = [];
     };
-    //endregion
 
 };// END CLASS
+
 /** objetManager */
 let $objs = new _Objs();
 console.log1('$objs: ', $objs);

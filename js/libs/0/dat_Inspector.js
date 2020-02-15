@@ -84,6 +84,19 @@ class Inspectors {
     };
     //#endregion
 
+    //#region [Static]
+    /** Inspect un simple Obj pour Debug (genre options)
+     * @param {object} Obj
+     */
+    static Objects(Obj,name=Math.random().toFixed(3)){
+        const gui = new Inspectors(name);
+        const f1 = gui.addFolder('OPTIONS').listen().slider();
+        Object.keys(Obj).forEach(key=>{
+            f1.add(Obj, key );
+        })
+        return gui;
+    };
+
  //#region [Static]
  /** Inspect un display Obj pour Debug 
   * @param {PIXI.DisplayObject} DisplayObj
@@ -95,18 +108,18 @@ class Inspectors {
         DisplayObj.position && f1.add(DisplayObj, "position",['x','y'] ).step(1);
         DisplayObj.scale && f1.add(DisplayObj, "scale",['x','y'] ).step(0.01);
         DisplayObj.pivot && f1.add(DisplayObj, "pivot",['x','y'] ).step(0.01);
+        DisplayObj.euler && f1.add(DisplayObj, "euler",['x','y','z'] ).step(0.01);
         if(Debug){
             if(Array.isArray(Debug)){
                 Debug.forEach(key => {
                     f1.add(DisplayObj, key).step(0.01);
-                });
+                })
             }else{ // sinon true ? utilise tous les key
                 Object.keys(DisplayObj).forEach(key => {
                     const subKeys = Object.keys(DisplayObj[key]);
                     f1.add(DisplayObj, key,subKeys).step(1);
                 });
             }
- 
         };
         return gui;
     };
@@ -114,13 +127,16 @@ class Inspectors {
 
 
     //#region [Static]
-    static DataObj(DataObj = new _DataObj_Case() ){
-        const name = `${DataObj.constructor.name}_${DataObj._globalId}-${DataObj._localId}`;
+    /**
+     * @static
+     * @param {_DataObj_Base} [DataObj=new _DataObj_Case()]
+     * @param {_PME_ObjMapDebug} buttonContext
+     * @returns {Inspectors}
+     */
+    static DataObj(DataObj, buttonContext){
+        const name = DataObj.constructorId;
         if(this.GUI[name]){return console.error('Un inspector est deja ouvert avec ce Id: ',name)};
         const Gui = new Inspectors(name);
-        const onChange = DataObj.p.Debug? Gui.onChange( ()=>{$PME.update_debug(DataObj)} ) : void 0;
-
-        //Gui.onChange() = (e)=>{ this.update_debug(dataObj,e) }; TODO:
         //![P] ParentContainer
         if(DataObj.p){
             function add(F,DisplayObject,k) {
@@ -162,6 +178,14 @@ class Inspectors {
                         });
                         F.add(DisplayObject ,k, { select }).listen()
                     break;
+                    case '_color':
+                        F.add(DisplayObject ,k,{ select: Object.fromEntries(Object.keys($systems.colorsSystem).map(k=>[k,k])) }).listen()
+                        .onChange((context,input,value)=>{ context.update() });
+                    break;
+                    case '_bounty':
+                        F.add(DisplayObject ,k,{ select: Object.fromEntries($systems.gameBounties.keys.map(k=>[k,k])) }).listen()
+                        .onChange((context,input,value)=>{ context.update() });
+                    break;
                     case '_identifiable':
                         F.add(DisplayObject ,k).listen()
                     break;
@@ -169,12 +193,26 @@ class Inspectors {
                     default: return F.add(DisplayObject ,k).listen();  break;
                 }
             }
+            //! SETTING OPTIONS 
+            const ff = Gui.addFolder('[AUTO]').close();
+                function presetCase() { // change to mode cases
+                    DataObj.p.euler.x = -Math.PI/2.4; //2.4 car les case son deja un peut iso
+                    DataObj.p.scale3d.set(0.55);
+                    DataObj.p.pivot3d.y = -76;
+                }
+                ff.add({preset:'default'} ,'preset',{ select:{'default':null, 'Case':'Case',  }})
+                .onChange((context,input,value)=>{
+                    switch (value) {
+                        case 'Case':presetCase(); break;
+                    }
+                    DataObj.update();
+                });
             //![G] DataObj_Base 
             const f0 = Gui.addFolder('[B] FACTORY GLOBAL').close(); //.disable()
             const DataObj_Base_keys = Object.keys( new _DataObj_Base() );
                 DataObj_Base_keys.forEach(k=>{
                     const el = add(f0,DataObj,k);
-                    ['_globalId','_localId','_url','_type','_category'].contains(k) && el.disable(); //lock et protege certaines props
+                    ['_globalId','_localId','_url','_type','_category','_dataBaseName','_textureName'].contains(k) && el.disable(); //lock et protege certaines props
                 });
             //![C] [DataObj_Case,DataObj_Wall,DataObj_Chara.....] from category
             if(DataObj.constructor.name !== '_DataObj_Base'){
@@ -183,7 +221,7 @@ class Inspectors {
                 DataObj_CategoryKeys.remove(...DataObj_Base_keys);
                 DataObj_CategoryKeys.forEach(k=>{
                     const el = add(f1,DataObj,k);
-                    [].contains(k) && el.disable(); //lock et protege certaines props
+                    ['_globalCaseId','_localCaseId','pathConnexion'].contains(k) && el.disable(); //lock et protege certaines props
                 });
             };
 
@@ -221,39 +259,39 @@ class Inspectors {
                     if(DisplayObject.proj){
                         const FF = F.addFolder(`${key}.PROJECTIONS`);
                         _Factory.FLATTERS.propreties.proj.forEach(k=>{
-                            add(FF,DisplayObject,k);
+                            add(FF,DisplayObject.proj,k);
                         });
                     };
                     //!obeservable
                     if(DisplayObject instanceof PIXI.DisplayObject){
                         const FF = F.addFolder(`${key}.OBSERVABLES`).slider();
-                        _Factory.FLATTERS.Observable.ALL.sort((a, b) => a.localeCompare(b)).forEach(k=>{
+                        _Factory.FLATTERS.Observable.ALL.forEach(k=>{ //.sort((a, b) => a.localeCompare(b))
                             add(FF,DisplayObject,k);
                         });
                     }
                 };
             };
             //!button
-            /** buttons seulement en mode click droit lorsque deja sur map */
-            Gui.addButton('SAVE',(e)=>{
-                //iziToast.warning( this.izifactoryUpdate(DataObj) ); //todo: si editor PME
-                DataObj.initializeFactory();
-                Inspectors.DESTROY(name);
-    
-            },'btn-success');
-            Gui.addButton('CANCEL',(e)=>{
-                DataObj.asignFactory();
-                Inspectors.DESTROY(name);
-            },'btn-danger');
-            Gui.addButton('RESTOR',(e)=>{ 
-                DataObj.asignFactory();
-            },'btn-warning');
-                
-        };
-
+            if(buttonContext){
+                /** buttons seulement en mode click gauche lorsque deja sur map */
+                Gui.addButton('SAVE',(e)=>{
+                    //iziToast.warning( this.izifactoryUpdate(DataObj) ); //todo: si editor PME
+                    buttonContext.saveToMap();
+                    buttonContext.removeDataTracking();
+                    Inspectors.DESTROY(name);
         
+                },'btn-success');
+                Gui.addButton('RESTOR',(e)=>{
+                    buttonContext.restorData();
+                },'btn-warning');
+                Gui.addButton('DELETE',(e)=>{
+                    buttonContext.removeToMap();
+                    Inspectors.DESTROY(name);
+                },'btn-danger');
+            }
+        };
+        return Gui;
     };
-    //#endregion
     
     /** when drag from slider is busy */
     static get pixiApp(){return window.PIXI && window.app || (typeof $app !== void 0+'') && $app; }
@@ -297,9 +335,12 @@ class Inspectors {
         };
         return false;
     };
+    //#endregion
+
     constructor(name,descriptions,options={frequency:200}) {
-        Inspectors.GUI[name] = this;
         Inspectors.EVENTS[name] = [];
+        /** indique si le inspector est minized pour enpecher els listen */
+        this._isMinimized = false;
         /** options pass to inspector gui */
         this.options = options;
         this._name = name;
@@ -315,19 +356,51 @@ class Inspectors {
         this.__drag = null;
         /**bottom div for button */
         this.buttons = null;
+        /** permet double click sur title pour masker rapidemnet */
+        this._doubleClickTitle = false;
 
         /** bottom buttons */
         this.__buttons = [];
-
         this.initialize();
         this.initializeListeners();
         
         const update = ()=>{this.update(this.__elements)};
         this.__update = setInterval(update, options.frequency||100);
-        this.x(300*(Object.keys(Inspectors.GUI).length-1));
+        //!position auto collide
+        
+        this.x(0);
+        this.y(0);
+        function isCollide(aRect, bRect) {
+            return !(
+                ((aRect.top + aRect.height) < (bRect.top)) ||
+                (aRect.top > (bRect.top + bRect.height)) ||
+                ((aRect.left + aRect.width) < bRect.left) ||
+                (aRect.left > (bRect.left + bRect.width))
+            );
+        }
+        for (let i=0,x=0,y=0,list = Object.values(Inspectors.GUI), l=list.length; i<l; i++) {
+            const e = list[i];
+            const A = this.__gui.toastCapsule.getBoundingClientRect();
+            const B = e.__gui.toastCapsule.getBoundingClientRect();
+            A.height = A.height || 450;
+            if(isCollide(A,B)){
+                x+=20;
+                this.x(x);
+                i--;
+                console.log('i: ', i);
+            }
+        };
+   
+        Inspectors.GUI[name] = this;
+            
     };
+    //#region [GetterSetter]
     get parentInspectors() {return Inspectors.GUI[this._name]};
+    //#endregion
 
+    CLOSE() {
+        Inspectors.DESTROY(this._name);
+    }
     initialize(){
         const gui = this.__gui = iziToast.show({
             id: this._name, 
@@ -394,9 +467,12 @@ class Inspectors {
               y: y||0
             };
           };
-          const preventDrag = (e)=>{
+          const preventDrag = (e)=>{ // doit return true pour autoriser drag
               return e.classList[1] === 'slideIn';
           }
+          const onDragEnd = (e,ee)=>{ // doit return true pour autoriser drag
+            //e.getBoundingClientRect()
+        }
           const DraggableOptions = {
             grid: 10,
             useGPU:true,
@@ -406,7 +482,7 @@ class Inspectors {
             //onDrag: function(){ }
           };
           this.__drag = new Draggable ( gui.toastCapsule ,DraggableOptions);
-          
+
           //#foldering body ,where we put all new folder
           const div = this.__gui.FOLDERS_BODY = document.createElement("div");
           div.classList.add('FOLDERS-BODY');
@@ -454,11 +530,26 @@ class Inspectors {
         }
         Inspectors.RegisterEvents(this._name,this.__gui.toastCapsule, "mouseover", __toastCapsule_mouseover);
         Inspectors.RegisterEvents(this._name,this.__gui.toastCapsule, "mouseout", __toastCapsule_mouseout);
-       
+        
+        //! double click togggle hideshow
+        this.__gui.toastTexts.addEventListener('click',  (e)=> {
+            if(this._doubleClickTitle){
+                const value = this.__gui.FOLDERS_BODY.style.display;
+                this.__gui.FOLDERS_BODY.style.display = value? '' : 'none'
+                this.__gui.toastCapsule.style.transform = value?null : `scale3d(0.6,0.6,0.6)`;
+                this._isMinimized = !value;
+            }
+            this._doubleClickTitle = true;
+            setTimeout(() => {
+                this._doubleClickTitle = false;
+            }, 200);
+        });
+
     };
 
     /** listen elements */
     update(elements){
+        if(this._isMinimized){ return };
         elements.forEach(el => {
             for (let i=0, l=el.__input.length; i<l; i++) {
                 const input = el.__input[i];
@@ -747,15 +838,25 @@ class Inspectors {
                 this.options.select? type = 'select' : this.options.color? type = 'color' : void 0;
             };
             switch (type) {
-                case "color"  :return this.create_color ()  ; break;
-                case "select" :return this.create_select (value,id) ; break;
-                case "string" :return this.create_string (value,id) ; break;
-                case "number" :return this.create_number (value,id) ; break;
-                case "boolean":return this.create_boolean(value,id) ; break;
-                case "object" :return this.create_objet()   ; break;
+                case "color"    :return this.create_color    (        ) ; break;
+                case "select"   :return this.create_select   (value,id) ; break;
+                case "string"   :return this.create_string   (value,id) ; break;
+                case "number"   :return this.create_number   (value,id) ; break;
+                case "boolean"  :return this.create_boolean  (value,id) ; break;
+                case "object"   :return this.create_objet    (        ) ; break;
+                case "function" :return this.create_function (        ) ; break;
                 default: return null ;break; // simple text si null ou undefined
             };
         };
+
+        create_function(){
+            var btn = document.createElement("BUTTON");
+            btn.classList.add('btn');
+            btn.innerHTML = 'click';
+            btn.onclick = this._initialValue
+            this.__input.push(btn);
+            return btn;
+        }
         /** create select tool */
         create_color(value=this.getValue(),options=this.options.color){
             const input = document.createElement("INPUT");
@@ -771,11 +872,14 @@ class Inspectors {
         /** create select tool */
         create_select(value=this.getValue()){
             const input = document.createElement("SELECT");
+            input.setAttribute('id', this._proprety);
             input.classList.add('custom-select');
+            input.classList.add('select-'+this._proprety);
             input.setAttribute("type", "select");
             const select = Array.isArray(this.options.select)? Object.entries(this.options.select).map(i=>[i[1],i[1]]) : Object.entries(this.options.select);
             select.forEach(entry => {
                 var opt = document.createElement("option");
+                opt.classList.add('option-'+value);
                 const l = entry.length-1;
                 opt.text = entry[0];
                 opt.value = entry[l];
@@ -957,6 +1061,7 @@ class Inspectors {
             const endUpdateDrag = (e)=>{
                 if(this.input){ // if no currently drag someting
                     Inspectors.__busySlider = false;
+                    $app.view.style.pointerEvents = ''; // enable canvas interaction
                     Inspectors.onDragSliders_end();
                     this.input = null;
                     window.removeEventListener('mousemove', updateDrag)
@@ -967,6 +1072,7 @@ class Inspectors {
             const startpdateDrag = (e,input = e.target)=>{
                 if(!this.input){ // if no currently drag someting
                     Inspectors.__busySlider = true;
+                    $app.view.style.pointerEvents = 'none'; // disable canvas interaction
                     Inspectors.onDragSliders_start();
                     this.__dragX = e.screenX;
                     this.__iniTargetX = this.getValue(input._props);
@@ -1011,7 +1117,7 @@ class Inspectors {
                     const percent = ((value - this._min) * 100) / (this._max - this._min)
                     this.__sliders[input.id].firstElementChild.style.width = `${percent}%`;
                 }
-                this._onchange (this.target, this._proprety);
+                this._onchange (this.target, this._proprety,input.value);
                 this.parentInspectors.__folders[this._folderName]._onchange (this.target,this._proprety);
                 this.parentInspectors._onchange (this.target,this._proprety);
             };

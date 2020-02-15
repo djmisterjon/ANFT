@@ -16,8 +16,14 @@ class _DataObj_Case extends _DataObj_Base {
      */
     constructor(_dataBaseName,_textureName, factory) {
         super(_dataBaseName,_textureName, factory);
-        /** allow generate random on new game */
-        this._randomAllowed = true;
+        /**@type {Number} Id global cases dans le jeux */
+        this._globalCaseId = Infinity;
+        /**@type {Number} Id local cases dans la scene */
+        this._localCaseId  = Infinity;
+        /** allow generate random color */
+        this._randomColor = true;
+        /** allow generate random bounty */
+        this._randomBounty = true;
         /** couleur type de la case */
         this._color = '';
         /** prime type de la case */
@@ -29,47 +35,53 @@ class _DataObj_Case extends _DataObj_Base {
         /** si la case a eter visiter */
         this._visited = false;
         /**Contien les element grafic input pour help ou action xbox */
-        this.input = [];
+        //this.input = [];
         /**battlers id onCase: identifier le id du battlers pour combat */
-        this._battlerID = null;
+        //this._battlerID = null;
         /** @type {{ 'CaseColor': PIXI.projection.Sprite3d, 'CaseBounty':PIXI.projection.Sprite3d }} */
         this.child = null;
+        Object.defineProperty(this, 'child',{enumerable:false});
+        //todo: enumerable false pour certain props
     }
 
     //#region [GetterSetter]
+    /** return  */
+    get bountyData() {//TODO:
+        return $systems.bountyDataFromId //this._bountyData;
+    }
     /** obtien couleur du case*/
     get color() {
         return this._color;
     }
+    
     /** Change la couleur du case */
     set color(value) {
-        this._color = value;
-        this.p.child.CaseColor.tint = this._color? $systems.colorsSystem[this._color] : 0xffffff;
+        this._color = value || 'white';
+        this.child.CaseColor.tint = this._color? $systems.colorsSystem[this._color] : 0xffffff;
     }
     /** return texture bounty, ou vierge default */
     get bounty() {
-        return this._bounty || 'caseEvent_hide';
+        return this._bounty;
     }
     set bounty(value) {
-        this._bounty = value;
+        this._bounty = value || 'caseEvent_hide';
         const texture = $loader.DATA2.CasesBounties.textures[this._bounty];
-        this.p.child.CaseBounty.texture = texture;//todo: voir comment cible le childrentoname ?
+        this.child.CaseBounty.texture = texture;//todo: voir comment cible le childrentoname ?
     }
     //#endregion
 
     //#region [Initialize]
     initialize(){
         this.initialize_base();
-        this.initialize_interactive()
+        this.initialize_interactive();
     }
     initialize_base(){
         const dataBase = this.dataBase;
-        const dataBase2 = $loader.DATA2[ 'CasesBounties' ];
+        const dataBase2 = $loader.DATA2['CasesBounties'];
         //cage color 
         const CaseColor = new PIXI.projection.Sprite3d(dataBase.textures.cColor).setName('CaseColor');
             CaseColor.anchor.set(0.5);
-            CaseColor.position3d.set(0,-80,0)
-            this._color && (CaseColor.tint = $systems.colorsSystem[this._color]);
+            CaseColor.position3d.set(0,-80,0);
             CaseColor.parentGroup = PIXI.lights.diffuseGroup;
         const CaseBounty = new PIXI.projection.Sprite3d(dataBase2.textures[this.bounty] ).setName('CaseBounty');
             CaseBounty.anchor.set(0.5,1);
@@ -77,6 +89,9 @@ class _DataObj_Case extends _DataObj_Base {
             CaseBounty.parentGroup = PIXI.lights.diffuseGroup;
             CaseBounty.euler.x = Math.PI/3;
         this.p.addChild(CaseColor,CaseBounty);
+        this.child = this.p.childrenToName(this.p.child);
+        //TODO: RENDU ICI , SYSTEM FONCTIONELL CHILDRENTO NAME
+        // les type objet on leur prop child cibler, mais on doit heviter s'asimiler les child des container
     }
     /** Interaction de base qui peuvent appeller les super interaction*/
     initialize_interactive(){
@@ -137,6 +152,12 @@ class _DataObj_Case extends _DataObj_Base {
         };
     }
     //#endregion
+    
+    /** update des getter speciaux */
+    update(){
+        this.color = this._color;
+        this.bounty = this._bounty;
+    }
 
     /**Affiche le chemin des cases selon les spiders */
     showCasesPath(){

@@ -54,10 +54,10 @@ class _DataBase {
         this._url = res.url;
         this._category = res.url.split('/')[1];
         this._type = this.getTypeFrom(res);
-        /*this.textures = {};
-        this.textures_n = {};
-        this.BaseTextures = {};*/ //bug dans editor, remapper isSpine...
+        /**@type {{d:PIXI.Texture,n:PIXI.Texture}} */
+        this.BaseTextures = null;
         this.addToCache(res)
+        
     };
 
     //#region [GetterSetter]

@@ -1,4 +1,6 @@
 /**Permet de debug des elements du jeux ou les position */
+//TODO: RENDU ICI, femrer tous les huds quand bood, + add a Inspector debug pour activer les hud
+
 class Debug extends PIXI.Container {
     /** contien les element debug */
     static POOL = [];

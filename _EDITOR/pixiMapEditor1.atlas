@@ -83,21 +83,21 @@ filterBG
   index: -1
 gb0
   rotate: false
-  xy: 134, 628
+  xy: 254, 805
   size: 24, 24
   orig: 24, 24
   offset: 0, 0
   index: -1
 gb1
   rotate: false
-  xy: 194, 687
+  xy: 316, 864
   size: 24, 24
   orig: 24, 24
   offset: 0, 0
   index: -1
 gb2
   rotate: false
-  xy: 254, 746
+  xy: 134, 628
   size: 24, 24
   orig: 24, 24
   offset: 0, 0
@@ -125,7 +125,7 @@ gb5
   index: -1
 gb6
   rotate: false
-  xy: 316, 832
+  xy: 194, 714
   size: 24, 24
   orig: 24, 24
   offset: 0, 0
@@ -202,9 +202,9 @@ icon_rotation
   index: -1
 icon_scale
   rotate: false
-  xy: 134, 654
-  size: 58, 57
-  orig: 58, 57
+  xy: 226, 746
+  size: 24, 24
+  orig: 24, 24
   offset: 0, 0
   index: -1
 icon_setup
@@ -216,16 +216,16 @@ icon_setup
   index: -1
 icon_showHideSprites
   rotate: false
-  xy: 194, 713
+  xy: 134, 654
   size: 58, 57
   orig: 58, 57
   offset: 0, 0
   index: -1
 icon_skew
   rotate: false
-  xy: 254, 772
-  size: 58, 57
-  orig: 58, 57
+  xy: 914, 780
+  size: 24, 24
+  orig: 24, 24
   offset: 0, 0
   index: -1
 icon_spotLight
@@ -258,7 +258,7 @@ isSpineSheets
   index: -1
 isSpriteSheets
   rotate: false
-  xy: 316, 858
+  xy: 194, 740
   size: 30, 30
   orig: 30, 30
   offset: 0, 0

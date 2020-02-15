@@ -147,19 +147,13 @@ Object.defineProperty(Math, 'randomFromLuck',{enumerable:false})
 
 
 //! PIXIJS
-
-PIXI.Container.prototype.childrenToName = function childrenToName()
+PIXI.Container.prototype.childrenToName = function childrenToName(ignore)
 {
     const Child = {};
     const bufferNames = []; // names buffer for check existe instead hasOwnProperty _child.name
+    const ignoreBuffer = ignore && Object.values(ignore);
     if(this.name){
         (Child[this.name] = this);//if parent source tree have name, take it
-    }
-    if(this.child){// humm ?
-        if(!Object.keys(this.child).length){
-            throw 'Error un child:{} est asign vide, mettre a null'; // deleteme: debug 
-        }
-        return Child;
     }
     const pool = [this.children];
 
@@ -167,7 +161,9 @@ PIXI.Container.prototype.childrenToName = function childrenToName()
     while (childrens = pool.shift()) {
         for (let i=0, l=childrens.length; i<l; i++) {
             const _child = childrens[i];
-            
+            if(ignoreBuffer && ignoreBuffer.contains(_child)){
+                continue; // ignore les child des autre child
+            }
             const childName = _child.name;
             if(childName){ // if the Child have .name?
                 if( bufferNames.indexOf(childName)>-1 ){ // if name alrealy exist in buffer, make array []
@@ -190,3 +186,8 @@ PIXI.Container.prototype.setName = function setName(name){
     return this;
 };
 Object.defineProperty(PIXI.Container.prototype, 'setName',{enumerable:false})
+
+
+Object.defineProperty(PIXI.interaction.InteractionEvent.prototype, 'isLeft'  , { get: function() { return this.data.button === 0 } }); // <==
+Object.defineProperty(PIXI.interaction.InteractionEvent.prototype, 'isRight' , { get: function() { return this.data.button === 2 } }); // ==>
+Object.defineProperty(PIXI.interaction.InteractionEvent.prototype, 'isMiddle', { get: function() { return this.data.button === 1 } }); // =|=

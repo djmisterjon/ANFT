@@ -37,7 +37,6 @@ class _Container_Spine extends _Container_Base {
     get s() { return this.child.s };
     /** Return les Diffuses lister dans un array */
     get d() { return this.dn[0] };
-    
     /** Return les Normals lister dans un array */
     get n() { return this.dn[1] };
     //#endregion

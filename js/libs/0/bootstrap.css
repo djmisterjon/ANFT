@@ -3494,7 +3494,7 @@ tbody.collapse.show {
   display: -ms-flexbox;
   display: flex;
   -ms-flex-wrap: wrap;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   -webkit-box-align: stretch;
   -ms-flex-align: stretch;
   align-items: stretch;
@@ -3796,7 +3796,9 @@ tbody.collapse.show {
 
 select:focus option:checked {
   background: #d1d1d1 linear-gradient(0deg, red 0%, red 100%);
-  color: #000000
+  color: #00000078;
+  border-style: dotted;
+  border-width: 2px;
 }
 select option {
   background: #2b2b2b;

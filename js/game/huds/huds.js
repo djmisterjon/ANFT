@@ -66,11 +66,11 @@ class _GUI { //TODO REFACTORING DANS UN CONTAINER ? .huds .menue gui.huds. gui.m
         $stage.addChild(Master); //TODO: RENDU ICI, FINALISER LES MENU
         //this.setRendering(false);
         //!deleteme debug.
-        this.PinBar.show();
-        this.Travel.show();
-        this.States.show();
+        //this.PinBar.show();
+        //this.Travel.show();
+        //this.States.show();
        //this.Minimap.show();
-       this.Items.show();
+       //this.Items.show();
        //this.MessageIndicator.show();
        //this.MessageIndicator.show();
     }

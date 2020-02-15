@@ -18,6 +18,8 @@ class _Container_Sprite extends _Container_Base {
     */
     constructor(dataObj) {
         super(dataObj);
+        /** @type {{ 'd':PIXI.projection.Sprite3d, 'n':PIXI.projection.Sprite3d,}} */
+        this.child = null;
     }
 
     //#region [Initialize]

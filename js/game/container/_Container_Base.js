@@ -1,5 +1,4 @@
 
-/** @extends {PIXI.projection.Container3d} - Element qui fonction sur plant 3d seulement */
 class _Container_Base extends PIXI.projection.Container3d {
     /**
      *Creates an instance of _Container_Base.
@@ -13,7 +12,6 @@ class _Container_Base extends PIXI.projection.Container3d {
         this.child = null;
         //dataObj && (dataObj.child = this); // register the dataobjchild with this container
         //dataObj.isValid && this.initialize();
-        this.initialize();
     };
 
     //#region [GetterSetter]
@@ -30,18 +28,20 @@ class _Container_Base extends PIXI.projection.Container3d {
                 this.parentGroup = $displayGroup.group[id];
             }
         };
-    };
-    /**@return {PIXI.extras.AnimatedSprite} */
+    }
+    /** @return {PIXI.extras.AnimatedSprite} */
     get a() { return this.child.a }; //todo: o
-    /** @returns _DataObj_Base */
+    /** @returns {_DataObj_Base} */
     get b() { return this.DataObj }; //todo: o
-    /** @returns _Container_Base */
+    /** @return {PIXI.projection.Spine3d} */
+    get s() { return this.child.s };
+    /** @returns {_Container_Base} */
     get p() { return this };
-    /** @returns PIXI.Sprite - diffuse */
+    /** @returns {PIXI.Sprite} - diffuse */
     get d() { return this.child.d || false };
-    /** @returns PIXI.Sprite - normal */
+    /** @returns {PIXI.Sprite} - normal */
     get n() { return this.child.n || false }; //
-     /** @returns [PIXI.Sprite,PIXI.Sprite] - arrays combat .cd, .cn */
+    /** @returns [PIXI.Sprite,PIXI.Sprite] - arrays combat .cd, .cn */
     get c() { return this.DataObj.dataBase.isBackground && [this.child.cd,this.child.cn] || false };
     get register() { return this.DataObj.register || false };
     set register(value) { value? $objs.addToRegister(this)  : $objs.removeToRegister(this) }; // 0 ou 1
@@ -49,38 +49,26 @@ class _Container_Base extends PIXI.projection.Container3d {
     //#endregion
 
     //#region [Initialize]
-    initialize(){
+    initialize(skipDataBase){
         this.initialize_base();
-        this.initialize_dataObj();
         this.child = this.childrenToName();
-        this.initialize_factory();
+        this.initialize_dataObj(skipDataBase);
+        
     }
 
-    initialize_dataObj(){
+    initialize_dataObj(skipDataBase){
         const DataObj = this.DataObj;
-        if(DataObj){
-            DataObj.addLink(this);
+        DataObj.addLink(this);
+        if(!skipDataBase && DataObj){
             DataObj.initialize();
         }
-    }
-
-    /** Si a un factory ? appliquer */
-    initialize_factory(){
-        if(this.DataObj.factory){
-            const factory = this.DataObj.factory
-            factory.g.to(this.DataObj);
-            factory.p && factory.p.to(this.p);
-            factory.d && factory.d.to(this.d);
-            factory.n && factory.n.to(this.n);
-            factory.s && factory.s.to(this.s);  
-        };
     }
 
     /** si na pas de class parent , ces une base background*/
     initialize_base(dataObj=this.DataObj) {
         const dataBase = dataObj.dataBase;
-        const d = this.child.d = new PIXI.projection.Sprite3d(dataBase.textures[dataObj._textureName]);
-        const n = this.child.n = new PIXI.projection.Sprite3d(dataBase.textures_n[dataObj._textureName]);
+        const d = new PIXI.projection.Sprite3d(dataBase.textures[dataObj._textureName]);
+        const n = new PIXI.projection.Sprite3d(dataBase.textures_n[dataObj._textureName]);
         //C.parentGroup = $displayGroup.group[0];
         d.parentGroup = PIXI.lights.diffuseGroup;
         n.parentGroup = PIXI.lights.normalGroup;
@@ -89,7 +77,7 @@ class _Container_Base extends PIXI.projection.Container3d {
         n.anchor.set(0.5);
         this.addChild(d,n);
 
-        if(dataBase.isBackground){
+        if(dataBase.isBackground){ //todo: move dans dataobj background init
             //!combat
             const combatTextureName = dataObj._textureName+'_c';
             const cd = this.child.cd = new PIXI.projection.Sprite3d(dataBase.textures[combatTextureName]);

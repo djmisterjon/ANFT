@@ -36,7 +36,7 @@ window.onload = function() {
         //# core
         await loadJS('js/game');
         //! editor
-        await loadJS('js/editor');
+        await loadJS('js/libs/editor');
         //#TODO: Decryptor,
         await $loader.initialize();//#JSON,CSV,
         $app.initialize();

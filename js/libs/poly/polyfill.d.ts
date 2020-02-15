@@ -9,7 +9,7 @@ interface Number {
      * @param {Number} max La limite superieur
      * @return {Number} A number in the range (min, max)
      */
-    clamp(min: number, max: number) : Number;
+    clamp(min: number, max: number) : number;
 
     /**
      * Returns a modulo value which is always positive.
@@ -18,13 +18,13 @@ interface Number {
      * @param {Number} n The divisor
      * @return {Number} A modulo value
      */
-    mod(n: number) : Number;
+    mod(n: number) : number;
 
 
     /**
      * Returns valeur arondie a 2 decimal seulement si besoin.
     */
-    round2() : Number;
+    round2() : number;
     
 }
 
@@ -42,7 +42,7 @@ interface String {
  *
  * @return {Number} 32bit hash 
  */
-    hashCode() : Number;
+    hashCode() : number;
 }
 interface Array<T> {
     /**
@@ -58,7 +58,7 @@ interface Array<T> {
      * @param {any} value The array to compare to
      * @return {Number} Qty of elements founds
      */
-    count(value: any) : Number;
+    count(value: any) : number;
 
 /**
  * Compare si 2 array son identique
@@ -77,7 +77,7 @@ interface Array<T> {
     contains(value: any) : Boolean;
 
 /**
- * Supprimer une list d'arguments et renvoi this tableau
+ * Supprimer une list d'arguments et renvoi this tableau splice
  *
 * @param args A list of arguments the function accepts.
 * @return {Array} renvoi un nouveau tableau avec les element suprimer
@@ -87,23 +87,23 @@ interface Array<T> {
 /**
  * Trouve l'index du premier element vide d'un tableau (undefined,null,false,0)
  *
-* @return {Number} l'index du premier emplacement libre du tableau
+* @return {number} l'index du premier emplacement libre du tableau
 */
-    findEmptyIndex() : Number;
+    findEmptyIndex() : number;
 
     /**
      * return multiple splitted 2d with max item per array
      *
-     * @param {Number} howMany Max items per 2d arrays
+     * @param {number} howMany Max items per 2d arrays
      * @return {Array} chunk arrays [[1,2],[3,4],[...]]
      */
-    chunk(howMany: Number) : Number;
+    chunk(howMany: number) : number;
     
     /**
      * Addition tous les valeurs (number) et return total.
-     * @return {Number} - valeur additionner
+     * @return {number} - valeur additionner
      */
-    sum() : Number;
+    sum() : number;
 
 };//!end
 
@@ -119,7 +119,7 @@ interface Math {
      * @param {Number} precision 
      * @return {Number} A random integer
      */
-    randomFrom(min:0,max:1,precision:0) : Number;
+    randomFrom(min:0,max:1,precision:0) : number;
 
     
     /**
@@ -140,10 +140,10 @@ declare namespace PIXI {
     interface Container {
         /**
          * Scan les childrens, et stock leur reference avec leur nom dans un objet, si aucune nom, nest pas stocker.
-         *
+         * @param {} ignore - un objet qui contien les child a ignorer
          * @return {Object} Qui contien les reference des children du container avec leur nom
          */
-        childrenToName(): any;
+        childrenToName(ignore?:object): any;
         /** Asign un name pour childrenToName */
         setName(name: string): this;
 
@@ -181,3 +181,29 @@ declare namespace PIXI {
         zero: Point;
     }
 }
+declare namespace PIXI.interaction {
+    interface InteractionEvent {
+        /**
+         * Get mouse click from id [isLeft,isMiddle,isRight]
+         *
+         * @member {InteractionEvent}
+         * @readonly
+         */
+        readonly isLeft: boolean;
+        /**
+         * Get mouse click from id [isLeft,isMiddle,isRight]
+         *
+         * @member {InteractionEvent}
+         * @readonly
+         */
+        readonly isRight: boolean;
+        /**
+         * Get mouse click from id [isLeft,isMiddle,isRight]
+         *
+         * @member {InteractionEvent}
+         * @readonly
+         */
+        readonly isMiddle: boolean;
+    }
+}
+

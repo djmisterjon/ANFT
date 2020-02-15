@@ -153,8 +153,8 @@ class _camera {
             container.visible = visible? renderable:true; // TODO: STOKER bounds, CAR VISIBLE NE FONCTIONNE PAS MAIS DONNERAIT DE SUPER PERFORMANCE.
             if(!container.renderable){this._cullingCount++};
 
-            if(container.renderable && container.dataObj){//!test door alpha
-                if(container.dataObj._type === _DataBase.CATEGORY.Door){
+            if(container.renderable && container.DataObj){//!test door alpha
+                if(container.DataObj.isDoor){
                     //!method 1
                     /*if(bounds.y+bounds.height/2 >= this._screenH/2 ){
                         container.alpha = 0.1;
@@ -177,7 +177,7 @@ class _camera {
     
     
     //$camera.moveToTarget(null,f) : ex setup: default:{ _zoom:0.58, _ang:-0.2, _perspective:-0.52}
-    moveToTarget(target, speed=5, ease = this._ease, setup=this.cameraSetup.default||'') {
+    moveToTarget(target, speed=4, ease = this._ease, setup=this.cameraSetup.default||'') {
             this.kill();
             //! selon setup, positionner les extra position3d
             let yy = 0;
@@ -218,21 +218,21 @@ class _camera {
     onMouseWheel(e){
         if(e.ctrlKey){
             if(this._perspective-e.wheelDeltaY/1000 > -0.1){
-                TweenMax.to(this, 1, {_perspective:-0.1, ease: Back.easeOut.config(1.4) });
+                gsap.to(this, 1, {_perspective:-0.1, ease: Back.easeOut.config(1.4) });
             }else
             if(this._zoom-e.wheelDeltaY/1000 < -Math.PI/2){
-                TweenMax.to(this, 1, {_perspective:-Math.PI/2, ease: Back.easeOut.config(1.4) });
+                gsap.to(this, 1, {_perspective:-Math.PI/2, ease: Back.easeOut.config(1.4) });
             }else{
-                TweenMax.to(this, 2, {_perspective:`-=${e.wheelDeltaY/1000}`, ease: Back.easeOut.config(1.4) });
+                gsap.to(this, 1, {_perspective:`-=${e.wheelDeltaY/1000}`, ease: Back.easeOut.config(1.4) });
             }
         }else
         if(this._zoom-e.wheelDeltaY/1000 > 3){
-            TweenMax.to(this, 1, {_zoom:3, ease: Back.easeOut.config(1.4) });
+            gsap.to(this, 1, {_zoom:3, ease: Back.easeOut.config(1.4) });
         }else
         if(this._zoom-e.wheelDeltaY/1000 < 0.1){
-            TweenMax.to(this, 1, {_zoom:0.1, ease: Back.easeOut.config(1.4) });
+            gsap.to(this, 1, {_zoom:0.1, ease: Back.easeOut.config(1.4) });
         }else{
-            TweenMax.to(this, 2, {_zoom:`-=${e.wheelDeltaY/1000}`, ease: Back.easeOut.config(1.4) });
+            gsap.to(this, 1, {_zoom:`-=${e.wheelDeltaY/1000}`, ease: Back.easeOut.config(1.4) });
         }
     };
     

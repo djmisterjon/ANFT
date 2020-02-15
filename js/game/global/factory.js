@@ -47,7 +47,7 @@ class _Factory {
 
     };
     
-    /**  */
+    /** @returns {FACTORY} */
     static createFrom(data){ // trusted obtien tous les keys sans verifier, ne pas utiliser sur des objet pixi
         if(data instanceof _DataObj_Base){
             return {
@@ -84,8 +84,8 @@ class _Factory {
                 proj:['affine','affinePreserveOrientation','cameraMode','scaleAfterAffine'],
             },
             Observable:{
-                base:['position','pivot','scale','skew','anchor'],
                 proj:['euler','position3d','pivot3d','scale3d'],
+                base:['skew','anchor','position','pivot','scale'],
             }
         };
 

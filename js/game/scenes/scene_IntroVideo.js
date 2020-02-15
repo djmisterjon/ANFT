@@ -33,7 +33,7 @@ class Scene_IntroVideo extends _Scene_Base {
     videoSprite.height = 1080;
     videoControler.currentTime = 11; //temp jump to end
     videoControler.onended = () => {
-        videoSprite.destroy(true)
+        videoSprite.destroy(true);
         videoControler.pause();
         videoControler.remove();
         videoControler.load();

@@ -1,11 +1,10 @@
-/** @namespace */
 class _DataObj_Base {
     //#region [Static]
     //#endregion
     /** 
      * @param {String} dataBaseName
      * @param {String} textureName
-     * @param {_Factory} factory
+     * @param {FACTORY} factory
     */
     constructor(dataBaseName,textureName,factory) {
         this._dataBaseName = dataBaseName;
@@ -44,6 +43,10 @@ class _DataObj_Base {
     get isGrass        () { return this.dataBase._category === _DataBase.CATEGORY.Grass        }
     get isIcons        () { return this.dataBase._category === _DataBase.CATEGORY.Icons        }
     get isMiscs        () { return this.dataBase._category === _DataBase.CATEGORY.Miscs        }
+    /** return un id constructor unique */
+    get constructorId() {
+        return `${this.constructor.name}[${this._globalId}:${this._localId}]`;
+    }
     /**@returns {_DataBase} */
     get dataBase() { return $loader.DATA2[ this._dataBaseName ] };
     get p() { return this.link };
@@ -106,16 +109,33 @@ class _DataObj_Base {
     }
 
     /** initialize un factory selon les props du child */
-    initializeFactory(){
-        return this.factory = _Factory.createFrom(this);
-    };
+    createFactory(){
+        return _Factory.createFrom(this);
+    }
 
-    /** asign le factory au display objet attacher */
+    /** asign un ou le factory au dataobj et link
+     * @param {FACTORY} [factory=this.factory]
+    */
     asignFactory(factory=this.factory){
-        if(!factory){return console.error('critical error! no factory existe',factory)};
+        if(!factory){return console.error('critical error! no factory existe!',factory)};
+        if(this.factory !== factory){
+            this.factory = factory;
+        }
+        const link = this.link;
         factory.g.to(this);
-        this.p && this.p.asignFactory(factory);
-    };
+        factory.p && factory.p.to(link.p);
+        factory.d && factory.d.to(link.d);
+        factory.n && factory.n.to(link.n);
+        factory.s && factory.s.to(link.s);
+        this.update(); 
+    }
+
+    /** update objet setting, lorsque on applique un factory, ou loadgame ou ..? 
+     * Voir les super class pour un update custom
+    */
+    update(){
+
+    }
 
     /**Proced a l'identification d'un obj, discover, show */
     doIdentification(){
@@ -135,16 +155,10 @@ class _DataObj_Base {
     }
     
     /** clone un dataObj avec posibiliter de register */
-    clone(needRegister){ //TODO: VERIFIER QUE LE CLONE FONCTIONNER POUR LE SUPER ?
-        const newDataObj = $objs.create_DataObj(this.dataBase._category,this._dataBaseName,this._textureName);
-       //if(needRegister){
-       //    $objs.addToGlobalRegister(newDataObj,$objs.GLOBAL.findEmptyIndex());
-       //    $objs.addtoLocalRegister (newDataObj,$objs.LOCAL .findEmptyIndex());
-       //}
-        return newDataObj;
-        /*const jsonValues = JSON.parse(JSON.stringify(this));
-        return new this.constructor(jsonValues._dataBaseName,jsonValues._textureName,jsonValues.dataValues);*/
-    };
+    clone(){
+        const factory = this.factory ? this.createFactory() : null;
+        return new this.constructor(this._dataBaseName,this._textureName,factory);
+    }
     //#endregion
    
 }

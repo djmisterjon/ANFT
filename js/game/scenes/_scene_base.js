@@ -61,8 +61,10 @@ class _Scene_Base extends PIXI.projection.Container3d {
                 //TODO: RENDRE CA PLUS PRORPE
                 const id = objs[i].g._globalId.value;
                 const dataObj = $objs.GLOBAL[id];
-                $objs.addtoLocalRegister(dataObj);
-                this.addChild(dataObj.p);
+                if(dataObj){
+                    $objs.addtoLocalRegister(dataObj);
+                    this.addChild(dataObj.p);
+                }
             };
         };
     };

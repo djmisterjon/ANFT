@@ -196,9 +196,6 @@ class _mouse extends PIXI.Container{
         interaction.cursorStyles.pointer = "none";
       
         interaction.setCursorMode('none'); // InteractionEvent
-        Object.defineProperty(interaction.eventData, 'isLeft'  , { get: function() { return this.data.button === 0 } }); // <==
-        Object.defineProperty(interaction.eventData, 'isRight' , { get: function() { return this.data.button === 2 } }); // ==>
-        Object.defineProperty(interaction.eventData, 'isMiddle', { get: function() { return this.data.button === 1 } }); // =|=
         /*const mouse = this;
         //TODO: VOIR SI ON PEUT MIXER CA AVEC TweenMax.ticker.addEventListener("tick", myFunction);
         //! hack the configureInteractionEventForDOMEvent
@@ -508,11 +505,3 @@ class _mouse extends PIXI.Container{
 
 let $mouse = new _mouse();
 console.log1('$mouse. ', $mouse);
-
-
-
- _mouse.prototype.mouseMove = function(e) {
-    this.mPos.x = this.interaction.mouse.global.x;
-    this.mPos.y = this.interaction.mouse.global.y;
- };
-

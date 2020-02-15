@@ -97,6 +97,7 @@ class _Huds_PinBar extends _Huds_Base {
         Master.addChild(Bar,Bag,Rotator);
         this.addChild(Master);
         this.child = this.childrenToName();
+        
     };
 
     initialize_interactions() {

@@ -1,7 +1,6 @@
 /**
  * Ici on retrous la extend base des slots, mais aussi les autres class static pour le materiel des huds
  */
-
 /** Base des GUI (menue,huds) */
 class _GUI_Base extends PIXI.Container{
     constructor(options) {
