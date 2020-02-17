@@ -11,7 +11,7 @@ class _DataObj_Case extends _DataObj_Base {
      *Creates an instance of _DataObj_Case.
      * @param {string} _dataBaseName
      * @param {string} _textureName
-     * @param {_Factory} factory
+     * @param {_Factory} [factory]
      * @memberof _DataObj_Case
      */
     constructor(_dataBaseName,_textureName, factory) {

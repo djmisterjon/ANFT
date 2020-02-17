@@ -11,24 +11,19 @@ class _Editor_Obj{
     /** mix ou une nouvelle instance de debug 
      * @param {_DataObj_Base} DataObj
     */
-    static create(DataObj){
-        const Container = $objs.create(DataObj);
-            Container.parentGroup = $displayGroup.group[1]; //todo: current group editor
-        DataObj._globalId = $objs.GLOBAL.findEmptyIndex();
-        DataObj._localId  = $objs.LOCAL .findEmptyIndex();
-        if(DataObj.isCase){
-            DataObj._globalCaseId = $objs.CASES_G.findEmptyIndex();
-            DataObj._localCaseId = $objs.CASES_L.findEmptyIndex();
-        }
-        new _Editor_Obj(Container.DataObj).addTracking();
-        $stage.scene.addChild(Container);
+
+    static makeInteractive(value){
+        this.POOL.forEach(o=>o.LINK.interactiveChildren = value);
+        $EDITOR.showLog(`All interactiveChildren: ${value}`);
     }
 
     //#endregion
     /**@param {_DataObj_Base} DataObj */
     constructor(DataObj) {
         this.DataObj = DataObj;
-        /** @type {{ 'Background':PIXI.projection.Sprite3d, 
+        /**@type {PIXI.Rectangle} - bound cache pour le debug rectangle */
+        this.recBound = null;
+        /** @type {{ 'Background':PIXI.projection.Sprite3d, 'Circle3d':PIXI.projection.Sprite3d, 
          * 'Axi3dContainer':PIXI.projection.Container3d, 
          * 'axeX':PIXI.projection.Sprite3d, 'axeY':PIXI.projection.Sprite3d, 'axeZ':PIXI.projection.Sprite3d, }} */
         this.child = null;
@@ -36,6 +31,9 @@ class _Editor_Obj{
         this.initialize();
     };
     //#region [GetterSetter]
+    get isTracking() {
+        return !!gsap.getById('mouseTrack');
+    }
     get EDITOR() {
         return $EDITOR;
     }
@@ -63,6 +61,7 @@ class _Editor_Obj{
     initialize() {
         this.initialize_background();
         this.initialize_Axis3d();
+        this.initialize_Circle3d();
         this.child = this.LINK.childrenToName(this.LINK.child)
         //this.initialize_pathDebug()
         ////this.initialize_Mesh3d();
@@ -86,8 +85,22 @@ class _Editor_Obj{
             axeZ.anchor.set(0.5,0);
             axeZ.euler.x = -Math.PI/2;
         Axi3dContainer.addChild(axeX,axeY,axeZ);
+        //Axi3dContainer.parentGroup = $displayGroup.DiffuseGroup;
         Axi3dContainer.alpha = 0.3;
         C.addChild(Axi3dContainer);
+    }
+    initialize_Circle3d(){
+        const C = this.LINK;
+        const g = new PIXI.Graphics();
+            g.beginFill(0xffffff,1);
+            g.lineStyle(2,0x000000,1)
+            g.drawCircle(0, 0, 8)
+            g.endFill();
+        const texture = $app.renderer.generateTexture(g,PIXI.SCALE_MODES.LINEAR,5);
+        const sprite = new PIXI.projection.Sprite3d(texture).setName('Circle3d');
+        sprite.anchor.set(0.5);
+        sprite.proj.affine = 4;
+        C.addChild(sprite);
     }
 
     initialize_interactions() {
@@ -126,7 +139,7 @@ class _Editor_Obj{
         this.clearTrack();
         if(e.button === 0){ //save
             this.saveToMap();
-            _Editor_Obj.create(this.DataObj.clone())
+            this.EDITOR.createObj(this.DataObj.clone())
         }else
         if(e.button === 2){ //cancel
             // si etai register, restor mode
@@ -136,6 +149,8 @@ class _Editor_Obj{
             }else{ // sinon delette
                 this.removeToMap();
             }
+            this.EDITOR.show();
+            this.EDITOR.child.Library2.show();
         }
     }
 
@@ -145,6 +160,10 @@ class _Editor_Obj{
         const Axi3dContainer = this.child.Axi3dContainer;
         Background     .alpha = 1 ;
         Axi3dContainer .alpha = 1 ;
+        Background     .renderable = true ;
+        Axi3dContainer .renderable = true ;
+        Background     .visible = true ;
+        Axi3dContainer .visible = true ;
         Background.filters = [this.EDITOR.FILTERS.OUTLINE2]
         this.INOBJ = this.DataObj;
     }
@@ -155,18 +174,27 @@ class _Editor_Obj{
         Axi3dContainer .alpha = 0.3 ;
         this.INOBJ = null;
         this.INAXIS = null;
-        this.toggleAxis3d();
+        this.toggleAxis3d(true);
+        if(!this.EDITOR._debugRenderableMode){
+            Background     .renderable = false ;
+            Axi3dContainer .renderable = false ;
+            Background     .visible    = false ;
+            Axi3dContainer .visible    = false ;
+        }
     }
 
     /** @param {PIXI.interaction.InteractionEvent} e -*/
     pointerup(e){
-        if(!gsap.getById('mouseTrack')){
+        if(!this.isTracking){
+            this.clearTrack();
+            this.pointerover(e);
+            this.toggleAxis3d(true);
             this.addTracking(e.isLeft);
         }
     }
 
     pointerdown_Axi3d(e){
-        if( gsap.getById('mouseTrack') ){ // seulement si track un obj
+        if( this.isTracking ){ // seulement si track un obj
             $stage.scene.interactiveChildren = false;
             // blink renderable /todo: petit bug a revoir: enlever le current trackobj
             const list = $objs.LOCAL.map( dataObj=>dataObj?.link ).remove( this.LINK ).unique();
@@ -179,7 +207,7 @@ class _Editor_Obj{
             axe.alpha = 4;
             axe.scale3d.set(1.2);
             axe.filters = [this.EDITOR.FILTERS.OUTLINE2];
-        this.toggleAxis3d(true);
+        this.toggleAxis3d(false);
         this.INAXIS = this.INAXIS || axe;
     }
     pointerout_Axi3d(e){
@@ -194,9 +222,10 @@ class _Editor_Obj{
     addTracking(allowTrack=true){
         this.INOBJ = null;
         this.INAXIS = null;
-        this.LINK.interactive = false;
         this.LINK.interactiveChildren = false;
-        Inspectors.DataObj(this.DataObj,this);
+        this.EDITOR.child.Library2.hide();
+        this.EDITOR.hide();
+        !allowTrack && Inspectors.DataObj(this.DataObj,this).onChange( ()=>{this.updateDebug()} );
         gsap.getById('mouseTrack')?.kill();
         allowTrack && gsap.IntervalCallId(0, ()=>{ this.updateTrack() }, 'mouseTrack');
         setTimeout(() => {
@@ -210,21 +239,24 @@ class _Editor_Obj{
         const pos = $mouse.InteractionData.getLocalPosition($stage.scene.Background, new PIXI.Point(), $mouse.InteractionData.global);
         const INOBJ = this.INOBJ?.link;
         const INAXIS = this.INAXIS;
-        if(INOBJ){
+        const TRACKING2 = _Editor_ObjCase.TRACKING2;
+        
+        if(INOBJ && !this.DataObj.isCase){
             const LOCAL = $mouse.InteractionData.getLocalPosition(INOBJ, new PIXI.Point(), $mouse.InteractionData.global);
             this.pivotCache = this.pivotCache || this.LINK.pivot3d.clone();
             this.eulerCache = this.eulerCache || this.LINK.euler.clone();
             this.LINK.position3d.set(pos.x,0,INOBJ.position3d.z+1);
-            this.LINK.euler.copy(INOBJ.euler);
             const x = INOBJ.position3d.x+(LOCAL.x*2);
             const y = INOBJ.pivot3d.y-(LOCAL.y*2);
             const z = INOBJ.position3d.z-(LOCAL.y*2);
+            this.LINK.euler.copy(INOBJ.euler);
             this.LINK.position3d.copy(INOBJ.position3d);
+            this.LINK.position3d.z-=1;
             switch (INAXIS?.name) {
-                case 'axeX': this.LINK.position3d.x = x; break;
-                case 'axeY': this.LINK.pivot3d.y = y; break;
-                case 'axeZ': this.LINK.position3d.z = z; break;
-                default: this.LINK.position3d.set(pos.x,0,-pos.y); break; 
+                case 'axeX': this.LINK.position3d.    x   = x          ; break;
+                case 'axeY': this.LINK.pivot3d   .    y   = y          ; break;
+                case 'axeZ': this.LINK.position3d.    z   = z          ; break;
+                default    : this.LINK.position3d.set(pos.  x,0,-pos.y); break; 
             }
         }else{
             this.LINK.position3d.set(pos.x,0,-pos.y);
@@ -233,6 +265,30 @@ class _Editor_Obj{
             this.pivotCache = null;
             this.eulerCache = null;
         }
+        TRACKING2 && TRACKING2.drawTracking2Path(this); // en mode cases, si hover circle, tracking distance 
+        this.updateDebug();
+    }
+
+    updateDebug(){
+        const C = this.LINK;
+        const Background = this.child.Background;
+        const Axi3dContainer = this.child.Axi3dContainer;
+        Background.position3d.copy(C.pivot3d);
+        //Axi3dContainer.position3d.copy(C.pivot3d);
+        //Axi3dContainer.scale3d.set(1/C.scale3d.x,1/C.scale3d.y,1/C.scale3d.z);
+        //!pivot test
+        Background.scale3d.y = (this.recBound.height+C.pivot3d.y)/this.recBound.height
+       // Background.width = this.recBound.width+C.pivot3d.x/2
+    }
+
+    toggleInteractive(link=false,axis=link,circle=axis){
+        const LINK = this.LINK;
+        const Circle3d = this.child.Circle3d;
+        const Axi3dContainer = this.child.Axi3dContainer;
+        LINK.interactive = link;
+        LINK.interactiveChildren = true;
+        Circle3d.interactive = circle;
+        Axi3dContainer.interactiveChildren = axis;
     }
 
     /** cache les axis non focuser pour permetre a INAXIS detre efficase */
@@ -240,9 +296,8 @@ class _Editor_Obj{
         for (let i=0, POOL=this.POOL, l=POOL.length; i<l; i++) {
             const obj = POOL[i];
             if(obj === this){ continue };
-            obj.child.Axi3dContainer.alpha = value && 0.1 || 1;
-            obj.child.Axi3dContainer.interactiveChildren = !value;
-            obj.LINK.interactive = !value;
+            obj.child.Axi3dContainer.alpha = value && 1 || 0.1;
+            this.toggleInteractive.call(obj,value);
         }
     }
 
@@ -266,6 +321,7 @@ class _Editor_Obj{
             gostSprite.anchor.set(0.5,1);
             sprite.addChild(gostSprite);
         }
+        this.recBound = sprite.getLocalBounds();
         return sprite;
     }
 
@@ -287,25 +343,29 @@ class _Editor_Obj{
     saveToMap(){
         this.INOBJ = null;
         this.INAXIS = null;
-        const LINK = this.LINK;
         const DataObj = this.DataObj;
-            LINK.interactive = true;
-            LINK.interactiveChildren = true;
         DataObj.asignFactory( DataObj.createFactory() );
         !$objs.GLOBAL[DataObj._globalId] && $objs.addToGlobalRegister(DataObj);
         !$objs.LOCAL [DataObj._localId ] && $objs.addtoLocalRegister (DataObj);
+        this.LINK.interactiveChildren = true;
+        const isPathmode = this.EDITOR._pathMode;
+        isPathmode? this.toggleInteractive(false,false,true) : this.toggleInteractive(true);
+        this.EDITOR.showLog('Tile SAVED to map');
     }
     removeToMap(){//todo: verifier si des conextions path sont detecter, ou des events game
         const LINK = this.LINK;
         $objs.removeFromRegister(this.DataObj); 
         this.POOL.remove(this);
+        this.EDITOR._pathMode && this.POOL2.remove(this);
         LINK.Destroy(); // todo: remove register , verifier
+        this.EDITOR.showLog('Tile removed');
     }
 
     /** cancel track */
     restorData(){
         this.DataObj.asignFactory(); // cancel, restor to factory
-        //this.updateDebug();
+        this.updateDebug();
+        this.EDITOR.showLog('Tile RESTORED');
     }
     /** clear les events et track props (anti Bug)*/
     clearTrack(){

@@ -4,7 +4,7 @@ class _DataObj_Base {
     /** 
      * @param {String} dataBaseName
      * @param {String} textureName
-     * @param {FACTORY} factory
+     * @param {FACTORY} [factory]
     */
     constructor(dataBaseName,textureName,factory) {
         this._dataBaseName = dataBaseName;

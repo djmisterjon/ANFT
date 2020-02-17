@@ -89,6 +89,7 @@ class Inspectors {
      * @param {object} Obj
      */
     static Objects(Obj,name=Math.random().toFixed(3)){
+        if(this.GUI[name]){return};
         const gui = new Inspectors(name);
         const f1 = gui.addFolder('OPTIONS').listen().slider();
         Object.keys(Obj).forEach(key=>{
@@ -296,6 +297,7 @@ class Inspectors {
     /** when drag from slider is busy */
     static get pixiApp(){return window.PIXI && window.app || (typeof $app !== void 0+'') && $app; }
     static __busySlider = false;
+    /** Pool contien les Inspector par id */
     static GUI = {};
     static EVENTS = {};
     static onDragSliders_start = function(){

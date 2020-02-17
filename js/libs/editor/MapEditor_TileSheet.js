@@ -15,10 +15,10 @@ class _Editor_TileSheet extends PIXI.Container {
         return $EDITOR;
     }
     get textureWidth() {
-        return this.dataBase.textures[this._textureName].width
+        return this.dataBase.textures?.[this._textureName]?.width || this.children[0].a?.width || this.children[0].s?.width || 0
     }
     get textureHeight() {
-        return this.dataBase.textures[this._textureName].height
+        return this.dataBase.textures?.[this._textureName]?.height || this.children[0].a?.height || this.children[0].s?.height || 0
     }
     //#endregion
 
@@ -134,7 +134,7 @@ class _Editor_TileSheet extends PIXI.Container {
     //#region [Method]
     createObjMap(){
         const Container = this.child.Container
-        _Editor_Obj.create(Container.DataObj.clone())
+        this.EDITOR.createObj(Container.DataObj.clone())
     }
     
     //#endregion

@@ -4,6 +4,7 @@
 * by Marcelo Dolce.
 */
 .iziToast-capsule {
+  position: absolute;
   font-size: 0;
   height: 0;
   width: -webkit-fill-available;

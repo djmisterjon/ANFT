@@ -84,7 +84,8 @@ class _camera {
         this.view.setPlanes(this._focus, this._near, this._far, this._orthographic);
         this.view.addChild(scene);
         //scene.pivot.set(this._sceneW/2,this._sceneH/2);
-       this.debug();// deleteme:
+       Debug.CameraInspector(); // deleteme:
+       Debug.CameraLines(); // deleteme:
     };
 
     /** get distance between 2 3dpoint */
@@ -237,58 +238,6 @@ class _camera {
     };
     
     
-    /**@description debug camera for test pixi-projections, also need move ticker and update to $app update */
-    debug(force=false) {
-        if(!force && this._debug){return};
-        this._debug = true;
-        /*const gui = new Inspectors('CAMERA');
-        const f1 = gui.addFolder('SCREEN');
-        f1.add(this, '_sceneName').listen().disable();
-        f1.add(this, '_screenW').disable();
-        f1.add(this, '_screenH').disable();
-        f1.add(this, '_sceneW').listen().disable();
-        f1.add(this, '_sceneH').listen().disable();
-       const f2 = gui.addFolder('FACTOR');
-       f2.add(this, '_inteliCam')
-       f2.add(this, '_zoom').min(0).max(3).step(0.1).slider().listen();
-       f2.add(this, '_ang').min(-Math.PI/2).max(Math.PI/2).step(0.02).slider().listen();
-       //
-       const f3 = gui.addFolder('CAMERA.VIEW');
-       f3.add(this.view, 'position3d', ['x','y','z'] ).max(100).slider();
-       f3.add(this.view, 'pivot3d', ['x','y','z'] ).max(100).slider();
-       const f4 = gui.addFolder('Array Matrix');
-       f4.add(this, 'renderable',{ select:{'NONE': 0, 'FREE': 1, 'AXIS_X': 2, 'AXIS_Y': 3, 'POINT': 4, 'AXIS_XR': 5}  });
-       f4.add(this, 'tint',{ color:{}  })*/
-       //!debug line
-        const line = new PIXI.Graphics();
-        line.lineStyle(1, 0xFFFFFF,0.3).moveTo(1920/2, 0).lineTo(1920/2, 1080).moveTo(0, 1080/2).lineTo(1920, 1080/2);
-        this.view.parent.addChild( new PIXI.Sprite($app.renderer.generateTexture(line)) );
-
-       const gui = new Inspectors('CAMERA','view-port and culling controlers');
-       //TODO: BREADCUM styte scan les parent et children
-       const f1 = gui.addFolder('CAMERA INFORMATIONS').disable().close();
-       f1.add(this, '_sceneName').listen();
-       f1.add(this, '_screenW'  ).listen();
-       f1.add(this, '_screenH'  ).listen();
-       f1.add(this, '_sceneW'   ).listen();
-       f1.add(this, '_sceneH'   ).listen();
-       const f2 = gui.addFolder('camera.TRANSFORM').listen().slider();
-       f2.add(this, '_inteliCam');
-       f2.add(this, '_orthographic');
-       f2.add(this, '_culling').listen();
-       f2.add(this, '_cullingCount').listen().disable();
-       f2.add(this, '_zoom'        ).min (0.1).max(3).step(0.01);
-       f2.add(this, '_ang'         ).min (-Math.PI/2).max(Math.PI/2).step(0.02);
-       f2.add(this, '_perspective' ).min (-1.4).max(-0.1).step(0.02);
-       f2.addLine('view.setPlanes change focal');
-       const onChangePlane = ()=>{ this.view.setPlanes(this._focus, this._near, this._far, this._orthographic) };
-       f2.add(this, '_focus' ).step(5).onChange(onChangePlane);
-       f2.add(this, '_near'  ).step(10).onChange(onChangePlane);
-       f2.add(this, '_far'   ).step(10).onChange(onChangePlane);
-       const f3 = gui.addFolder('camera.view.TRANSLATE').listen().slider();
-       f3.add(this.view, 'position3d', ['x','y','z'] ).step(1);
-       f3.add(this.view, 'pivot3d', ['x','y','z'] ).step(1);
-    };
 };
 let $camera = new _camera();
 console.log1('$camera.', $camera);

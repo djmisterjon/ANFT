@@ -1,7 +1,7 @@
 
 class _Editor_Library2 extends PIXI.Container {
-    static MAXWIDTH = 630;
-    static MAXHEIGTH = 850;
+    static MAXWIDTH = 640;
+    static MAXHEIGTH = 900;
     constructor() {
         super();
         /**@type {_Editor_ThumbSheet} - Le sheets actuelement visible ou en cache */
@@ -10,10 +10,16 @@ class _Editor_Library2 extends PIXI.Container {
         this.child = null;
         /** zoom lib */
         this._zoom = 1;
+        /** ce rappelle si avait eter ouvert ou non (auto) */
+        this._wasOpen = false;
         this.initialize();
     }
 
     //#region [GetterSetter]
+    /** @returns {PIXI.Text} - text titre de la library */
+    get TitleText() {
+        return this.SpineEditor.skeleton.findSlot('tilsheetT').currentSprite.children[0];
+    }
     get EDITOR() {
         return $EDITOR;
     }
@@ -34,7 +40,7 @@ class _Editor_Library2 extends PIXI.Container {
         this.initialize_base()
         this.child = this.childrenToName()
         this.initialize_interactions()
-        this.position.set(1275,55);
+        this.position.set(1270,45);
         this.hide();
     }
         
@@ -130,7 +136,6 @@ class _Editor_Library2 extends PIXI.Container {
         const bg = this.child.bg;
         bg.width = this.MAXWIDTH+10;
         ContainerLibs.mask.width = this.MAXWIDTH+10;
-        clearInterval(this._interval);
         this._scroll = false;
         this.child.ContainerLibs.interactiveChildren = true;
         if(ContainerLibs.width+ContainerLibs.x<210){
@@ -142,29 +147,35 @@ class _Editor_Library2 extends PIXI.Container {
            
     }
     /**@param {_Editor_ThumbSheet} Sheet toggle show hide */
-    toggle(Sheet){
+    toggle(Sheet = this.currentSheet){
         if(this.currentSheet === Sheet){
+            this._wasOpen = !this.renderable;
             this.renderable ? this.hide() : this.show(Sheet);
         }else{
+            this._wasOpen = true;
             this.show(Sheet);
         }
     }
     /**@param {_Editor_ThumbSheet} Sheet*/
-    show(Sheet){
-        this.SpineEditor?.state.setAnimation(2, 'showEditor_tiles', false);
+    show(Sheet=this.currentSheet){
+        if(!Sheet || !this._wasOpen || this.EDITOR._pathMode){return};
+        this.SpineEditor?.state.setAnimation(1, 'show2', false);
         this.renderable = true;
         this.visible = true;
         if(this.currentSheet !== Sheet){
             this.currentSheet = Sheet;
             this.clear();
             this.createTiles();
+            this.TitleText.text = `[${Sheet._dataBaseName}]-[${Sheet.dataBase._type}]-[${Sheet.dataBase._category}] (${this.child.ContainerLibs.children.length})`;
         }
     }
     /**@param {_Editor_ThumbSheet} [Sheet]*/
     hide(Sheet){
-        this.SpineEditor?.state.setAnimation(2, 'hideEditor_tiles', false);
-        this.renderable = false;
-        this.visible = false;
+        if(this.renderable){
+            this.SpineEditor?.state.setAnimation(1, 'hide2', false);
+            this.renderable = false;
+            this.visible = false;
+        }
     }
 
     /** clear les tilesheet */

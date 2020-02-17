@@ -1,0 +1,216 @@
+
+pixiMapEditor2.png
+size: 256,2048
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+bar_D
+  rotate: true
+  xy: 2, 2
+  size: 1874, 148
+  orig: 1874, 148
+  offset: 0, 0
+  index: -1
+bar_G
+  rotate: false
+  xy: 152, 1175
+  size: 67, 701
+  orig: 67, 701
+  offset: 0, 0
+  index: -1
+filter_animation
+  rotate: true
+  xy: 221, 1756
+  size: 26, 27
+  orig: 26, 27
+  offset: 0, 0
+  index: -1
+filter_normal
+  rotate: false
+  xy: 221, 1846
+  size: 30, 30
+  orig: 30, 30
+  offset: 0, 0
+  index: -1
+filter_spine
+  rotate: false
+  xy: 221, 1784
+  size: 30, 28
+  orig: 30, 28
+  offset: 0, 0
+  index: -1
+filter_texturePacker
+  rotate: false
+  xy: 221, 1814
+  size: 30, 30
+  orig: 30, 30
+  offset: 0, 0
+  index: -1
+gb0
+  rotate: false
+  xy: 221, 1703
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+gb1
+  rotate: false
+  xy: 221, 1677
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+gb2
+  rotate: false
+  xy: 221, 1651
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+gb3
+  rotate: false
+  xy: 221, 1625
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+gb4
+  rotate: false
+  xy: 221, 1599
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+gb5
+  rotate: false
+  xy: 221, 1573
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+gb6
+  rotate: false
+  xy: 221, 1547
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+icon_Save
+  rotate: false
+  xy: 152, 809
+  size: 47, 46
+  orig: 47, 46
+  offset: 0, 0
+  index: -1
+icon_battleDebug
+  rotate: false
+  xy: 201, 796
+  size: 47, 46
+  orig: 47, 46
+  offset: 0, 0
+  index: -1
+icon_camera
+  rotate: false
+  xy: 152, 761
+  size: 47, 46
+  orig: 47, 46
+  offset: 0, 0
+  index: -1
+icon_darkMode
+  rotate: false
+  xy: 152, 1057
+  size: 58, 57
+  orig: 58, 57
+  offset: 0, 0
+  index: -1
+icon_drawLine
+  rotate: false
+  xy: 152, 1007
+  size: 49, 48
+  orig: 49, 48
+  offset: 0, 0
+  index: -1
+icon_events
+  rotate: false
+  xy: 203, 844
+  size: 48, 47
+  orig: 48, 47
+  offset: 0, 0
+  index: -1
+icon_grid
+  rotate: false
+  xy: 201, 748
+  size: 47, 46
+  orig: 47, 46
+  offset: 0, 0
+  index: -1
+icon_light
+  rotate: false
+  xy: 152, 713
+  size: 47, 46
+  orig: 47, 46
+  offset: 0, 0
+  index: -1
+icon_masterLight
+  rotate: false
+  xy: 152, 957
+  size: 49, 48
+  orig: 49, 48
+  offset: 0, 0
+  index: -1
+icon_pathMaker
+  rotate: false
+  xy: 152, 907
+  size: 49, 48
+  orig: 49, 48
+  offset: 0, 0
+  index: -1
+icon_pixigroupLock
+  rotate: false
+  xy: 221, 1729
+  size: 25, 25
+  orig: 25, 25
+  offset: 0, 0
+  index: -1
+icon_setup
+  rotate: false
+  xy: 152, 1116
+  size: 60, 57
+  orig: 60, 57
+  offset: 0, 0
+  index: -1
+icon_showHideSprites
+  rotate: false
+  xy: 152, 857
+  size: 49, 48
+  orig: 49, 48
+  offset: 0, 0
+  index: -1
+icon_spotLight
+  rotate: false
+  xy: 201, 700
+  size: 47, 46
+  orig: 47, 46
+  offset: 0, 0
+  index: -1
+pixidsplayLogo
+  rotate: true
+  xy: 199, 289
+  size: 409, 34
+  orig: 409, 34
+  offset: 0, 0
+  index: -1
+tilesheetB
+  rotate: true
+  xy: 221, 893
+  size: 652, 20
+  orig: 652, 20
+  offset: 0, 0
+  index: -1
+tilsheetT
+  rotate: true
+  xy: 152, 57
+  size: 654, 45
+  orig: 654, 45
+  offset: 0, 0
+  index: -1

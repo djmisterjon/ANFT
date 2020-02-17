@@ -2,7 +2,7 @@
 /** La library afficher */
 
 class _Editor_Library1 extends PIXI.Container {
-    static MAXWIDTH = 1800;
+    static MAXWIDTH = 1765;
     static MAXHEIGHT = 96;
     constructor() {
         super();
@@ -28,7 +28,7 @@ class _Editor_Library1 extends PIXI.Container {
     initialize() {
         this.initialize_base();
         this.initialize_interactions();
-        this.position.set(90,950);
+        this.position.set(90,975);
     }
         
     initialize_base() {
