@@ -15,18 +15,38 @@ class _Editor_ObjCase extends _Editor_Obj{
         DataObj.p.scale3d.set(0.55);
         DataObj.p.pivot3d.y = -76;
     }
+    static clearPath(e){
+        if(confirm('clear all pathFinding') ){
+           this.clearPaths();
+        }
+    }
+    static newCase(e){
+        const DataObj = new _DataObj_Case('cases','case');
+        $EDITOR.createObj(DataObj);
+        this.presetCase(DataObj);
+    }
+    static distanceMin = 105;
+    static distanceMax = 200;
     static show(){
         const option = {
-            clearPath:(e)=>{},
+            clearPath:(e)=>{
+                if(confirm('clear all pathFinding') ){
+                   this.clearPaths();
+                }
+            },
             newCase:(e)=>{
                 const DataObj = new _DataObj_Case('cases','case');
                 $EDITOR.createObj(DataObj);
                 this.presetCase(DataObj);
             },//todo:
+            distanceMin:50,
+            distanceMax:{ select:{'level1(200)':200, 'level2(300)':300, 'level3(400)':400 } },
             showId:true,
             showEnviroment:false,
         }
-        Inspectors.Objects(option,'PathMode');
+        Inspectors.Objects(option,'PathMode').onChange((target,propretyName,value)=>{
+            this[propretyName] = value
+        });
         _Editor_Obj.makeInteractive(false); // ont disable tous pour activer seulement les circles
         $EDITOR.toggle_debugMode(false);
         this.POOL.forEach(ObjCase=>{
@@ -46,6 +66,11 @@ class _Editor_ObjCase extends _Editor_Obj{
             ObjCase.toggleInteractive(true);
             ObjCase.drawPath();
         })
+    }
+
+    static clearPaths(){
+        this.POOL.forEach(ObjCase=>{ ObjCase.DataObj.pathConnexion = {} });
+        $EDITOR.showLog(`cleared ${this.POOL.length} paths`);
     }
     //#endregion
     /**@param {_DataObj_Case} DataObj*/
@@ -76,6 +101,12 @@ class _Editor_ObjCase extends _Editor_Obj{
     }
     get POOL2() {
         return _Editor_ObjCase.POOL;
+    }
+    get distanceMin() {
+        return _Editor_ObjCase.distanceMin;
+    }
+    get distanceMax() {
+        return _Editor_ObjCase.distanceMax;
     }
     //#endregion
 
@@ -114,13 +145,10 @@ class _Editor_ObjCase extends _Editor_Obj{
         Circle3d.on('pointerdown'       , this.pointerdown_Circle3d    , this);
         Circle3d.on('pointerup'         , this.pointerup_Circle3d    , this);
         Circle3d.on('pointerupoutside ' , this.pointerup_Circle3d , this);
-    };
-
-/** @param {PIXI.interaction.InteractionEvent} e -*/
-        
-
+    }
     //#endregion
     //#region [Interactive]
+    /** @param {PIXI.interaction.InteractionEvent} e -*/
     pointerover_Circle3d(e){
         if(!this.EDITOR._pathMode){return};
         const Circle3d = this.child.Circle3d;
@@ -217,7 +245,8 @@ class _Editor_ObjCase extends _Editor_Obj{
      */
     //TODO: RENDU ICI, permetre quand addtomap de continuer un tracking linear, et suprimer quand right click cancel
     drawTracking2Path(tracked){ // reverse track
-        tracked.child.PathContainer.removeChildren();
+        tracked.child.PathContainer.removeChildren().forEach(c=>c.destroy(true));
+        const clampPos = this.normalizeVector(tracked);
         const PathContainer = tracked.child.PathContainer;
         const DataObj = tracked.DataObj;
         const dist = tracked.getDistanceFrom(this.LINK)
@@ -230,7 +259,36 @@ class _Editor_ObjCase extends _Editor_Obj{
             lineSprite.euler.x = -Math.PI/2;
             lineSprite.scale3d.set(1/DataObj.p.scale3d.x);
         PathContainer.addChild(lineSprite);
+        const txtDist = new PIXI.Text(`dist:${~~dist.d}`,$systems.styles[0]);
+        const txtSprite = new PIXI.projection.Sprite3d ( $app.renderer.generateTexture( txtDist,PIXI.SCALE_MODES.LINEAR,1 ) );
+        txtSprite.y = 50;
+        txtSprite.x = dist.d/2;
+        txtSprite.proj.affine = 4;
+        lineSprite.addChild(txtSprite);
     }
+
+    /**normalize and clamp freeze point1 to min max */
+    normalizeVector(tracked){
+        const p0 = this.LINK.position3d;
+        const p1 = tracked.LINK.position3d.clone();
+        const vec2 = new Vector2( p1.x - p0.x, p1.z - p0.z );
+        const d = Math.hypot(vec2.x,vec2.y);
+        const a = Math.atan2(vec2.x,vec2.y);
+        if(d<this.distanceMin || d>this.distanceMax){
+            const value = d<this.distanceMin?this.distanceMin:this.distanceMax;
+            vec2.setLength(value);
+            p1.x = (p0.x + vec2.x);
+            p1.z = (p0.z + vec2.y);
+            tracked.LINK.position3d.set(p1.x,0,p1.z);
+        }
+    
+        /* if(d<this._min){
+            vec2.setLength(this._min);
+            p1.x = p0.x + vec2.x;
+            p1.y = p0.y + vec2.y;
+        }*/
+    }
+
     /**@returns {{d:number,a:number}} - dirtance:antan2 */
     getDistanceFrom( t2, t1=this.DataObj.p){
         const p1 = t1.position3d;
@@ -239,9 +297,9 @@ class _Editor_ObjCase extends _Editor_Obj{
         const deltaY = p1.y - p2.y;
         const deltaZ = p1.z - p2.z;
         return {
-            d:Math.sqrt( deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ ),
+            d:Math.hypot(p2.x - p1.x, p2.z - p1.z),//Math.sqrt( deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ ),
             a:Math.atan2(p2.z - p1.z, p2.x - p1.x),
-        };
+        }
     }
 
 
@@ -259,6 +317,5 @@ class _Editor_ObjCase extends _Editor_Obj{
             this.EDITOR.showLog('Added')
             this.LINK.alpha = 0.4;
         }
-
     }
 };

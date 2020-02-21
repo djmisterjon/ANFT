@@ -23,9 +23,10 @@ class _Editor extends PIXI.Container{
         /** @type {Object.<string, PIXI.Texture>} */
         this.ICONS = {};
         this.FILTERS = {
-            OUTLINE1:new PIXI.filters.OutlineFilter(20,0xef2ac4),
-            OUTLINE2:new PIXI.filters.OutlineFilter(2,0xc9c9c9),
-            ALPHA: new PIXI.filters.AlphaFilter(0.3)
+            OUTLINE1: new PIXI.filters.OutlineFilter (20 ,0xef2ac4),
+            OUTLINE2: new PIXI.filters.OutlineFilter (2  ,0xc9c9c9),
+            ALPHA   : new PIXI.filters.AlphaFilter   (0.3         ),
+            BLUR    : new PIXI.filters.BlurFilter    (10 , 3      ),
         }
         /**@type {PIXI.projection.Sprite3d} - grids mode */
         this.GRIDS = null;
@@ -212,7 +213,7 @@ class _Editor extends PIXI.Container{
         const name = slot.currentSpriteName;
         switch (name) {
             //case "icon_darkMode"        : this.toggle_thumbsLibs        (slot) ; break;
-            //case "icon_Save"            : this.create_Inspector_save    (slot) ; break;
+            case "icon_Save"            : this.create_Inspector_save    (e) ; break;
             case "icon_showHideSprites" : this.toggle_debugMode    () ; break;
             case "icon_grid"            : this.create_MapGrids     (e) ; break;
             case "icon_pathMaker"       : this.toggle_drawPathMode (e,slot) ; break;
@@ -334,6 +335,106 @@ class _Editor extends PIXI.Container{
         this.showLog('Tile CREATED');
     }
     //#endregion
+
+
+      /** creer les dat.gui permanent  */
+      create_Inspector_save(e){
+        const NAME = `SAVEJSON`;
+        if(Inspectors.GUI[NAME]){return};
+        const gui = new Inspectors(NAME).x(500);
+        const mu = process.memoryUsage();
+        const LOCAL = $objs.LOCAL;
+        function formatBytes(bytes, decimals = 2) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const dm = decimals < 0 ? 0 : decimals;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+        }
+        const options = {
+            isSpriteSheets    :LOCAL.filter(dataObj=>dataObj.dataBase.isSpriteSheets   ).length,
+            isSpineSheets     :LOCAL.filter(dataObj=>dataObj.dataBase.isSpineSheets    ).length,
+            isAnimationSheets :LOCAL.filter(dataObj=>dataObj.dataBase.isAnimationSheets).length,
+            isCases :$objs.CASES_L.length,
+            mem:{
+                external :formatBytes(mu.external ),
+                heapTotal:formatBytes(mu.heapTotal),
+                heapUsed :formatBytes(mu.heapUsed ),
+                rss      :formatBytes(mu.rss      ),
+            },
+            options: {
+                rebootWithThisScene  :false,
+                checkHash32Integrity :false,
+                exportPhotoshopLayers:false,
+            }
+        };
+        const f1 = gui.addFolder('MEMORY').disable();
+            f1.add(options, 'mem', ['external','heapTotal','heapUsed','rss'] );
+        const f2 = gui.addFolder('ELEMENTS').disable();
+            f2.add(options, 'isSpriteSheets'    )//.name('TOTAL.SpriteSheets'    );
+            f2.add(options, 'isSpineSheets'     )//.name('TOTAL.SpineSheets'     );
+            f2.add(options, 'isAnimationSheets' )//.name('TOTAL.AnimationSheets' );
+            f2.add(options, 'isCases' )//.name('TOTAL.AnimationSheets' );
+        const f3 = gui.addFolder('OPTIONS');
+            f3.add(options.options, 'rebootWithThisScene'  )
+            f3.add(options.options, 'checkHash32Integrity' )
+            f3.add(options.options, 'exportPhotoshopLayers')
+        gui.addButton('SAVE',(e)=>{
+            Inspectors.DESTROY(NAME);
+            this.save(options)
+        },'btn-success');
+        gui.addButton('CANCEL',(e)=>{ 
+
+        },'btn-danger');
+        gui.addButton('CLEAR',(e)=>{ 
+            confirm("ARE YOU SURE TO CLEAR SCENES AND ALL EVENTS") && this.clearScene();
+        },'btn-warning');
+        gui.addButton('LOAD',(e)=>{ 
+
+        },'btn-light');
+        
+    }
+
+    /** Editor Save de la map */
+    save(options) {
+        this.hide();
+        const BLUR = this.FILTERS.BLUR;
+        $displayGroup._layer_diffuseGroup.filters = [BLUR];
+        TweenLite.fromTo(BLUR, 0.5, { blur:0},{ blur:11, ease: Power2.easeOut }).eventCallback("onComplete", ()=>{$displayGroup._layer_diffuseGroup.filters = null})
+            $stage.interactiveChildren = false; // disable stage interactive
+        this.create_JSON(options).then(() => {
+            $stage.interactiveChildren = true; // disable stage interactive
+            iziToast.warning( this.showLog('MAP SAVED') );
+        }).catch(e=>console.error(e));
+    }
+
+    /** creer un gameMap json */
+    create_JSON(options) {
+        return new Promise((resolve, reject) => {
+            const _lights      = {ambientLight:false,DirectionalLight:false,PointLight:false}
+            const _objs        = $objs.LOCAL.map(dataObj=>dataObj.factory);
+            const _background  = $stage.scene.Background.name || ""; // factory dataValues//FIXME: just le nom
+            const _sheets      = $objs.LOCAL.map(dataObj=>dataObj._dataBaseName).remove().unique() ; // Set: remove les duplicata
+            const META = {date:Date.now()};
+            ///const SYSTEM = {memoryUsage:dataValues.memoryUsage,timeElasped:PIXI.ticker.shared.lastTime / 1000, data: new Date().toDateString()};
+            const json = { META, _lights , _background, _sheets, _objs, };
+            const fs = eval("require('fs')");
+            function writeFile(path,content){
+                JSON.parse(content);
+                // backup current to _old.json with replace() rename()
+                /*fs.rename(`${path}`, `${path.replace(".","_OLD.")}`, function(err) {
+                    if ( err ) { console.log('ERROR:rename ' + err) };
+                    fs.writeFile(path, content, 'utf8', function (err) { 
+                        if(err){return console.error(path,err) }
+                        resolve();
+                        return console.log9("WriteFile Complette: "+path,JSON.parse(content));
+                    });
+                });*/
+            };     
+            writeFile(`data/scene/${$stage.scene.constructor.name}.json` , JSON.stringify(json, null, '\t') );
+        });
+    };
 }
 
 

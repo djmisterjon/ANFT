@@ -93,7 +93,12 @@ class Inspectors {
         const gui = new Inspectors(name);
         const f1 = gui.addFolder('OPTIONS').listen().slider();
         Object.keys(Obj).forEach(key=>{
-            f1.add(Obj, key );
+            if(Obj[key].constructor.name === "Object"){
+                const select = Obj[key].select;
+                f1.add(Obj ,key,{ select });
+            }else{
+                f1.add(Obj, key );
+            }
         })
         return gui;
     };
@@ -793,7 +798,7 @@ class Inspectors {
             this._max = null;
             this._min = null;
             this._step = 1;
-
+            this._isFakevalue = this.getValue()?.constructor.name === 'Object'; // si on passe des options sans pros, mais utilise onchange.
             this._onchange = function (e){};
             this.initialize();
         };
@@ -880,6 +885,10 @@ class Inspectors {
             input.setAttribute("type", "select");
             const select = Array.isArray(this.options.select)? Object.entries(this.options.select).map(i=>[i[1],i[1]]) : Object.entries(this.options.select);
             select.forEach(entry => {
+                if(this._isFakevalue){
+                    value = this._proprety;
+                }
+                
                 var opt = document.createElement("option");
                 opt.classList.add('option-'+value);
                 const l = entry.length-1;
@@ -1121,7 +1130,7 @@ class Inspectors {
                 }
                 this._onchange (this.target, this._proprety,input.value);
                 this.parentInspectors.__folders[this._folderName]._onchange (this.target,this._proprety);
-                this.parentInspectors._onchange (this.target,this._proprety);
+                this.parentInspectors._onchange (this.target,this._proprety,value);
             };
 
              this.__input.forEach(input => {

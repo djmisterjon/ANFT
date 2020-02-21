@@ -138,6 +138,7 @@ class _Editor_Obj{
     pointerup_canvas(e){
         this.clearTrack();
         if(e.button === 0){ //save
+            _Editor_ObjCase.TRACKING2 = this;
             this.saveToMap();
             this.EDITOR.createObj(this.DataObj.clone())
         }else

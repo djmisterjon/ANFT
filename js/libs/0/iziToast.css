@@ -1803,6 +1803,8 @@ option[value=black] {
   background-color: rgb(44, 44, 44);
 }
 
-
+.custom-select {
+  min-width: -webkit-fill-available;
+}
 
 

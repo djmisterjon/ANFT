@@ -3519,6 +3519,17 @@ var pixi_projection;
             this.cb.call(this.scope);
         }
     };
+    PIXI.ObservablePoint.prototype.clone = function clone() {
+        var cb = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+        var scope = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+        var _cb = cb || this.cb;
+        var _scope = scope || this.scope;
+        var o = new PIXI.ObservablePoint(_cb, _scope, this._x, this._y);
+        o.z = this._z;
+        return o;
+    };
+
     var Point3d = (function (_super) {
         __extends(Point3d, _super);
         function Point3d(x, y, z) {
