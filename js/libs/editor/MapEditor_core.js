@@ -404,8 +404,9 @@ class _Editor extends PIXI.Container{
         TweenLite.fromTo(BLUR, 0.5, { blur:0},{ blur:11, ease: Power2.easeOut }).eventCallback("onComplete", ()=>{$displayGroup._layer_diffuseGroup.filters = null})
             $stage.interactiveChildren = false; // disable stage interactive
         this.create_JSON(options).then(() => {
+            $displayGroup._layer_diffuseGroup.filters = null;
             $stage.interactiveChildren = true; // disable stage interactive
-            iziToast.warning( this.showLog('MAP SAVED') );
+            this.showLog('MAP SAVED')
         }).catch(e=>console.error(e));
     }
 
@@ -413,7 +414,7 @@ class _Editor extends PIXI.Container{
     create_JSON(options) {
         return new Promise((resolve, reject) => {
             const _lights      = {ambientLight:false,DirectionalLight:false,PointLight:false}
-            const _objs        = $objs.LOCAL.map(dataObj=>dataObj.factory);
+            const _objs        = $objs.LOCAL.filter(dataObj=>dataObj).map(dataObj=>dataObj.factory);
             const _background  = $stage.scene.Background.name || ""; // factory dataValues//FIXME: just le nom
             const _sheets      = $objs.LOCAL.map(dataObj=>dataObj._dataBaseName).remove().unique() ; // Set: remove les duplicata
             const META = {date:Date.now()};
@@ -423,14 +424,14 @@ class _Editor extends PIXI.Container{
             function writeFile(path,content){
                 JSON.parse(content);
                 // backup current to _old.json with replace() rename()
-                /*fs.rename(`${path}`, `${path.replace(".","_OLD.")}`, function(err) {
+                fs.rename(`${path}`, `${path.replace(".","_OLD.")}`, function(err) {
                     if ( err ) { console.log('ERROR:rename ' + err) };
                     fs.writeFile(path, content, 'utf8', function (err) { 
                         if(err){return console.error(path,err) }
                         resolve();
                         return console.log9("WriteFile Complette: "+path,JSON.parse(content));
                     });
-                });*/
+                });
             };     
             writeFile(`data/scene/${$stage.scene.constructor.name}.json` , JSON.stringify(json, null, '\t') );
         });

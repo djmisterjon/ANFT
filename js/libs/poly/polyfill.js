@@ -73,7 +73,7 @@ Array.prototype.contains = function (element) {
 }
 Object.defineProperty(Array.prototype, 'contains',{enumerable:false})
 
-Array.prototype.remove = function () {
+Array.prototype.remove = function (arg = undefined) {
     let what;
     let a = arguments;
     let L = a.length

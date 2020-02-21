@@ -138,7 +138,6 @@ class _Objs{
         const textureName = factory.g._textureName.value;
         const category = $loader.DATA2[factory.g._dataBaseName.value]._category; 
         const dataObj = this.create_DataObj(category,dataBaseName,textureName,factory); //(dataBase._category,data.g._dataBaseName.value, data.g._textureName.value, factory);//TODO: a ton vraiment besoin de passer en argument factory
-        if(dataObj.isCase){return console.log1('case not create for debug delete me');}
         /**
         Probleme ces que factory doi etre just pour les save game ou lediteur
         Ensuite pour la progression en jeux on map ca sur dataObj

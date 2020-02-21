@@ -2483,6 +2483,7 @@ select.form-control-lg:not([size]):not([multiple]), .input-group-lg > select.for
   position: absolute;
   bottom: -30px;
   min-width: max-content;
+  display: inline-flex;
 }
 .BUTTONS-clipbar {
   position: absolute;
