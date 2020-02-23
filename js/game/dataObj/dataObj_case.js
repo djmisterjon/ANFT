@@ -163,7 +163,7 @@ class _DataObj_Case extends _DataObj_Base {
     showCasesPath(){
         if(_DataObj_Case.SpidersSucces){
             const SpidersSucces = _DataObj_Case.SpidersSucces;
-            const LOCAL = $objs.LOCAL; // getter
+            const LOCAL = $objs.CASES_L; // getter
             for (let i=0, l=SpidersSucces.travel.length; i<l; i++) {
                 const id = SpidersSucces.travel[i];
                 const dataObj = LOCAL[id];
@@ -177,7 +177,7 @@ class _DataObj_Case extends _DataObj_Base {
     clearCasesPath(){
         if(_DataObj_Case.SpidersSucces){
             _DataObj_Case.SpidersSucces.travel.forEach(id => {
-                const LOCAL = $objs.LOCAL; // getter
+                const LOCAL = $objs.CASES_L; // getter
                 const dataObj = LOCAL[id];
                 dataObj.p.d.filters = null;
             });
@@ -225,7 +225,7 @@ class _DataObj_Case extends _DataObj_Base {
         Selector.anchor.set(0.5);
         Selector.parentGroup = $displayGroup.DiffuseGroup;
         Selector.position3d.y = -65
-        Selector.euler.x = -0.15
+        Selector.euler.x = -0.32;
        // Selector.proj.euler.pitch = 0.2
         this.p.addChildAt(Selector,0);
         TweenLite.fromTo(Selector.scale3d, 0.2, {x:0,y:0},{x:1,y:1, ease:Back.easeOut.config(1.7)})
@@ -258,9 +258,9 @@ class _DataObj_Case extends _DataObj_Base {
             this._succeed = false;
             this._death = false;
         };
-        const LOCAL = $objs.LOCAL; // getter
-        const START = $players.p0.inCase._localId+'';
-        const END = target.DataObj._localId+'';
+        const LOCAL = $objs.CASES_L; // getter
+        const START = $players.p0.inCase._localCaseId+'';
+        const END = target.DataObj._localCaseId+'';
         //# spider: pour chaque direction, le spider ce duplique.
         let Spiders = [new SPIDER(0,START)]; // les spiders vivant
         let SpidersSucces = null; // le premier spider arriver a destination
@@ -315,6 +315,7 @@ class _DataObj_Case extends _DataObj_Base {
         fx.a.anchor.set(0.5);
         fx.n.anchor.set(0.5);
         fx.position3d.z = -25;
+        console.log('fx: ', fx);
         this.p.addChildAt(fx,0);
     };
 

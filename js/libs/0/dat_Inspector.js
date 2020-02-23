@@ -283,7 +283,7 @@ class Inspectors {
                 Gui.addButton('SAVE',(e)=>{
                     //iziToast.warning( this.izifactoryUpdate(DataObj) ); //todo: si editor PME
                     buttonContext.saveToMap();
-                    buttonContext.removeDataTracking();
+                    buttonContext.clearTrack();
                     Inspectors.DESTROY(name);
         
                 },'btn-success');
@@ -369,37 +369,12 @@ class Inspectors {
         /** bottom buttons */
         this.__buttons = [];
         this.initialize();
+        this.initialize_position();
+        this.initialize_draggable();
         this.initializeListeners();
-        
         const update = ()=>{this.update(this.__elements)};
         this.__update = setInterval(update, options.frequency||100);
-        //!position auto collide
-        
-        this.x(0);
-        this.y(0);
-        function isCollide(aRect, bRect) {
-            return !(
-                ((aRect.top + aRect.height) < (bRect.top)) ||
-                (aRect.top > (bRect.top + bRect.height)) ||
-                ((aRect.left + aRect.width) < bRect.left) ||
-                (aRect.left > (bRect.left + bRect.width))
-            );
-        }
-        for (let i=0,x=0,y=0,list = Object.values(Inspectors.GUI), l=list.length; i<l; i++) {
-            const e = list[i];
-            const A = this.__gui.toastCapsule.getBoundingClientRect();
-            const B = e.__gui.toastCapsule.getBoundingClientRect();
-            A.height = A.height || 450;
-            if(isCollide(A,B)){
-                x+=20;
-                this.x(x);
-                i--;
-                console.log('i: ', i);
-            }
-        };
-   
         Inspectors.GUI[name] = this;
-            
     };
     //#region [GetterSetter]
     get parentInspectors() {return Inspectors.GUI[this._name]};
@@ -408,6 +383,7 @@ class Inspectors {
     CLOSE() {
         Inspectors.DESTROY(this._name);
     }
+    //#region [Initialize]
     initialize(){
         const gui = this.__gui = iziToast.show({
             id: this._name, 
@@ -464,32 +440,6 @@ class Inspectors {
             onClosing: function (e) {Inspectors.DESTROY(e.id,true)},
            // onClosed: function () {console.log('CLOSED END');}
         });
-    
-        //#draggable
-        function limit(x, y, x0, y0) {
-            x<0?x=0:x>window.innerWidth-120?x=window.innerWidth-120:x;
-            y<0?y=0:y>window.innerHeight-120?y=window.innerHeight-120:y;
-            return {
-              x: x||0,
-              y: y||0
-            };
-          };
-          const preventDrag = (e)=>{ // doit return true pour autoriser drag
-              return e.classList[1] === 'slideIn';
-          }
-          const onDragEnd = (e,ee)=>{ // doit return true pour autoriser drag
-            //e.getBoundingClientRect()
-        }
-          const DraggableOptions = {
-            grid: 10,
-            useGPU:true,
-            limit: limit,
-            filterTarget:preventDrag,
-            //onDragEnd:onDragEnd,
-            //onDrag: function(){ }
-          };
-          this.__drag = new Draggable ( gui.toastCapsule ,DraggableOptions);
-
           //#foldering body ,where we put all new folder
           const div = this.__gui.FOLDERS_BODY = document.createElement("div");
           div.classList.add('FOLDERS-BODY');
@@ -515,6 +465,60 @@ class Inspectors {
           btn.classList.add('BUTTONS-BOTTOMS');
           this.__gui.FOLDERS_BODY.appendChild(btn)
     };
+
+    initialize_draggable(){
+        const gui = this.__gui;
+             //#draggable
+             function limit(x, y, x0, y0) {
+                x<0?x=0:x>window.innerWidth-120?x=window.innerWidth-120:x;
+                y<0?y=0:y>window.innerHeight-120?y=window.innerHeight-120:y;
+                return {
+                  x: x||0,
+                  y: y||0
+                };
+              };
+              const preventDrag = (e)=>{ // doit return true pour autoriser drag
+                  return e.classList[1] === 'slideIn';
+              }
+              const onDragEnd = (e,ee)=>{ // doit return true pour autoriser drag
+                //e.getBoundingClientRect()
+            }
+              const DraggableOptions = {
+                grid: 10,
+                useGPU:true,
+                limit: limit,
+                filterTarget:preventDrag,
+                //onDragEnd:onDragEnd,
+                //onDrag: function(){ }
+              };
+              this.__drag = new Draggable ( gui.toastCapsule ,DraggableOptions);
+    }
+    initialize_position(){
+        //!position auto collide
+        this.x(0);
+        this.y(0);
+        function isCollide(aRect, bRect) {
+            return !(
+                ((aRect.top + aRect.height) < (bRect.top)) ||
+                (aRect.top > (bRect.top + bRect.height)) ||
+                ((aRect.left + aRect.width) < bRect.left) ||
+                (aRect.left > (bRect.left + bRect.width))
+            );
+        }
+        for (let i=0,x=0,y=0,list = Object.values(Inspectors.GUI), l=list.length; i<l; i++) {
+            const e = list[i];
+            const A = this.__gui.toastCapsule.getBoundingClientRect();
+            const B = e.__gui.toastCapsule.getBoundingClientRect();
+            A.height = A.height || 450;
+            if(isCollide(A,B)){
+                x+=20;
+                this.x(x);
+                i--;
+            }
+        };
+    }
+
+    //#endregion
 
     /** position x from left*/
     x(x=0){

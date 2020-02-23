@@ -18,6 +18,10 @@ class _Scene_Base extends PIXI.projection.Container3d {
     get DATA() {
         return $loader.DATA.scene[this.constructor.name] || console.error('(get:DATA): warning missing json: ',this.constructor.name) && {};
     };
+    /** return true si ces un scenes maps */
+    get isSceneMap(){
+        return this._name.contains('Scene_Map');
+    }
     //#endregion
 
     //#region [Initialize]
@@ -63,6 +67,7 @@ class _Scene_Base extends PIXI.projection.Container3d {
                 const dataObj = $objs.GLOBAL[id];
                 if(dataObj){
                     $objs.addtoLocalRegister(dataObj);
+                    $objs.create(dataObj);
                     this.addChild(dataObj.p);
                 }
             };
@@ -113,10 +118,9 @@ class _Scene_Base extends PIXI.projection.Container3d {
 
     /** ending return des promise de fin des scenes*/
     end(){
-        //!purge scene
-        $objs.clear();
         return new Promise((resolve, reject) => {
             TweenLite.to(this, 0.5, {alpha:0}).eventCallback("onComplete",()=>{
+                $objs.clear();//!purge scene
                 // remove players, sinon il von etre destroys
                 $players.p0 && this.removeChild($players.p0.p);
                 $players.p1 && this.removeChild($players.p1.p);

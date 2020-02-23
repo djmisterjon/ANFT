@@ -13,6 +13,8 @@ class _stage extends PIXI.display.Stage {
         this._nextScene = null;
         /** si la scene est starter */
         this._started = false;
+        /** @type {{ 'AmbientLight':PIXI.lights.AmbientLight, 'BB':, 'CC':, 'DD':, 'EE':, 'FF':, }} */
+        this.child = {};
     };
 
     //#region [Initialize]
@@ -55,11 +57,11 @@ class _stage extends PIXI.display.Stage {
 
     /** lumiere pour le stage */
     initialize_lights(){ //TODO: A VOIR SI ON MET DANS SCENE OU STAGE ?
-        // this.LIGHTS.ambientLight     = new PIXI.lights.AmbientLight();//$objs.newContainer_light('AmbientLight'    );
+        const AmbientLight = this.child.AmbientLight = new PIXI.lights.AmbientLight(0xffffff,0.6);//$objs.newContainer_light('AmbientLight'    );
         // this.LIGHTS.PointLight_mouse = new PIXI.lights.PointLight();//$objs.newContainer_light('PointLight'      );
         //// this.LIGHTS.DirectionalLight = new PIXI.lights.DirectionalLight();//$objs.newContainer_light('DirectionalLight');
         // this.addChild(...Object.values(this.LIGHTS) );
-        this.addChild(new PIXI.lights.AmbientLight(0xffffff,0.6)); //TODO: VOIR SI ON MET DANS STAGE AUSSI OU LES 2 ? car les huds on besoin ?
+        this.addChild(AmbientLight); //TODO: VOIR SI ON MET DANS STAGE AUSSI OU LES 2 ? car les huds on besoin ?
         // this.addChild(new PIXI.lights.DirectionalLight(0xffffff,1,this)); //TODO: VOIR SI ON MET DANS STAGE AUSSI OU LES 2 ? car les huds on besoin ?
     };
     //#endregion

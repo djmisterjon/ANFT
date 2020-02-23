@@ -76,14 +76,22 @@ interface Array<T> {
  */
     contains(value: any) : Boolean;
 
-/**
- * Supprimer une list d'arguments et renvoi this tableau splice
- *
-* @param args A list of arguments the function accepts.
-* @return {Array} renvoi un nouveau tableau avec les element suprimer
-*/
+    /**
+     * Supprimer une list d'arguments et renvoi tableaux recalculer (splice)
+     *
+    * @param args A list of arguments the function accepts.
+    * @return {Array} renvoi un nouveau tableau avec les element suprimer
+    */
     remove(...args: any) : Array<T>;
 
+    /**
+     * Supprimer une list d'arguments devient (empty), garde la hyharchie index
+     *
+    * @param args A list of arguments the function accepts.
+    * @return {Array} renvoi un nouveau tableau avec les element suprimer
+    */
+   delete(...args: any) : Array<T>;
+   
 /**
  * Trouve l'index du premier element vide d'un tableau (undefined,null,false,0)
  *

@@ -18,6 +18,7 @@ class _Objs{
         /** @type {Array.<_DataObj_Base>} */
     static DataObjs = []; 
     constructor() {
+        this.GLOBALNAME = {}; // Acces par keyName qui return le globalID
         /** @type {Array.<_DataObj_Base>} */
         this.GLOBAL = []; // obj global du jeux
         /** @type {Array.<_DataObj_Base>} */
@@ -51,10 +52,18 @@ class _Objs{
                 for (let i=0, l=_objs.length; i<l; i++) {
                     const data = _objs[i];
                     const factory = _Factory.parseFrom(data);
-                    const e = this.dataObjFromFactory(factory);
+                    this.dataObjFromFactory(factory);
+                    //const Container = this.create(dataObj);// voir si on pourrait peut etre pre-build mais seulement pour les sceneskit
                 };
             };
        };
+        //!ici on fill les empty avec undefined !
+        for (let i=0, l=this.GLOBAL.length; i<l; i++) {
+            this.GLOBAL[i] = this.GLOBAL[i] || undefined;
+        };
+        for (let i=0, l=this.CASES_G.length; i<l; i++) {
+            this.CASES_G[i] = this.CASES_G[i] || undefined;
+        };
     }
 
     /** Apply randomizore on objts game */
@@ -132,24 +141,21 @@ class _Objs{
 
     /** creer un dataObj from Factory data
      * @param {FACTORY} factory
+     * @returns {_DataObj_Base}
     */
     dataObjFromFactory(factory){
         const dataBaseName = factory.g._dataBaseName.value;
         const textureName = factory.g._textureName.value;
         const category = $loader.DATA2[factory.g._dataBaseName.value]._category; 
         const dataObj = this.create_DataObj(category,dataBaseName,textureName,factory); //(dataBase._category,data.g._dataBaseName.value, data.g._textureName.value, factory);//TODO: a ton vraiment besoin de passer en argument factory
+        dataObj.asignFactory();
+        this.addToGlobalRegister(dataObj);
         /**
         Probleme ces que factory doi etre just pour les save game ou lediteur
         Ensuite pour la progression en jeux on map ca sur dataObj
         les prites pourait etre grarder dans les dataObj, juste besoin de creer une method appeller invalidate=>validate
         Ce qui detrui les textures detache les texture, et tous autre elements
          */
-        const container = this.create(dataObj);
-
-        //factory.assignTo(dataObj);
-        //dataObj.asignFactory(factory);
-        this.addToGlobalRegister(dataObj);
-       //this.addtoLocalRegister(dataObj, data._localId);
         return dataObj;
     }
 
@@ -202,41 +208,46 @@ class _Objs{
     //!REGISTER
     /** Add objet to register */
     addToGlobalRegister(dataObj){
-        if(Number.isFinite(dataObj._globalId)){
-            this.GLOBAL[dataObj._globalId] = dataObj;
-            if(dataObj.isCase){
-                this.CASES_G[dataObj._globalCaseId] = dataObj;
-            }
-        }else{
-            throw `FATAL Error corrupt GlobalID not number ${dataObj._globalId}`
+        const globalId = dataObj._globalId;
+        const globalCaseId = dataObj._globalCaseId;
+        if(Number.isFinite(globalId)){
+            this.GLOBAL[globalId] = dataObj;
+        }else{ throw `FATAL Error corrupt GlobalID not number ${dataObj._globalId}`}
+        if(Number.isFinite(globalCaseId)){
+            this.CASES_G[globalCaseId] = dataObj;
         }
     }
 
     /** ajoute au local register de la scene */
     addtoLocalRegister(dataObj){
-        if(Number.isFinite(dataObj._localId)){
-            this.LOCAL[dataObj._localId] = dataObj;
-            if(dataObj.isCase){
-                this.CASES_L[dataObj._localCaseId] = dataObj;
-            }
-        }else{
-            throw `FATAL Error corrupt GlobalID not number ${dataObj._localId}`
+        const localId     = dataObj._localId    ;
+        const localCaseId = dataObj._localCaseId;
+        if(Number.isFinite(localId)){
+            this.LOCAL[localId] = dataObj;
+        }else{ throw `FATAL Error corrupt GlobalID not number ${dataObj._localId}`}
+        if(Number.isFinite(localCaseId)){
+            this.CASES_L[localCaseId] = dataObj;
         }
     }
-    /** suprim du register un dataObj*/
+    /** suprim du register un dataObj
+     * @param {_DataObj_Base} dataObj
+    */
     removeFromRegister(dataObj){
-        this.GLOBAL[dataObj._globalId] && this.GLOBAL.splice(dataObj._globalId,1, void 0);
-        this.LOCAL[dataObj._localId] && this.LOCAL.splice(dataObj._localId,1, void 0);
+        this.GLOBAL.delete(dataObj);
+        this.LOCAL.delete(dataObj);
+        if(dataObj.isCase){
+            this.CASES_G.delete(dataObj);
+            this.CASES_L.delete(dataObj);
+        }
     }
     //endregion
 
     /** clear les objet pendant un changement scene */
     clear(){
         //todo: verifier le clear reference
-       //for (let i=0, l=this.LOCAL.length; i<l; i++) {
-       //    const o = this.LOCAL[i]
-       //    o.child = null;
-       //};
+        this.LOCAL.forEach(dataObj => {
+            dataObj.link = null; // todo: maybe a destroy ?
+        });
         this.LOCAL = [];
         this.CASES_L = [];
     };

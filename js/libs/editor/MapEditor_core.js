@@ -66,6 +66,13 @@ class _Editor extends PIXI.Container{
 
     /** Tous ce qui nessesite la preparation */
     initialize_prepare(){
+        //! clear les STATIC, utile si change de scene
+        _Editor_Obj.POOL = [];
+        _Editor_Obj.INOBJ = null;
+        _Editor_Obj.INAXIS = null;
+        _Editor_ObjCase.POOL = [];
+        _Editor_ObjCase.TRACKING2 = null;
+        _Editor_ObjCase.PATHBUFFER = [];
         $camera._inteliCam = false;
         PIXI.utils.clearTextureCache();
         $stage.scene.interactiveChildren = true;
@@ -135,6 +142,13 @@ class _Editor extends PIXI.Container{
     }
     initialize_listeners() {
         const canvas = $app.view;
+        //! keys
+        document.addEventListener('keyup', (e) => {
+            this._keycode = e.code;
+            if(this._keycode === 'Delete'){
+                _Editor_Obj.INOBJ.removeToMap();
+            }
+        });
         //!scroll zoom
         document.addEventListener('wheel', (e) => {
             const hitTest = $mouse.interaction.hitTest($mouse.p.position);
@@ -213,14 +227,20 @@ class _Editor extends PIXI.Container{
         const name = slot.currentSpriteName;
         switch (name) {
             //case "icon_darkMode"        : this.toggle_thumbsLibs        (slot) ; break;
+            case "icon_masterLight"            : this.toggle_sceneLight    (e) ; break;
             case "icon_Save"            : this.create_Inspector_save    (e) ; break;
             case "icon_showHideSprites" : this.toggle_debugMode    () ; break;
             case "icon_grid"            : this.create_MapGrids     (e) ; break;
             case "icon_pathMaker"       : this.toggle_drawPathMode (e,slot) ; break;
             case "icon_camera"       : this.toggle_CameraMode (e) ; break;
-            //case "icon_setup"           : this.create_datGui_sceneSetup (slot) ; break;
+            case "icon_setup"           : this.toggle_EditorSetup (e) ; break;
         };
     }
+    /** inspecteur scene light */
+    toggle_sceneLight(){
+        Inspectors.Light($stage.child.AmbientLight);
+    }
+
     toggle_debugMode(value = !this._debugRenderableMode){
         this._debugRenderableMode = value;
         _Editor_Obj.POOL.forEach(Editor_Obj=>{
@@ -283,6 +303,41 @@ class _Editor extends PIXI.Container{
         },'+=0.1')
         $stage.addChild(txt);
     }
+    toggle_EditorSetup(){
+        const NAME = `EDITOR OPTIONS`;
+        if(Inspectors.GUI[NAME]){return};
+        const option = {
+            clearBackground:(e)=>{
+                if(confirm('clearBackground') ){
+    
+                }
+            },
+            clearObjs:(e)=>{
+                if(confirm('clearObjs') ){
+                    $objs.GLOBAL.delete(...$objs.LOCAL)
+                    $objs.CASES_G.delete(...$objs.LOCAL)
+                    $objs.LOCAL = [];
+                    $objs.CASES_L = [];
+                }
+            },
+            
+            scenes:{ select: Object.fromEntries($loader.scenesKits.flat().map(k=>[k,k])) },
+        }
+        Inspectors.Objects(option,NAME).onChange((target,propretyName,value)=>{
+            console.log('target,propretyName,value: ', target,propretyName,value);
+            if(propretyName==='scenes'){
+                $stage.interactiveChildren = false;
+                const nextScene = $stage.goto(value); // promise pour refresh editor
+                const check = setInterval(() => {
+                    if(!$stage._nextScene && $stage.scene.isSceneMap && $stage.scene._started){
+                        clearInterval(check);
+                        this.initialize_prepare();
+                        $stage.interactiveChildren = true;
+                    }
+                }, 80)
+            }
+        });
+    }
 
     /** @param {PIXI.interaction.InteractionEvent} e -*/
     toggle_drawPathMode(e,slot){
@@ -337,8 +392,8 @@ class _Editor extends PIXI.Container{
     //#endregion
 
 
-      /** creer les dat.gui permanent  */
-      create_Inspector_save(e){
+    /** creer les dat.gui permanent  */
+    create_Inspector_save(e){
         const NAME = `SAVEJSON`;
         if(Inspectors.GUI[NAME]){return};
         const gui = new Inspectors(NAME).x(500);
@@ -353,9 +408,9 @@ class _Editor extends PIXI.Container{
             return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
         }
         const options = {
-            isSpriteSheets    :LOCAL.filter(dataObj=>dataObj.dataBase.isSpriteSheets   ).length,
-            isSpineSheets     :LOCAL.filter(dataObj=>dataObj.dataBase.isSpineSheets    ).length,
-            isAnimationSheets :LOCAL.filter(dataObj=>dataObj.dataBase.isAnimationSheets).length,
+            isSpriteSheets    :LOCAL.filter(dataObj=>dataObj?.dataBase.isSpriteSheets   ).length,
+            isSpineSheets     :LOCAL.filter(dataObj=>dataObj?.dataBase.isSpineSheets    ).length,
+            isAnimationSheets :LOCAL.filter(dataObj=>dataObj?.dataBase.isAnimationSheets).length,
             isCases :$objs.CASES_L.length,
             mem:{
                 external :formatBytes(mu.external ),
@@ -401,10 +456,10 @@ class _Editor extends PIXI.Container{
         this.hide();
         const BLUR = this.FILTERS.BLUR;
         $displayGroup._layer_diffuseGroup.filters = [BLUR];
-        TweenLite.fromTo(BLUR, 0.5, { blur:0},{ blur:11, ease: Power2.easeOut }).eventCallback("onComplete", ()=>{$displayGroup._layer_diffuseGroup.filters = null})
+        TweenLite.fromTo(BLUR, 0.5, { blur:0},{ blur:11, ease: Power2.easeOut })
+        .eventCallback("onComplete", ()=>{$displayGroup._layer_diffuseGroup.filters = null})
             $stage.interactiveChildren = false; // disable stage interactive
         this.create_JSON(options).then(() => {
-            $displayGroup._layer_diffuseGroup.filters = null;
             $stage.interactiveChildren = true; // disable stage interactive
             this.showLog('MAP SAVED')
         }).catch(e=>console.error(e));
@@ -416,8 +471,8 @@ class _Editor extends PIXI.Container{
             const _lights      = {ambientLight:false,DirectionalLight:false,PointLight:false}
             const _objs        = $objs.LOCAL.filter(dataObj=>dataObj).map(dataObj=>dataObj.factory);
             const _background  = $stage.scene.Background.name || ""; // factory dataValues//FIXME: just le nom
-            const _sheets      = $objs.LOCAL.map(dataObj=>dataObj._dataBaseName).remove().unique() ; // Set: remove les duplicata
-            const META = {date:Date.now()};
+            const _sheets      = $objs.LOCAL.map(dataObj=>dataObj?._dataBaseName).remove().unique() ; // Set: remove les duplicata
+            const META = {date:date.format(new Date(), 'DD MMMM YYYY HH:mm:ss A dddd')};
             ///const SYSTEM = {memoryUsage:dataValues.memoryUsage,timeElasped:PIXI.ticker.shared.lastTime / 1000, data: new Date().toDateString()};
             const json = { META, _lights , _background, _sheets, _objs, };
             const fs = eval("require('fs')");

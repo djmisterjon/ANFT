@@ -1,6 +1,6 @@
 {
 	"META": {
-		"date": 1582317055030
+		"date": "23 février 2020 14:26:56 PM dimanche"
 	},
 	"_lights": {
 		"ambientLight": false,
@@ -12,6 +12,7 @@
 		"wall01",
 		"bed_001",
 		"doorsWoods",
+		"cases",
 		"house2d41"
 	],
 	"_objs": [
@@ -6079,24 +6080,73 @@
 		{
 			"g": {
 				"_dataBaseName": {
-					"value": "bed_001",
+					"value": "cases",
 					"type": "String"
 				},
 				"_textureName": {
-					"value": "bed_test000",
+					"value": "case",
 					"type": "String"
 				},
 				"_globalId": {
-					"value": 119,
+					"value": 0,
 					"type": "Number"
 				},
 				"_localId": {
-					"value": 19,
+					"value": 18,
 					"type": "Number"
 				},
-				"_type": {
+				"_identifiable": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_identified": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_destroyed": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_globalCaseId": {
 					"value": 0,
 					"type": "Number"
+				},
+				"_localCaseId": {
+					"value": 0,
+					"type": "Number"
+				},
+				"_randomColor": {
+					"value": true,
+					"type": "Boolean"
+				},
+				"_randomBounty": {
+					"value": true,
+					"type": "Boolean"
+				},
+				"_color": {
+					"value": "white",
+					"type": "String"
+				},
+				"_bounty": {
+					"value": "caseEvent_hide",
+					"type": "String"
+				},
+				"pathConnexion": {
+					"value": {
+						"1": {
+							"value": 138.71,
+							"type": "Number"
+						},
+						"9": {
+							"value": 200,
+							"type": "Number"
+						}
+					},
+					"type": "Object"
+				},
+				"_visited": {
+					"value": false,
+					"type": "Boolean"
 				}
 			},
 			"p": {
@@ -6112,26 +6162,45 @@
 					"value": 1,
 					"type": "Number"
 				},
-				"proj": {
+				"euler": {
 					"value": {
-						"affine": {
-							"value": 0,
-							"type": "Number"
-						},
-						"affinePreserveOrientation": {
-							"value": false,
-							"type": "Boolean"
-						},
-						"cameraMode": {
-							"value": false,
-							"type": "Boolean"
-						},
-						"scaleAfterAffine": {
-							"value": true,
-							"type": "Boolean"
-						}
+						"x": -1.3089969389957472,
+						"y": 0,
+						"z": 0
 					},
-					"type": "Object"
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": 282.99019513905614,
+						"y": 0,
+						"z": 194.3032167550043
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": -76,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 0.55,
+						"y": 0.55,
+						"z": 0.55
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
 				},
 				"position": {
 					"value": {
@@ -6154,46 +6223,6 @@
 						"x": 1,
 						"y": 1,
 						"z": 0
-					},
-					"type": "ObservablePoint"
-				},
-				"skew": {
-					"value": {
-						"x": 0,
-						"y": 0,
-						"z": 0
-					},
-					"type": "ObservablePoint"
-				},
-				"euler": {
-					"value": {
-						"x": -1.18,
-						"y": 0,
-						"z": 0
-					},
-					"type": "ObservablePoint"
-				},
-				"position3d": {
-					"value": {
-						"x": 984.9012417275893,
-						"y": 0,
-						"z": 427.58288654492117
-					},
-					"type": "ObservablePoint"
-				},
-				"pivot3d": {
-					"value": {
-						"x": 0,
-						"y": 0,
-						"z": 0
-					},
-					"type": "ObservablePoint"
-				},
-				"scale3d": {
-					"value": {
-						"x": 0.72,
-						"y": 0.72,
-						"z": 1
 					},
 					"type": "ObservablePoint"
 				}
@@ -6203,6 +6232,10 @@
 					"value": 1,
 					"type": "Number"
 				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
 				"tint": {
 					"value": 16777215,
 					"type": "Number"
@@ -6210,71 +6243,6 @@
 				"blendMode": {
 					"value": 0,
 					"type": "Number"
-				},
-				"rotation": {
-					"value": 0,
-					"type": "Number"
-				},
-				"proj": {
-					"value": {
-						"affine": {
-							"value": 0,
-							"type": "Number"
-						},
-						"affinePreserveOrientation": {
-							"value": false,
-							"type": "Boolean"
-						},
-						"cameraMode": {
-							"value": false,
-							"type": "Boolean"
-						},
-						"scaleAfterAffine": {
-							"value": true,
-							"type": "Boolean"
-						}
-					},
-					"type": "Object"
-				},
-				"position": {
-					"value": {
-						"x": 0,
-						"y": 0,
-						"z": 0
-					},
-					"type": "ObservablePoint"
-				},
-				"pivot": {
-					"value": {
-						"x": 0,
-						"y": 0,
-						"z": 0
-					},
-					"type": "ObservablePoint"
-				},
-				"scale": {
-					"value": {
-						"x": 1,
-						"y": 1,
-						"z": 0
-					},
-					"type": "ObservablePoint"
-				},
-				"skew": {
-					"value": {
-						"x": 0,
-						"y": 0,
-						"z": 0
-					},
-					"type": "ObservablePoint"
-				},
-				"anchor": {
-					"value": {
-						"x": 0.5,
-						"y": 1,
-						"z": 0
-					},
-					"type": "ObservablePoint"
 				},
 				"euler": {
 					"value": {
@@ -6305,6 +6273,46 @@
 						"x": 1,
 						"y": 1,
 						"z": 1
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"anchor": {
+					"value": {
+						"x": 0.5,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
 					},
 					"type": "ObservablePoint"
 				}
@@ -6314,6 +6322,10 @@
 					"value": 1,
 					"type": "Number"
 				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
 				"tint": {
 					"value": 16777215,
 					"type": "Number"
@@ -6321,71 +6333,6 @@
 				"blendMode": {
 					"value": 0,
 					"type": "Number"
-				},
-				"rotation": {
-					"value": 0,
-					"type": "Number"
-				},
-				"proj": {
-					"value": {
-						"affine": {
-							"value": 0,
-							"type": "Number"
-						},
-						"affinePreserveOrientation": {
-							"value": false,
-							"type": "Boolean"
-						},
-						"cameraMode": {
-							"value": false,
-							"type": "Boolean"
-						},
-						"scaleAfterAffine": {
-							"value": true,
-							"type": "Boolean"
-						}
-					},
-					"type": "Object"
-				},
-				"position": {
-					"value": {
-						"x": 0,
-						"y": 0,
-						"z": 0
-					},
-					"type": "ObservablePoint"
-				},
-				"pivot": {
-					"value": {
-						"x": 0,
-						"y": 0,
-						"z": 0
-					},
-					"type": "ObservablePoint"
-				},
-				"scale": {
-					"value": {
-						"x": 1,
-						"y": 1,
-						"z": 0
-					},
-					"type": "ObservablePoint"
-				},
-				"skew": {
-					"value": {
-						"x": 0,
-						"y": 0,
-						"z": 0
-					},
-					"type": "ObservablePoint"
-				},
-				"anchor": {
-					"value": {
-						"x": 0.5,
-						"y": 1,
-						"z": 0
-					},
-					"type": "ObservablePoint"
 				},
 				"euler": {
 					"value": {
@@ -6416,6 +6363,46 @@
 						"x": 1,
 						"y": 1,
 						"z": 1
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"anchor": {
+					"value": {
+						"x": 0.5,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
 					},
 					"type": "ObservablePoint"
 				}
@@ -7796,6 +7783,3604 @@
 						"x": 1,
 						"y": 1,
 						"z": 1
+					},
+					"type": "ObservablePoint"
+				}
+			}
+		},
+		{
+			"g": {
+				"_dataBaseName": {
+					"value": "cases",
+					"type": "String"
+				},
+				"_textureName": {
+					"value": "case",
+					"type": "String"
+				},
+				"_globalId": {
+					"value": 1,
+					"type": "Number"
+				},
+				"_localId": {
+					"value": 24,
+					"type": "Number"
+				},
+				"_identifiable": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_identified": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_destroyed": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_globalCaseId": {
+					"value": 1,
+					"type": "Number"
+				},
+				"_localCaseId": {
+					"value": 1,
+					"type": "Number"
+				},
+				"_randomColor": {
+					"value": true,
+					"type": "Boolean"
+				},
+				"_randomBounty": {
+					"value": true,
+					"type": "Boolean"
+				},
+				"_color": {
+					"value": "white",
+					"type": "String"
+				},
+				"_bounty": {
+					"value": "caseEvent_hide",
+					"type": "String"
+				},
+				"pathConnexion": {
+					"value": {
+						"2": {
+							"value": 182.1,
+							"type": "Number"
+						}
+					},
+					"type": "Object"
+				},
+				"_visited": {
+					"value": false,
+					"type": "Boolean"
+				}
+			},
+			"p": {
+				"alpha": {
+					"value": 1,
+					"type": "Number"
+				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
+				"parentGroupId": {
+					"value": 1,
+					"type": "Number"
+				},
+				"euler": {
+					"value": {
+						"x": -1.3089969389957472,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": 144.28534734443036,
+						"y": 0,
+						"z": 194.89978694165984
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": -76,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 0.55,
+						"y": 0.55,
+						"z": 0.55
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				}
+			},
+			"d": {
+				"alpha": {
+					"value": 1,
+					"type": "Number"
+				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
+				"tint": {
+					"value": 16777215,
+					"type": "Number"
+				},
+				"blendMode": {
+					"value": 0,
+					"type": "Number"
+				},
+				"euler": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 1
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"anchor": {
+					"value": {
+						"x": 0.5,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				}
+			},
+			"n": {
+				"alpha": {
+					"value": 1,
+					"type": "Number"
+				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
+				"tint": {
+					"value": 16777215,
+					"type": "Number"
+				},
+				"blendMode": {
+					"value": 0,
+					"type": "Number"
+				},
+				"euler": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 1
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"anchor": {
+					"value": {
+						"x": 0.5,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				}
+			}
+		},
+		{
+			"g": {
+				"_dataBaseName": {
+					"value": "cases",
+					"type": "String"
+				},
+				"_textureName": {
+					"value": "case",
+					"type": "String"
+				},
+				"_globalId": {
+					"value": 2,
+					"type": "Number"
+				},
+				"_localId": {
+					"value": 25,
+					"type": "Number"
+				},
+				"_identifiable": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_identified": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_destroyed": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_globalCaseId": {
+					"value": 2,
+					"type": "Number"
+				},
+				"_localCaseId": {
+					"value": 2,
+					"type": "Number"
+				},
+				"_randomColor": {
+					"value": true,
+					"type": "Boolean"
+				},
+				"_randomBounty": {
+					"value": true,
+					"type": "Boolean"
+				},
+				"_color": {
+					"value": "white",
+					"type": "String"
+				},
+				"_bounty": {
+					"value": "caseEvent_hide",
+					"type": "String"
+				},
+				"pathConnexion": {
+					"value": {
+						"3": {
+							"value": 150.11,
+							"type": "Number"
+						}
+					},
+					"type": "Object"
+				},
+				"_visited": {
+					"value": false,
+					"type": "Boolean"
+				}
+			},
+			"p": {
+				"alpha": {
+					"value": 1,
+					"type": "Number"
+				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
+				"parentGroupId": {
+					"value": 1,
+					"type": "Number"
+				},
+				"euler": {
+					"value": {
+						"x": -1.3089969389957472,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": -37.81006269035714,
+						"y": 0,
+						"z": 195.21882644373932
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": -76,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 0.55,
+						"y": 0.55,
+						"z": 0.55
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				}
+			},
+			"d": {
+				"alpha": {
+					"value": 1,
+					"type": "Number"
+				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
+				"tint": {
+					"value": 16777215,
+					"type": "Number"
+				},
+				"blendMode": {
+					"value": 0,
+					"type": "Number"
+				},
+				"euler": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 1
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"anchor": {
+					"value": {
+						"x": 0.5,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				}
+			},
+			"n": {
+				"alpha": {
+					"value": 1,
+					"type": "Number"
+				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
+				"tint": {
+					"value": 16777215,
+					"type": "Number"
+				},
+				"blendMode": {
+					"value": 0,
+					"type": "Number"
+				},
+				"euler": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 1
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"anchor": {
+					"value": {
+						"x": 0.5,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				}
+			}
+		},
+		{
+			"g": {
+				"_dataBaseName": {
+					"value": "cases",
+					"type": "String"
+				},
+				"_textureName": {
+					"value": "case",
+					"type": "String"
+				},
+				"_globalId": {
+					"value": 3,
+					"type": "Number"
+				},
+				"_localId": {
+					"value": 26,
+					"type": "Number"
+				},
+				"_identifiable": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_identified": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_destroyed": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_globalCaseId": {
+					"value": 3,
+					"type": "Number"
+				},
+				"_localCaseId": {
+					"value": 3,
+					"type": "Number"
+				},
+				"_randomColor": {
+					"value": true,
+					"type": "Boolean"
+				},
+				"_randomBounty": {
+					"value": true,
+					"type": "Boolean"
+				},
+				"_color": {
+					"value": "white",
+					"type": "String"
+				},
+				"_bounty": {
+					"value": "caseEvent_hide",
+					"type": "String"
+				},
+				"pathConnexion": {
+					"value": {
+						"4": {
+							"value": 200,
+							"type": "Number"
+						},
+						"6": {
+							"value": 169.71,
+							"type": "Number"
+						}
+					},
+					"type": "Object"
+				},
+				"_visited": {
+					"value": false,
+					"type": "Boolean"
+				}
+			},
+			"p": {
+				"alpha": {
+					"value": 1,
+					"type": "Number"
+				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
+				"parentGroupId": {
+					"value": 1,
+					"type": "Number"
+				},
+				"euler": {
+					"value": {
+						"x": -1.3089969389957472,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": -167.99807805847036,
+						"y": 0,
+						"z": 120.49112505960579
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": -76,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 0.55,
+						"y": 0.55,
+						"z": 0.55
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				}
+			},
+			"d": {
+				"alpha": {
+					"value": 1,
+					"type": "Number"
+				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
+				"tint": {
+					"value": 16777215,
+					"type": "Number"
+				},
+				"blendMode": {
+					"value": 0,
+					"type": "Number"
+				},
+				"euler": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 1
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"anchor": {
+					"value": {
+						"x": 0.5,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				}
+			},
+			"n": {
+				"alpha": {
+					"value": 1,
+					"type": "Number"
+				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
+				"tint": {
+					"value": 16777215,
+					"type": "Number"
+				},
+				"blendMode": {
+					"value": 0,
+					"type": "Number"
+				},
+				"euler": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 1
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"anchor": {
+					"value": {
+						"x": 0.5,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				}
+			}
+		},
+		{
+			"g": {
+				"_dataBaseName": {
+					"value": "cases",
+					"type": "String"
+				},
+				"_textureName": {
+					"value": "case",
+					"type": "String"
+				},
+				"_globalId": {
+					"value": 4,
+					"type": "Number"
+				},
+				"_localId": {
+					"value": 27,
+					"type": "Number"
+				},
+				"_identifiable": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_identified": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_destroyed": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_globalCaseId": {
+					"value": 4,
+					"type": "Number"
+				},
+				"_localCaseId": {
+					"value": 4,
+					"type": "Number"
+				},
+				"_randomColor": {
+					"value": true,
+					"type": "Boolean"
+				},
+				"_randomBounty": {
+					"value": true,
+					"type": "Boolean"
+				},
+				"_color": {
+					"value": "white",
+					"type": "String"
+				},
+				"_bounty": {
+					"value": "caseEvent_hide",
+					"type": "String"
+				},
+				"pathConnexion": {
+					"value": {
+						"5": {
+							"value": 143.92,
+							"type": "Number"
+						}
+					},
+					"type": "Object"
+				},
+				"_visited": {
+					"value": false,
+					"type": "Boolean"
+				}
+			},
+			"p": {
+				"alpha": {
+					"value": 1,
+					"type": "Number"
+				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
+				"parentGroupId": {
+					"value": 1,
+					"type": "Number"
+				},
+				"euler": {
+					"value": {
+						"x": -1.3089969389957472,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": -67.02249872509263,
+						"y": 0,
+						"z": -52.14702940889154
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": -76,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 0.55,
+						"y": 0.55,
+						"z": 0.55
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				}
+			},
+			"d": {
+				"alpha": {
+					"value": 1,
+					"type": "Number"
+				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
+				"tint": {
+					"value": 16777215,
+					"type": "Number"
+				},
+				"blendMode": {
+					"value": 0,
+					"type": "Number"
+				},
+				"euler": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 1
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"anchor": {
+					"value": {
+						"x": 0.5,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				}
+			},
+			"n": {
+				"alpha": {
+					"value": 1,
+					"type": "Number"
+				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
+				"tint": {
+					"value": 16777215,
+					"type": "Number"
+				},
+				"blendMode": {
+					"value": 0,
+					"type": "Number"
+				},
+				"euler": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 1
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"anchor": {
+					"value": {
+						"x": 0.5,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				}
+			}
+		},
+		{
+			"g": {
+				"_dataBaseName": {
+					"value": "cases",
+					"type": "String"
+				},
+				"_textureName": {
+					"value": "case",
+					"type": "String"
+				},
+				"_globalId": {
+					"value": 5,
+					"type": "Number"
+				},
+				"_localId": {
+					"value": 28,
+					"type": "Number"
+				},
+				"_identifiable": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_identified": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_destroyed": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_globalCaseId": {
+					"value": 5,
+					"type": "Number"
+				},
+				"_localCaseId": {
+					"value": 5,
+					"type": "Number"
+				},
+				"_randomColor": {
+					"value": true,
+					"type": "Boolean"
+				},
+				"_randomBounty": {
+					"value": true,
+					"type": "Boolean"
+				},
+				"_color": {
+					"value": "white",
+					"type": "String"
+				},
+				"_bounty": {
+					"value": "caseEvent_hide",
+					"type": "String"
+				},
+				"pathConnexion": {
+					"value": {},
+					"type": "Object"
+				},
+				"_visited": {
+					"value": false,
+					"type": "Boolean"
+				}
+			},
+			"p": {
+				"alpha": {
+					"value": 1,
+					"type": "Number"
+				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
+				"parentGroupId": {
+					"value": 1,
+					"type": "Number"
+				},
+				"euler": {
+					"value": {
+						"x": -1.3089969389957472,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": 65.74854763190177,
+						"y": 0,
+						"z": -107.7000055589292
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": -76,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 0.55,
+						"y": 0.55,
+						"z": 0.55
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				}
+			},
+			"d": {
+				"alpha": {
+					"value": 1,
+					"type": "Number"
+				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
+				"tint": {
+					"value": 16777215,
+					"type": "Number"
+				},
+				"blendMode": {
+					"value": 0,
+					"type": "Number"
+				},
+				"euler": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 1
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"anchor": {
+					"value": {
+						"x": 0.5,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				}
+			},
+			"n": {
+				"alpha": {
+					"value": 1,
+					"type": "Number"
+				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
+				"tint": {
+					"value": 16777215,
+					"type": "Number"
+				},
+				"blendMode": {
+					"value": 0,
+					"type": "Number"
+				},
+				"euler": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 1
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"anchor": {
+					"value": {
+						"x": 0.5,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				}
+			}
+		},
+		{
+			"g": {
+				"_dataBaseName": {
+					"value": "cases",
+					"type": "String"
+				},
+				"_textureName": {
+					"value": "case",
+					"type": "String"
+				},
+				"_globalId": {
+					"value": 6,
+					"type": "Number"
+				},
+				"_localId": {
+					"value": 29,
+					"type": "Number"
+				},
+				"_identifiable": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_identified": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_destroyed": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_globalCaseId": {
+					"value": 6,
+					"type": "Number"
+				},
+				"_localCaseId": {
+					"value": 6,
+					"type": "Number"
+				},
+				"_randomColor": {
+					"value": true,
+					"type": "Boolean"
+				},
+				"_randomBounty": {
+					"value": true,
+					"type": "Boolean"
+				},
+				"_color": {
+					"value": "white",
+					"type": "String"
+				},
+				"_bounty": {
+					"value": "caseEvent_hide",
+					"type": "String"
+				},
+				"pathConnexion": {
+					"value": {
+						"7": {
+							"value": 142.48,
+							"type": "Number"
+						}
+					},
+					"type": "Object"
+				},
+				"_visited": {
+					"value": false,
+					"type": "Boolean"
+				}
+			},
+			"p": {
+				"alpha": {
+					"value": 1,
+					"type": "Number"
+				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
+				"parentGroupId": {
+					"value": 1,
+					"type": "Number"
+				},
+				"euler": {
+					"value": {
+						"x": -1.3089969389957472,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": -334.92887962158113,
+						"y": 0,
+						"z": 89.9280961169352
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": -76,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 0.55,
+						"y": 0.55,
+						"z": 0.55
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				}
+			},
+			"d": {
+				"alpha": {
+					"value": 1,
+					"type": "Number"
+				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
+				"tint": {
+					"value": 16777215,
+					"type": "Number"
+				},
+				"blendMode": {
+					"value": 0,
+					"type": "Number"
+				},
+				"euler": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 1
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"anchor": {
+					"value": {
+						"x": 0.5,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				}
+			},
+			"n": {
+				"alpha": {
+					"value": 1,
+					"type": "Number"
+				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
+				"tint": {
+					"value": 16777215,
+					"type": "Number"
+				},
+				"blendMode": {
+					"value": 0,
+					"type": "Number"
+				},
+				"euler": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 1
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"anchor": {
+					"value": {
+						"x": 0.5,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				}
+			}
+		},
+		{
+			"g": {
+				"_dataBaseName": {
+					"value": "cases",
+					"type": "String"
+				},
+				"_textureName": {
+					"value": "case",
+					"type": "String"
+				},
+				"_globalId": {
+					"value": 7,
+					"type": "Number"
+				},
+				"_localId": {
+					"value": 30,
+					"type": "Number"
+				},
+				"_identifiable": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_identified": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_destroyed": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_globalCaseId": {
+					"value": 7,
+					"type": "Number"
+				},
+				"_localCaseId": {
+					"value": 7,
+					"type": "Number"
+				},
+				"_randomColor": {
+					"value": true,
+					"type": "Boolean"
+				},
+				"_randomBounty": {
+					"value": true,
+					"type": "Boolean"
+				},
+				"_color": {
+					"value": "white",
+					"type": "String"
+				},
+				"_bounty": {
+					"value": "caseEvent_hide",
+					"type": "String"
+				},
+				"pathConnexion": {
+					"value": {
+						"8": {
+							"value": 145.16,
+							"type": "Number"
+						}
+					},
+					"type": "Object"
+				},
+				"_visited": {
+					"value": false,
+					"type": "Boolean"
+				}
+			},
+			"p": {
+				"alpha": {
+					"value": 1,
+					"type": "Number"
+				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
+				"parentGroupId": {
+					"value": 1,
+					"type": "Number"
+				},
+				"euler": {
+					"value": {
+						"x": -1.3089969389957472,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": -468.34038129901796,
+						"y": 0,
+						"z": 39.900633342105266
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": -76,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 0.55,
+						"y": 0.55,
+						"z": 0.55
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				}
+			},
+			"d": {
+				"alpha": {
+					"value": 1,
+					"type": "Number"
+				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
+				"tint": {
+					"value": 16777215,
+					"type": "Number"
+				},
+				"blendMode": {
+					"value": 0,
+					"type": "Number"
+				},
+				"euler": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 1
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"anchor": {
+					"value": {
+						"x": 0.5,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				}
+			},
+			"n": {
+				"alpha": {
+					"value": 1,
+					"type": "Number"
+				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
+				"tint": {
+					"value": 16777215,
+					"type": "Number"
+				},
+				"blendMode": {
+					"value": 0,
+					"type": "Number"
+				},
+				"euler": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 1
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"anchor": {
+					"value": {
+						"x": 0.5,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				}
+			}
+		},
+		{
+			"g": {
+				"_dataBaseName": {
+					"value": "cases",
+					"type": "String"
+				},
+				"_textureName": {
+					"value": "case",
+					"type": "String"
+				},
+				"_globalId": {
+					"value": 8,
+					"type": "Number"
+				},
+				"_localId": {
+					"value": 31,
+					"type": "Number"
+				},
+				"_identifiable": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_identified": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_destroyed": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_globalCaseId": {
+					"value": 8,
+					"type": "Number"
+				},
+				"_localCaseId": {
+					"value": 8,
+					"type": "Number"
+				},
+				"_randomColor": {
+					"value": true,
+					"type": "Boolean"
+				},
+				"_randomBounty": {
+					"value": true,
+					"type": "Boolean"
+				},
+				"_color": {
+					"value": "white",
+					"type": "String"
+				},
+				"_bounty": {
+					"value": "caseEvent_hide",
+					"type": "String"
+				},
+				"pathConnexion": {
+					"value": {},
+					"type": "Object"
+				},
+				"_visited": {
+					"value": false,
+					"type": "Boolean"
+				}
+			},
+			"p": {
+				"alpha": {
+					"value": 1,
+					"type": "Number"
+				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
+				"parentGroupId": {
+					"value": 1,
+					"type": "Number"
+				},
+				"euler": {
+					"value": {
+						"x": -1.3089969389957472,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": -606.978725260847,
+						"y": 0,
+						"z": -3.1118581154332787
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": -76,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 0.55,
+						"y": 0.55,
+						"z": 0.55
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				}
+			},
+			"d": {
+				"alpha": {
+					"value": 1,
+					"type": "Number"
+				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
+				"tint": {
+					"value": 16777215,
+					"type": "Number"
+				},
+				"blendMode": {
+					"value": 0,
+					"type": "Number"
+				},
+				"euler": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 1
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"anchor": {
+					"value": {
+						"x": 0.5,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				}
+			},
+			"n": {
+				"alpha": {
+					"value": 1,
+					"type": "Number"
+				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
+				"tint": {
+					"value": 16777215,
+					"type": "Number"
+				},
+				"blendMode": {
+					"value": 0,
+					"type": "Number"
+				},
+				"euler": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 1
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"anchor": {
+					"value": {
+						"x": 0.5,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				}
+			}
+		},
+		{
+			"g": {
+				"_dataBaseName": {
+					"value": "cases",
+					"type": "String"
+				},
+				"_textureName": {
+					"value": "case",
+					"type": "String"
+				},
+				"_globalId": {
+					"value": 9,
+					"type": "Number"
+				},
+				"_localId": {
+					"value": 32,
+					"type": "Number"
+				},
+				"_identifiable": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_identified": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_destroyed": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_globalCaseId": {
+					"value": 9,
+					"type": "Number"
+				},
+				"_localCaseId": {
+					"value": 9,
+					"type": "Number"
+				},
+				"_randomColor": {
+					"value": true,
+					"type": "Boolean"
+				},
+				"_randomBounty": {
+					"value": true,
+					"type": "Boolean"
+				},
+				"_color": {
+					"value": "white",
+					"type": "String"
+				},
+				"_bounty": {
+					"value": "caseEvent_hide",
+					"type": "String"
+				},
+				"pathConnexion": {
+					"value": {
+						"10": {
+							"value": 200,
+							"type": "Number"
+						}
+					},
+					"type": "Object"
+				},
+				"_visited": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"input": {
+					"value": [],
+					"type": "Array"
+				}
+			},
+			"p": {
+				"alpha": {
+					"value": 1,
+					"type": "Number"
+				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
+				"parentGroupId": {
+					"value": 1,
+					"type": "Number"
+				},
+				"euler": {
+					"value": {
+						"x": -1.3089969389957472,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": 421.4144832406163,
+						"y": 0,
+						"z": 49.94700295186982
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": -76,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 0.55,
+						"y": 0.55,
+						"z": 0.55
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				}
+			},
+			"d": {
+				"alpha": {
+					"value": 1,
+					"type": "Number"
+				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
+				"tint": {
+					"value": 16777215,
+					"type": "Number"
+				},
+				"blendMode": {
+					"value": 0,
+					"type": "Number"
+				},
+				"euler": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 1
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"anchor": {
+					"value": {
+						"x": 0.5,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				}
+			},
+			"n": {
+				"alpha": {
+					"value": 1,
+					"type": "Number"
+				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
+				"tint": {
+					"value": 16777215,
+					"type": "Number"
+				},
+				"blendMode": {
+					"value": 0,
+					"type": "Number"
+				},
+				"euler": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 1
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"anchor": {
+					"value": {
+						"x": 0.5,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				}
+			}
+		},
+		{
+			"g": {
+				"_dataBaseName": {
+					"value": "cases",
+					"type": "String"
+				},
+				"_textureName": {
+					"value": "case",
+					"type": "String"
+				},
+				"_globalId": {
+					"value": 10,
+					"type": "Number"
+				},
+				"_localId": {
+					"value": 33,
+					"type": "Number"
+				},
+				"_identifiable": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_identified": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_destroyed": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_globalCaseId": {
+					"value": 10,
+					"type": "Number"
+				},
+				"_localCaseId": {
+					"value": 10,
+					"type": "Number"
+				},
+				"_randomColor": {
+					"value": true,
+					"type": "Boolean"
+				},
+				"_randomBounty": {
+					"value": true,
+					"type": "Boolean"
+				},
+				"_color": {
+					"value": "white",
+					"type": "String"
+				},
+				"_bounty": {
+					"value": "caseEvent_hide",
+					"type": "String"
+				},
+				"pathConnexion": {
+					"value": {
+						"11": {
+							"value": 159.31,
+							"type": "Number"
+						}
+					},
+					"type": "Object"
+				},
+				"_visited": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"input": {
+					"value": [],
+					"type": "Array"
+				}
+			},
+			"p": {
+				"alpha": {
+					"value": 1,
+					"type": "Number"
+				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
+				"parentGroupId": {
+					"value": 1,
+					"type": "Number"
+				},
+				"euler": {
+					"value": {
+						"x": -1.3089969389957472,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": 592.7508236841318,
+						"y": 0,
+						"z": 153.1160799246904
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": -76,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 0.55,
+						"y": 0.55,
+						"z": 0.55
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				}
+			},
+			"d": {
+				"alpha": {
+					"value": 1,
+					"type": "Number"
+				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
+				"tint": {
+					"value": 16777215,
+					"type": "Number"
+				},
+				"blendMode": {
+					"value": 0,
+					"type": "Number"
+				},
+				"euler": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 1
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"anchor": {
+					"value": {
+						"x": 0.5,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				}
+			},
+			"n": {
+				"alpha": {
+					"value": 1,
+					"type": "Number"
+				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
+				"tint": {
+					"value": 16777215,
+					"type": "Number"
+				},
+				"blendMode": {
+					"value": 0,
+					"type": "Number"
+				},
+				"euler": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 1
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"anchor": {
+					"value": {
+						"x": 0.5,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				}
+			}
+		},
+		{
+			"g": {
+				"_dataBaseName": {
+					"value": "cases",
+					"type": "String"
+				},
+				"_textureName": {
+					"value": "case",
+					"type": "String"
+				},
+				"_globalId": {
+					"value": 11,
+					"type": "Number"
+				},
+				"_localId": {
+					"value": 34,
+					"type": "Number"
+				},
+				"_identifiable": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_identified": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_destroyed": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"_globalCaseId": {
+					"value": 11,
+					"type": "Number"
+				},
+				"_localCaseId": {
+					"value": 11,
+					"type": "Number"
+				},
+				"_randomColor": {
+					"value": true,
+					"type": "Boolean"
+				},
+				"_randomBounty": {
+					"value": true,
+					"type": "Boolean"
+				},
+				"_color": {
+					"value": "white",
+					"type": "String"
+				},
+				"_bounty": {
+					"value": "caseEvent_hide",
+					"type": "String"
+				},
+				"pathConnexion": {
+					"value": {},
+					"type": "Object"
+				},
+				"_visited": {
+					"value": false,
+					"type": "Boolean"
+				},
+				"input": {
+					"value": [],
+					"type": "Array"
+				}
+			},
+			"p": {
+				"alpha": {
+					"value": 1,
+					"type": "Number"
+				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
+				"parentGroupId": {
+					"value": 1,
+					"type": "Number"
+				},
+				"euler": {
+					"value": {
+						"x": -1.3089969389957472,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": 602.2799926676445,
+						"y": 0,
+						"z": 312.14089234220273
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": -76,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 0.55,
+						"y": 0.55,
+						"z": 0.55
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				}
+			},
+			"d": {
+				"alpha": {
+					"value": 1,
+					"type": "Number"
+				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
+				"tint": {
+					"value": 16777215,
+					"type": "Number"
+				},
+				"blendMode": {
+					"value": 0,
+					"type": "Number"
+				},
+				"euler": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 1
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"anchor": {
+					"value": {
+						"x": 0.5,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				}
+			},
+			"n": {
+				"alpha": {
+					"value": 1,
+					"type": "Number"
+				},
+				"rotation": {
+					"value": 0,
+					"type": "Number"
+				},
+				"tint": {
+					"value": 16777215,
+					"type": "Number"
+				},
+				"blendMode": {
+					"value": 0,
+					"type": "Number"
+				},
+				"euler": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot3d": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale3d": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 1
+					},
+					"type": "ObservablePoint"
+				},
+				"skew": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"anchor": {
+					"value": {
+						"x": 0.5,
+						"y": 1,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"position": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"pivot": {
+					"value": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"type": "ObservablePoint"
+				},
+				"scale": {
+					"value": {
+						"x": 1,
+						"y": 1,
+						"z": 0
 					},
 					"type": "ObservablePoint"
 				}

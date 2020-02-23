@@ -73,20 +73,35 @@ Array.prototype.contains = function (element) {
 }
 Object.defineProperty(Array.prototype, 'contains',{enumerable:false})
 
-Array.prototype.remove = function (arg = undefined) {
-    let what;
-    let a = arguments;
-    let L = a.length
-    let ax;
-    while (L && this.length) {
-        what = a[--L];
-        while ((ax = this.indexOf(what)) !== -1) {
-            this.splice(ax, 1);
+Array.prototype.remove = function (arg) {
+    if(arguments.length){
+        const arr = arguments;
+        for (let i=0, index = null, l=arr.length; i<l; i++) {
+            const el = arr[i];
+            while (( index = this.indexOf(el)) !== -1) {
+                this.splice(index, 1);
+            }
+       }
+    }else{
+        for (let i=0, l=this.length; i<l; i++) {
+            this[i] ?? delete this[i];
         }
-    };
-    return this;
+    }
+   return this;
 }
 Object.defineProperty(Array.prototype, 'remove',{enumerable:false})
+
+Array.prototype.delete = function (arg) {
+    const arr = arguments;
+    for (let i=0, index = null, l=arr.length; i<l; i++) {
+        const el = arr[i];
+        while (( index = this.indexOf(el)) !== -1) {
+            this[index] = undefined;
+        }
+   }
+   return this;
+}
+Object.defineProperty(Array.prototype, 'delete',{enumerable:false})
 
 Array.prototype.findEmptyIndex = function() {
     for (let i=0, l=this.length+1; i<l; i++) {

@@ -69,10 +69,9 @@ class _GUI { //TODO REFACTORING DANS UN CONTAINER ? .huds .menue gui.huds. gui.m
         //this.PinBar.show();
         //this.Travel.show();
         //this.States.show();
-       //this.Minimap.show();
-       //this.Items.show();
-       //this.MessageIndicator.show();
-       //this.MessageIndicator.show();
+        //this.Minimap.show();
+        //this.Items.show();
+        //this.MessageIndicator.show();
     }
 
     /** active ou disable le rendering et la visibiliter pour les scenes au besoin

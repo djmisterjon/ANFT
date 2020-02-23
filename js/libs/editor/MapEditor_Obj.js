@@ -2,7 +2,9 @@
 /** enrobage d'un objet map pour editeur, contien debug et interaction */
 class _Editor_Obj{
     //#region [Static]
-    /**@type {_DataObj_Base}  a l'interieux d'un obj*/
+    /** @type {_Editor_Obj} un obj en cour de tracking */
+    static TRACKING = null;
+    /**@type {_Editor_Obj}  a l'interieux d'un obj*/
     static INOBJ = null;
     /**@type {PIXI.projection.Sprite3d} - a 'interieux d'un axe3d  */
     static INAXIS = null;
@@ -11,7 +13,6 @@ class _Editor_Obj{
     /** mix ou une nouvelle instance de debug 
      * @param {_DataObj_Base} DataObj
     */
-
     static makeInteractive(value){
         this.POOL.forEach(o=>o.LINK.interactiveChildren = value);
         $EDITOR.showLog(`All interactiveChildren: ${value}`);
@@ -31,8 +32,9 @@ class _Editor_Obj{
         this.initialize();
     };
     //#region [GetterSetter]
+    
     get isTracking() {
-        return !!gsap.getById('mouseTrack');
+        return !!gsap.getById('mouseTrack') || !!this.TRACKING;
     }
     get EDITOR() {
         return $EDITOR;
@@ -40,11 +42,17 @@ class _Editor_Obj{
     get LINK() {
         return this.DataObj.link;
     }
+    get TRACKING() {
+        return _Editor_Obj.TRACKING;
+    }
+    set TRACKING(DataObj) {
+        _Editor_Obj.TRACKING = DataObj;
+    }
     get INOBJ() {
         return _Editor_Obj.INOBJ;
     }
-    set INOBJ(DataObj) {
-        _Editor_Obj.INOBJ = DataObj;
+    set INOBJ(Editor_Obj) {
+        _Editor_Obj.INOBJ = Editor_Obj;
     }
     get INAXIS() {
         return _Editor_Obj.INAXIS;
@@ -138,7 +146,9 @@ class _Editor_Obj{
     pointerup_canvas(e){
         this.clearTrack();
         if(e.button === 0){ //save
-            _Editor_ObjCase.TRACKING2 = this;
+            if(this.EDITOR._pathMode){
+                this.TRACKING2 = this;
+            }
             this.saveToMap();
             this.EDITOR.createObj(this.DataObj.clone())
         }else
@@ -166,7 +176,7 @@ class _Editor_Obj{
         Background     .visible = true ;
         Axi3dContainer .visible = true ;
         Background.filters = [this.EDITOR.FILTERS.OUTLINE2]
-        this.INOBJ = this.DataObj;
+        this.INOBJ = this;
     }
     pointerout(e){
         const Background = this.child.Background;
@@ -226,6 +236,7 @@ class _Editor_Obj{
         this.LINK.interactiveChildren = false;
         this.EDITOR.child.Library2.hide();
         this.EDITOR.hide();
+        this.TRACKING = this;
         !allowTrack && Inspectors.DataObj(this.DataObj,this).onChange( ()=>{this.updateDebug()} );
         gsap.getById('mouseTrack')?.kill();
         allowTrack && gsap.IntervalCallId(0, ()=>{ this.updateTrack() }, 'mouseTrack');
@@ -238,7 +249,7 @@ class _Editor_Obj{
 
     updateTrack(){
         const pos = $mouse.InteractionData.getLocalPosition($stage.scene.Background, new PIXI.Point(), $mouse.InteractionData.global);
-        const INOBJ = this.INOBJ?.link;
+        const INOBJ = this.INOBJ?.LINK;
         const INAXIS = this.INAXIS;
         const TRACKING2 = _Editor_ObjCase.TRACKING2;
         
@@ -287,7 +298,7 @@ class _Editor_Obj{
         const Circle3d = this.child.Circle3d;
         const Axi3dContainer = this.child.Axi3dContainer;
         LINK.interactive = link;
-        LINK.interactiveChildren = true;
+        LINK.interactiveChildren = this!==this.TRACKING;
         Circle3d.interactive = circle;
         Axi3dContainer.interactiveChildren = axis;
     }
@@ -349,17 +360,18 @@ class _Editor_Obj{
         !$objs.GLOBAL[DataObj._globalId] && $objs.addToGlobalRegister(DataObj);
         !$objs.LOCAL [DataObj._localId ] && $objs.addtoLocalRegister (DataObj);
         this.LINK.interactiveChildren = true;
-        const isPathmode = this.EDITOR._pathMode;
-        isPathmode? this.toggleInteractive(false,false,true) : this.toggleInteractive(true);
+        this.EDITOR._pathMode? this.toggleInteractive(false,false,true) : this.toggleInteractive(true);
         this.EDITOR.showLog('Tile SAVED to map');
     }
-    removeToMap(){//todo: verifier si des conextions path sont detecter, ou des events game
+    removeToMap(removeFromRegister){//todo: verifier si des conextions path sont detecter, ou des events game
+        this.clearTrack();
         const LINK = this.LINK;
-        $objs.removeFromRegister(this.DataObj); 
         this.POOL.remove(this);
-        this.EDITOR._pathMode && this.POOL2.remove(this);
+        this.POOL2?.remove(this)
+        $objs.removeFromRegister(this.DataObj); 
         LINK.Destroy(); // todo: remove register , verifier
         this.EDITOR.showLog('Tile removed');
+        this.EDITOR._pathMode? this.toggleInteractive(false,false,true) : this.toggleInteractive(true);
     }
 
     /** cancel track */
@@ -373,6 +385,7 @@ class _Editor_Obj{
         $stage.scene.interactiveChildren = true;
         gsap.getById('blinkRenderable')?.kill();
         gsap.getById('mouseTrack')?.kill();
+        this.TRACKING = null;
         this.INOBJ = null;
         this.INAXIS = null;
         this.LINK.interactive = true;

@@ -15,7 +15,6 @@ class Scene_Map2 extends _Scene_Base {
         this.__start(true);
         //$huds.showAll(); //DELETEME:
        // $events.introSleep(); //TODO: AJOUTER PUSH[] DANS UN POOL UPDATE,?
-        //$huds.showAll();
     };
 
     update(delta){

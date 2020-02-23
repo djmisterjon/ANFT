@@ -218,7 +218,7 @@ console.log1('$players: ', $players);
          * @param {_DataObj_Case} Case - force saute sur une case
          * @returns {PIXI.spine.core.TrackEntry} */
         moveToNextPath(Case) { //TODO: RENDU ICI, this.inCase APARET TROP TO ToT?
-            const LOCAL = $objs.LOCAL;
+            const LOCAL = $objs.CASES_L;
             this._isMoving = true;
             this.inCase = this.toCase || this.inCase; // mise a jours inCase
 

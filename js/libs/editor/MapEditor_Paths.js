@@ -32,9 +32,22 @@ class _Editor_ObjCase extends _Editor_Obj{
             clearPath:(e)=>{
                 if(confirm('clear all pathFinding') ){
                    this.clearPaths();
+                   this.drawPath();
+                }
+            },
+            clearLocalCases:(e)=>{
+                if(confirm('clear all local Cases') ){
+                    const LINKS = $objs.CASES_L.map(c=>c.link);
+                    $stage.scene  .removeChild(...LINKS);
+                    $objs .GLOBAL .delete(...$objs.CASES_L);
+                    $objs .LOCAL  .delete(...$objs.CASES_L);
+                    $objs .CASES_G.delete(...$objs.CASES_L);
+                    $objs.CASES_L = [];
+                    this.POOL = [];
                 }
             },
             newCase:(e)=>{
+                this.TRACKING2 = null;
                 const DataObj = new _DataObj_Case('cases','case');
                 $EDITOR.createObj(DataObj);
                 this.presetCase(DataObj);
@@ -49,6 +62,9 @@ class _Editor_ObjCase extends _Editor_Obj{
         });
         _Editor_Obj.makeInteractive(false); // ont disable tous pour activer seulement les circles
         $EDITOR.toggle_debugMode(false);
+        this.drawPath();
+    }
+    static drawPath(){
         this.POOL.forEach(ObjCase=>{
             ObjCase.renderablePathDebug(true);
             ObjCase.toggleInteractive(false,false,true);
@@ -65,6 +81,7 @@ class _Editor_ObjCase extends _Editor_Obj{
             ObjCase.renderablePathDebug(false);
             ObjCase.toggleInteractive(true);
             ObjCase.drawPath();
+            ObjCase.DataObj.asignFactory( ObjCase.DataObj.createFactory() );
         })
     }
 
@@ -167,7 +184,11 @@ class _Editor_ObjCase extends _Editor_Obj{
         Circle3d.scale.set(2);
         Circle3d.filters = null;
     }
+    /** @param {PIXI.interaction.InteractionEvent} e -*/
     pointerdown_Circle3d(e){
+        if(e.isRight){
+            return this.removeToMap()
+        }
         this.RECPATH = true;
         setTimeout(() => {
             $app.view.addEventListener("pointerup"  ,(e)=>{
@@ -233,10 +254,11 @@ class _Editor_ObjCase extends _Editor_Obj{
                 lineSprite.scale3d.set(1/DataObj.p.scale3d.x);
             PathContainer.addChild(lineSprite);
             const txtDist = new PIXI.Text(`dist:${~~dist.d}`,$systems.styles[0]);
-            txtDist.y = 50;
-            txtDist.x = dist.d/2;
-            txtDist.scale.set(1,-1);
-            lineSprite.addChild(txtDist);
+            const txtSprite = new PIXI.projection.Sprite3d ( $app.renderer.generateTexture( txtDist,PIXI.SCALE_MODES.LINEAR,1 ) );
+            txtSprite.y = 50;
+            txtSprite.x = dist.d/2;
+            txtSprite.proj.affine = 4;
+            lineSprite.addChild(txtSprite);
         });
     }
 

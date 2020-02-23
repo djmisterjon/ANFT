@@ -121,16 +121,20 @@ class _DataObj_Base {
         if(this.factory !== factory){
             this.factory = factory;
         }
-        const link = this.link;
         factory.g.to(this);
-        factory.p && factory.p.to(link.p);
-        factory.d && factory.d.to(link.d);
-        factory.n && factory.n.to(link.n);
-        factory.s && factory.s.to(link.s);
-        this.update(); 
+        const link = this.link;
+        if(link){
+            link.p && factory?.p.to(link.p);
+            link.d && factory?.d.to(link.d);
+            link.n && factory?.n.to(link.n);
+            link.s && factory?.s.to(link.s);
+            //link.a && factory?.a.to(link.a);
+            //link.l && factory?.l.to(link.l);
+            this.update();
+        }
     }
 
-    /** update objet setting, lorsque on applique un factory, ou loadgame ou ..? 
+    /** update objet link from setting, lorsque on applique un factory, ou loadgame ou ..? 
      * Voir les super class pour un update custom
     */
     update(){

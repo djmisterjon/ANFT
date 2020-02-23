@@ -5671,7 +5671,6 @@ var Resource = exports.Resource = function () {
         } else {
             xhr.responseType = this.xhrType;
         }
-
         xhr.addEventListener('error', this._boundXhrOnError, false);
         xhr.addEventListener('timeout', this._boundXhrOnTimeout, false);
         xhr.addEventListener('abort', this._boundXhrOnAbort, false);
