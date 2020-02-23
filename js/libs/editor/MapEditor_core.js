@@ -227,15 +227,26 @@ class _Editor extends PIXI.Container{
         const name = slot.currentSpriteName;
         switch (name) {
             //case "icon_darkMode"        : this.toggle_thumbsLibs        (slot) ; break;
-            case "icon_masterLight"            : this.toggle_sceneLight    (e) ; break;
-            case "icon_Save"            : this.create_Inspector_save    (e) ; break;
-            case "icon_showHideSprites" : this.toggle_debugMode    () ; break;
-            case "icon_grid"            : this.create_MapGrids     (e) ; break;
-            case "icon_pathMaker"       : this.toggle_drawPathMode (e,slot) ; break;
-            case "icon_camera"       : this.toggle_CameraMode (e) ; break;
-            case "icon_setup"           : this.toggle_EditorSetup (e) ; break;
+            case "icon_light"       : this.toggle_pointLight      (e     ) ; break;
+            case "icon_spotLight"       : this.toggle_spotLight      (e     ) ; break;
+            case "icon_masterLight"     : this.toggle_sceneLight     (e     ) ; break;
+            case "icon_Save"            : this.create_Inspector_save (e     ) ; break;
+            case "icon_showHideSprites" : this.toggle_debugMode      (      ) ; break;
+            case "icon_grid"            : this.create_MapGrids       (e     ) ; break;
+            case "icon_pathMaker"       : this.toggle_drawPathMode   (e,slot) ; break;
+            case "icon_camera"          : this.toggle_CameraMode     (e     ) ; break;
+            case "icon_setup"           : this.toggle_EditorSetup    (e     ) ; break;
         };
     }
+    toggle_pointLight(e){// TODO: PLUTOT UN MODE LIGHT, similair au cases
+       
+    }
+    toggle_spotLight(e){
+        const spotLight = new PIXI.lights.DirectionalLight(0xffffff,1,$stage.scene);
+        $stage.addChild(spotLight);
+        Inspectors.Light(spotLight);
+    }
+
     /** inspecteur scene light */
     toggle_sceneLight(){
         Inspectors.Light($stage.child.AmbientLight);

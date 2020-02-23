@@ -76,10 +76,13 @@ class Inspectors {
         f1.add(Light, "lightHeight" ).step(0.001);
         f1.add(Light, "radius" ).step(0.01);
         f1.add(Light, "brightness" ).step(0.01);
+        console.log('Light: ', Light);
        
         f1.add(Light, "color",{color:true} )
         f1.add(Light, "indices" ).step(0.1);
         f1.add(Light, "alpha" ).step(0.1);
+        f1.add(Light ,'blendMode',{ select:{'[0]-NORMAL':0, '[1]-ADD':1, '[2]-MULTIPLY':2, '[3]-SCREEN':3, '[4]-OVERLAY':4, '[5]-DARKEN':5, '[6]-LIGHTEN':6  }}).listen()
+        Light.position && f1.add(Light, "position",['x','y'] ).step(10);
         return gui;
     };
     //#endregion
