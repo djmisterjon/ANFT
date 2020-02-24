@@ -259,14 +259,14 @@ class _Editor_Obj{
             this.eulerCache = this.eulerCache || this.LINK.euler.clone();
             this.LINK.position3d.set(pos.x,0,INOBJ.position3d.z+1);
             const x = INOBJ.position3d.x+(LOCAL.x*2);
-            const y = INOBJ.pivot3d.y-(LOCAL.y*2);
+            const y = INOBJ.position3d.y+(LOCAL.y*2);
             const z = INOBJ.position3d.z-(LOCAL.y*2);
             this.LINK.euler.copy(INOBJ.euler);
             this.LINK.position3d.copy(INOBJ.position3d);
             this.LINK.position3d.z-=1;
             switch (INAXIS?.name) {
                 case 'axeX': this.LINK.position3d.    x   = x          ; break;
-                case 'axeY': this.LINK.pivot3d   .    y   = y          ; break;
+                case 'axeY': this.LINK.position3d   .    y   = y          ; break;
                 case 'axeZ': this.LINK.position3d.    z   = z          ; break;
                 default    : this.LINK.position3d.set(pos.  x,0,-pos.y); break; 
             }
@@ -286,7 +286,7 @@ class _Editor_Obj{
         const Background = this.child.Background;
         const Axi3dContainer = this.child.Axi3dContainer;
         Background.position3d.copy(C.pivot3d);
-        //Axi3dContainer.position3d.copy(C.pivot3d);
+        Axi3dContainer.position3d.copy(C.pivot3d);
         //Axi3dContainer.scale3d.set(1/C.scale3d.x,1/C.scale3d.y,1/C.scale3d.z);
         //!pivot test
         Background.scale3d.y = (this.recBound.height+C.pivot3d.y)/this.recBound.height
