@@ -281,7 +281,7 @@ class _mouse extends PIXI.Container{
             $audio._sounds.BT_A.play("BT_A03").speed = 0.8;
             return this.clear();
         }; // remove item in mouse
-        if($systems._inCombat){ return $combats.pUP_global(e) }; // si en combat et mode selectionner.
+        if($systems._inCombat){ return _Combats.pUP_global(e) }; // si en combat et mode selectionner.
         if(isClickR && $gui._inMenue){$gui.hide()};
     };
     /**@param {PIXI.interaction.InteractionEvent} e */
@@ -490,15 +490,6 @@ class _mouse extends PIXI.Container{
             }
             coor.text = `x:${~~this.xx}, y:${~~this.yy}\n_x:${~~(this.xx-hold.x)}, _y:${~~(this.yy-hold.y)}`;
         }, 80);
-
-        const gui = new Inspectors('MOUSE','controler').x(300);
-        //TODO: BREADCUM styte scan les parent et children
-        const f1 = gui.addFolder('LIGHT.controler');
-        f1.add(this.l, 'lightHeight').step(0.01).listen().slider();
-        f1.add(this.l, 'brightness').step(0.1).listen().slider();
-        //f1.add(this.l, 'radius').listen().slider();
-        f1.add(this.l, 'falloff').step(0.1).listen().slider();
-       
     };
   
 };// end class

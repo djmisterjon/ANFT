@@ -391,6 +391,7 @@ class _Editor extends PIXI.Container{
         DataObj._globalId = $objs.GLOBAL.findEmptyIndex();
         DataObj._localId  = $objs.LOCAL .findEmptyIndex();
         if(DataObj.isCase){
+            DataObj.pathConnexion = {};// on reset les path connections, car le clone les a copier
             DataObj._globalCaseId = $objs.CASES_G.findEmptyIndex();
             DataObj._localCaseId = $objs.CASES_L.findEmptyIndex();
             new _Editor_ObjCase(Container.DataObj).addTracking()

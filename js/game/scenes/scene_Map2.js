@@ -12,7 +12,9 @@ class Scene_Map2 extends _Scene_Base {
 
     //#region [Method]
     start(){
-        this.__start(true);
+        //TODO: RENDU ICI: Tester la premiere quest, chercher item, recolte ressource, et tester les cases turn
+        //todo: les case porte,tp, permetre de teleporter, sinon les porte a proximiter ne fon rien
+        this.__start(true); 
         //$huds.showAll(); //DELETEME:
         //$events.introSleep(); //TODO: AJOUTER PUSH[] DANS UN POOL UPDATE,?
     };

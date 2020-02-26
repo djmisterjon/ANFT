@@ -1,6 +1,6 @@
 {
 	"META": {
-		"date": "23 février 2020 14:26:56 PM dimanche"
+		"date": "25 février 2020 13:28:56 PM mardi"
 	},
 	"_lights": {
 		"ambientLight": false,
@@ -6131,6 +6131,10 @@
 					"value": "caseEvent_hide",
 					"type": "String"
 				},
+				"_bountyData": {
+					"value": null,
+					"type": "Number"
+				},
 				"pathConnexion": {
 					"value": {
 						"1": {
@@ -7842,8 +7846,16 @@
 					"value": "caseEvent_hide",
 					"type": "String"
 				},
+				"_bountyData": {
+					"value": null,
+					"type": "Number"
+				},
 				"pathConnexion": {
 					"value": {
+						"0": {
+							"value": 138.71,
+							"type": "Number"
+						},
 						"2": {
 							"value": 182.1,
 							"type": "Number"
@@ -8169,8 +8181,16 @@
 					"value": "caseEvent_hide",
 					"type": "String"
 				},
+				"_bountyData": {
+					"value": null,
+					"type": "Number"
+				},
 				"pathConnexion": {
 					"value": {
+						"1": {
+							"value": 182.1,
+							"type": "Number"
+						},
 						"3": {
 							"value": 150.11,
 							"type": "Number"
@@ -8496,8 +8516,16 @@
 					"value": "caseEvent_hide",
 					"type": "String"
 				},
+				"_bountyData": {
+					"value": null,
+					"type": "Number"
+				},
 				"pathConnexion": {
 					"value": {
+						"2": {
+							"value": 150.11,
+							"type": "Number"
+						},
 						"4": {
 							"value": 200,
 							"type": "Number"
@@ -8512,6 +8540,10 @@
 				"_visited": {
 					"value": false,
 					"type": "Boolean"
+				},
+				"input": {
+					"value": [],
+					"type": "Array"
 				}
 			},
 			"p": {
@@ -8827,8 +8859,16 @@
 					"value": "caseEvent_hide",
 					"type": "String"
 				},
+				"_bountyData": {
+					"value": null,
+					"type": "Number"
+				},
 				"pathConnexion": {
 					"value": {
+						"3": {
+							"value": 200,
+							"type": "Number"
+						},
 						"5": {
 							"value": 143.92,
 							"type": "Number"
@@ -9154,8 +9194,17 @@
 					"value": "caseEvent_hide",
 					"type": "String"
 				},
+				"_bountyData": {
+					"value": null,
+					"type": "Number"
+				},
 				"pathConnexion": {
-					"value": {},
+					"value": {
+						"4": {
+							"value": 143.92,
+							"type": "Number"
+						}
+					},
 					"type": "Object"
 				},
 				"_visited": {
@@ -9476,8 +9525,16 @@
 					"value": "caseEvent_hide",
 					"type": "String"
 				},
+				"_bountyData": {
+					"value": null,
+					"type": "Number"
+				},
 				"pathConnexion": {
 					"value": {
+						"3": {
+							"value": 169.71,
+							"type": "Number"
+						},
 						"7": {
 							"value": 142.48,
 							"type": "Number"
@@ -9788,11 +9845,11 @@
 					"type": "Number"
 				},
 				"_randomColor": {
-					"value": true,
+					"value": false,
 					"type": "Boolean"
 				},
 				"_randomBounty": {
-					"value": true,
+					"value": false,
 					"type": "Boolean"
 				},
 				"_color": {
@@ -9800,11 +9857,19 @@
 					"type": "String"
 				},
 				"_bounty": {
-					"value": "caseEvent_hide",
+					"value": "caseEvent_gold",
 					"type": "String"
+				},
+				"_bountyData": {
+					"value": null,
+					"type": "Number"
 				},
 				"pathConnexion": {
 					"value": {
+						"6": {
+							"value": 142.48,
+							"type": "Number"
+						},
 						"8": {
 							"value": 145.16,
 							"type": "Number"
@@ -9815,6 +9880,10 @@
 				"_visited": {
 					"value": false,
 					"type": "Boolean"
+				},
+				"input": {
+					"value": [],
+					"type": "Array"
 				}
 			},
 			"p": {
@@ -10130,8 +10199,17 @@
 					"value": "caseEvent_hide",
 					"type": "String"
 				},
+				"_bountyData": {
+					"value": null,
+					"type": "Number"
+				},
 				"pathConnexion": {
-					"value": {},
+					"value": {
+						"7": {
+							"value": 145.16,
+							"type": "Number"
+						}
+					},
 					"type": "Object"
 				},
 				"_visited": {
@@ -10449,11 +10527,15 @@
 					"type": "String"
 				},
 				"_bounty": {
-					"value": "caseEvent_hide",
+					"value": "caseEvent_gold",
 					"type": "String"
 				},
 				"pathConnexion": {
 					"value": {
+						"0": {
+							"value": 200,
+							"type": "Number"
+						},
 						"10": {
 							"value": 200,
 							"type": "Number"
@@ -10780,11 +10862,15 @@
 					"type": "String"
 				},
 				"_bounty": {
-					"value": "caseEvent_hide",
+					"value": "caseEvent_monsters",
 					"type": "String"
 				},
 				"pathConnexion": {
 					"value": {
+						"9": {
+							"value": 200,
+							"type": "Number"
+						},
 						"11": {
 							"value": 159.31,
 							"type": "Number"
@@ -11114,8 +11200,17 @@
 					"value": "caseEvent_hide",
 					"type": "String"
 				},
+				"_bountyData": {
+					"value": null,
+					"type": "Number"
+				},
 				"pathConnexion": {
-					"value": {},
+					"value": {
+						"10": {
+							"value": 159.31,
+							"type": "Number"
+						}
+					},
 					"type": "Object"
 				},
 				"_visited": {

@@ -68,18 +68,29 @@ class _Objs{
 
     /** Apply randomizore on objts game */
     initialize_newGame(options){
-        const cases = this.CASES_G.filter(c=>c._randomAllowed); // get only cases allowed to randomize
-        //! TODO: generate random cases propreties : from map influence, planet,galaxi, need ref id inside dataObj
+         // TODO: generate random cases propreties : from map influence, planet,galaxi, need ref id inside dataObj
         const colors = $systems.colorsSystem.keys;
         const bounty = $systems.gameBounties.passive;
-        cases.forEach((dataObj,i) => {
-            //# _color
-            dataObj._color = dataObj.color || colors[~~(Math.random()*colors.length)];
-            //# _bounty
-            dataObj._bounty = dataObj.bounty || bounty[1] // bounty[~~(Math.random()*bounty.length)];//DELETEME: HACK DEBUG:
-            if(dataObj._bounty === 'caseEvent_monsters'){ //TODO: CREER UN POOL DE BOUNTY DATA
-                //dataObj._bountyData = [$monsters.generate(0),$monsters.generate(0),$monsters.generate(1),$monsters.generate(2),$monsters.generate(3),$monsters.generate(0)];//todo: ajouter indicateur de dificultet pour heviter trop de monstre puissant ?
-            }
+        //!_randomBounty
+        this.CASES_G.filter(c=>c._randomBounty).forEach(DataObj => {
+            DataObj._bounty = bounty[4];//monsters //bounty[~~(Math.random()*bounty.length)]
+        });
+        //!_randomColor
+        this.CASES_G.filter(c=>c._randomColor).forEach(DataObj => {
+            DataObj._color = colors[~~(Math.random()*colors.length)];
+        });
+        //!bountyData monsters
+        this.CASES_G.filter(c=>c._bounty === bounty[4]).forEach(DataObj => {
+            //todo: ajouter indicateur de dificultet pour heviter trop de monstre puissant ?
+            const ranMonsters = [
+                _DataBattlers.generate(0),
+                _DataBattlers.generate(0),
+                _DataBattlers.generate(1),
+                _DataBattlers.generate(2),
+                _DataBattlers.generate(3),
+                _DataBattlers.generate(0)
+            ]
+            DataObj._bountyData = ranMonsters;
         });
     }
     //#endregion
@@ -173,16 +184,17 @@ class _Objs{
      * @param {_DataBase} dataBase
      * @param {String} textureName
      * @param {String} name
-     * @returns {(_Container_Sprite|_Container_Spine|_Container_Animation|_Container_Base)} creer une nouvelle class et la return
+     * @returns {(_Container_Sprite|_Container_Spine|_Container_Animation|_Container_Background|_Container_Base)} creer une nouvelle class et la return
      * @memberof _Objs
      */
     create_Container(dataBase, dataObj){
         const type = dataBase._type;
         switch (type) {
-            case _DataBase.TYPE._Container_Sprite   : return new _Container_Sprite    (dataObj); break;
-            case _DataBase.TYPE._Container_Spine    : return new _Container_Spine     (dataObj); break;
-            case _DataBase.TYPE._Container_Animation: return new _Container_Animation (dataObj); break;
-            case _DataBase.TYPE._Container_Base     : return new _Container_Base      (dataObj); break;
+            case _DataBase.TYPE._Container_Sprite     : return new _Container_Sprite (dataObj)   ; break;
+            case _DataBase.TYPE._Container_Spine      : return new _Container_Spine (dataObj)    ; break;
+            case _DataBase.TYPE._Container_Animation  : return new _Container_Animation (dataObj); break;
+            case _DataBase.TYPE._Container_Background : return new _Container_Background (dataObj)     ; break;
+            case _DataBase.TYPE._Container_Base       : return new _Container_Base (dataObj)     ; break;
             default: throw "FATAL ERROR TYPE"; break;
         };
     }

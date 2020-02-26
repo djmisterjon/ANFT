@@ -101,6 +101,8 @@ class _Huds_CombatScreenChoice extends _Huds_Base {
         this.bountyData = null;
         this.child = null;
         $stage.removeChild(this);
+        this.renderable = false;
+        this.visible = false;
         resolve(ee.name);
     };
     //#endregion
@@ -110,7 +112,7 @@ class _Huds_CombatScreenChoice extends _Huds_Base {
      * @param {Promise.resolve} resolve
      * @param {[]} bountyData
     */
-    show(resolve,bountyData){
+    show(resolve,bountyData=[]){
         $stage.interactiveChildren = true;
         $stage.scene.interactiveChildren = false;
         this.resolve = resolve;

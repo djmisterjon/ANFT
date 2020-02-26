@@ -2,6 +2,18 @@
 //TODO: RENDU ICI, femrer tous les huds quand bood, + add a Inspector debug pour activer les hud
 
 class Debug extends PIXI.Container {
+    /** creer un inspector avec les commands debug */
+    static CreateInspector(){
+        const Command = {
+            addTravelPoint:this.addTravelPoint,
+            addStatusPoisonToPlayer1:this.addStatusPoisonToPlayer1,
+            addStatusHungerToPlayer1:this.addStatusHungerToPlayer1,
+            reduit_HG_deMotier:this.reduit_HG_deMotier,
+            reset_HG_toMax:this.reset_HG_toMax,
+            StartCombat_x1:this.StartCombat_x1,
+        }
+        Inspectors.Objects(Command,'DEBUG HACK');
+    }
     /** contien les element debug */
     static POOL = [];
     /** Applique interactive sur debug ET AJOUTE UN .DEBUG*/
@@ -16,28 +28,40 @@ class Debug extends PIXI.Container {
             }
         }
     };
-    static get addStatusPoisonToPlayer1() {
-        (function () {
-            $players.p0.addStatus('poison',true)
-            console.log('$players.p0: ', $players.p0);
-        })()
+    static addTravelPoint() {
+        $gui.showAll();
+        $gui.Travel.sta = 100;
     };
-    static get addStatusHungerToPlayer1() {
-        (function () {
-            $players.p0.addStatus('hunger',true)
-            console.log('$players.p0: ', $players.p0);
-        })()
-    };
-    static get reduit_HG_deMotier() {
-        (function () {
-            $players.p0.add_HG(-$players.p0._HG/2.5);
 
-        })();
+    static addStatusPoisonToPlayer1() {
+        $players.p0.addStatus('poison',true)
+
     };
-    static get reset_HG_toMax() {
-        (function () {
-            $players.p0.add_HG(999);
-        })()
+    static addStatusHungerToPlayer1() {
+        $players.p0.addStatus('hunger',true)
+
+    };
+    static reduit_HG_deMotier() {
+        $players.p0.add_HG(-$players.p0._HG/2.5);
+
+    };
+    static reset_HG_toMax() {
+        $players.p0.add_HG(999);
+    };
+    
+    static StartCombat_x1() {
+        $players.p0.s.state.addAnimation(3, "visiteCase", false,0);
+        const bountyData = [
+            _DataBattlers.generate(0),
+        ];
+        new Promise((resolve, reject) => { // resolve()
+            $gui.CombatScreenChoice.show(resolve,bountyData);
+        }).then((value) => {
+            switch (value) {
+                case 'xButton_A': new _Combats(bountyData);break;
+                default:break;
+            }
+        });
     };
 
     /**@description debug camera for test pixi-projections, also need move ticker and update to $app update */

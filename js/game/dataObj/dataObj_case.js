@@ -29,7 +29,7 @@ class _DataObj_Case extends _DataObj_Base {
         /** prime type de la case */
         this._bounty = '';
         /** les data generer pour le bounty si besoin (combat,golds...) */ //TODO: DOI ETRE UN ID
-        this._bountyData = Infinity; //TODO: CREER UN POOL POUR LES BOUNTYDATA
+        this._bountyData = null; //TODO: CREER UN POOL POUR LES BOUNTYDATA
         /** connextion des paths */
         this.pathConnexion = {};
         /** si la case a eter visiter */
@@ -46,6 +46,14 @@ class _DataObj_Case extends _DataObj_Base {
 
     //#region [GetterSetter]
     /** return  */
+    
+    get SpidersSucces() {
+        return _DataObj_Case.SpidersSucces;
+    }
+    set SpidersSucces(value) {
+        _DataObj_Case.SpidersSucces = value;
+    }
+
     get bountyData() {//TODO:
         return $systems.bountyDataFromId //this._bountyData;
     }
@@ -110,7 +118,7 @@ class _DataObj_Case extends _DataObj_Base {
         const ee = e.currentTarget; // this.child.container
         $audio._sounds.BT_A.play("BT_A07").Speed(1.4).Volume(0.2);
         ee.d._filters = [ $systems.PixiFilters.OutlineFilterx4white ];
-        if($combats._started){ //FIXME: en move move permetre ???? :
+        if(_Combats.Active){ //FIXME: en move move permetre ???? :
             //$combats.selectTarget(this._battlerID);
         }else{
             this.initializePathFinding(ee);
@@ -122,7 +130,7 @@ class _DataObj_Case extends _DataObj_Base {
     pointerout(e) {
         const ee = e.currentTarget; // this.child.container
         ee.d._filters = null;
-        if($combats._started){ //FIXME: probleme en mode combat. Il faut permet ca en  mode `move`, mais pas en mode attack
+        if(_Combats.Active){ //FIXME: probleme en mode combat. Il faut permet ca en  mode `move`, mais pas en mode attack
             
         }else{
             this.clearCasesPath(ee);
@@ -140,12 +148,12 @@ class _DataObj_Case extends _DataObj_Base {
 
     pointerup(e) {
         const c = e.currentTarget;
-        if($combats._started){ //FIXME: probleme en mode combat. Il faut permet ca en  mode `move`, mais pas en mode attack
-            return $combats.selectTarget(this._battlerID);
+        if(_Combats.Active){ //FIXME: probleme en mode combat. Il faut permet ca en  mode `move`, mais pas en mode attack
+            return _Combats.Active.selectTarget(this._battlerID);
         }else
-        if(_DataObj_Case.SpidersSucces && $gui.Travel.sta>0) {
+        if(this.SpidersSucces && $gui.Travel.sta>0) {
             // start move path
-            _DataObj_Case.ActivePath = _DataObj_Case.SpidersSucces.travel.splice($gui.sta); // remove les path selon stamina possible
+            _DataObj_Case.ActivePath = this.SpidersSucces.travel.splice($gui.sta); // remove les path selon stamina possible
             $players.p0.initialisePath();
             this.playFX_landing();
             this.pointerout(e);
@@ -161,8 +169,8 @@ class _DataObj_Case extends _DataObj_Base {
 
     /**Affiche le chemin des cases selon les spiders */
     showCasesPath(){
-        if(_DataObj_Case.SpidersSucces){
-            const SpidersSucces = _DataObj_Case.SpidersSucces;
+        if(this.SpidersSucces){
+            const SpidersSucces = this.SpidersSucces;
             const LOCAL = $objs.CASES_L; // getter
             for (let i=0, l=SpidersSucces.travel.length; i<l; i++) {
                 const id = SpidersSucces.travel[i];
@@ -175,13 +183,13 @@ class _DataObj_Case extends _DataObj_Base {
     };
     /**clear chemin des cases spiders */
     clearCasesPath(){
-        if(_DataObj_Case.SpidersSucces){
-            _DataObj_Case.SpidersSucces.travel.forEach(id => {
+        if(this.SpidersSucces){
+            this.SpidersSucces.travel.forEach(id => {
                 const LOCAL = $objs.CASES_L; // getter
                 const dataObj = LOCAL[id];
                 dataObj.p.d.filters = null;
             });
-            _DataObj_Case.SpidersSucces = null;
+            this.SpidersSucces = null;
         }
     };
 
@@ -195,7 +203,7 @@ class _DataObj_Case extends _DataObj_Base {
         xButton_A.d.anchor.set(0.5);
         xButton_A.n.anchor.set(0.5);
         xButton_A.position.set(0);
-        const value = _DataObj_Case.SpidersSucces && `Cost: ${_DataObj_Case.SpidersSucces.travel.length}` || `SELECT TARGET`;
+        const value = this.SpidersSucces && `Cost: ${this.SpidersSucces.travel.length}` || `SELECT TARGET`;
         const txt_A = new PIXI.Text(value,$systems.styles[0]);
             txt_A.name = 'txt_A';
             txt_A.anchor.set(1,0.5);
@@ -243,12 +251,15 @@ class _DataObj_Case extends _DataObj_Base {
 
     /** lorsque hover une cases, calcul un chemin du player vers la case selectionner */
     initializePathFinding(target){
-        return _DataObj_Case.SpidersSucces = this.computePathTo(target); // si on un spider valide
+        return this.SpidersSucces = this.computePathTo(target); // si on un spider valide
     };
 
+    //todo:  replace function SPIDER(id,currentID,parentSprite)
+    createSpider(){
+
+    }
     /** calcule chemin cases */
     computePathTo(target){
-        /**@class SPIDER */
         function SPIDER(id,currentID,parentSprite) {
             this._id = id;
             this._lastID = null;
@@ -266,7 +277,7 @@ class _DataObj_Case extends _DataObj_Base {
         let SpidersSucces = null; // le premier spider arriver a destination
         let SpidersDeath = []; // DELETEmE DEBUG ONLY: normalment il ne sont pas stoquer!
         let Visited = [];
-
+        // si pas spidersucces et reste des spider vivant? proceed
         while (!SpidersSucces && Spiders.length) {
             for (let i=0, l=Spiders.length; i<l; i++) {
                 const spider = Spiders[i];
@@ -357,12 +368,12 @@ class _DataObj_Case extends _DataObj_Base {
 
     // TRY execute _actionType de la case, appelle normalement pas la $player
     executeCasesBounty(){
-        return $stage.interactiveChildren = true; //TODO: SOIS FAIR UN CHECK PENDANT UN UPDATE et aussi comparer les couleurs des orbsSynegies pour activer event
+        $stage.interactiveChildren = true; //TODO: SOIS FAIR UN CHECK PENDANT UN UPDATE et aussi comparer les couleurs des orbsSynegies pour activer event
         if(this._visited){
             // malus , retour sur case visited
         }else{
-            const CaseColor  = this.p.child.CaseColor ;
-            const CaseBounty = this.p.child.CaseBounty;
+            const CaseColor  = this.child.CaseColor ;
+            const CaseBounty = this.child.CaseBounty;
             $audio._sounds.TRA_A.play("TRA_A29");
             $players.p0.s.state.addAnimation(3, "visiteCase", false,0);
             CaseBounty.parentGroup = $displayGroup.group[2];
@@ -371,7 +382,7 @@ class _DataObj_Case extends _DataObj_Base {
                 tl.to(CaseBounty.position3d, 2, { z:'-=250', ease: Elastic.easeOut.config(0.6, 0.5) },0)
                 tl.to(CaseBounty.scale3d, 0.3, { x:0.5, ease: Power4.easeOut },0)
                 tl.to(CaseBounty.scale3d, 0.5, { x:2,y:2, ease:  Power4.easeOut },0.3)
-                tl.call(() => {
+                tl.add(()=>{
                     //! resolve est retourner lorsque la fin de l'event bounty. inclu les combat et minigame.
                     switch (this._bounty) {
                         case "caseEvent_monsters":
@@ -382,7 +393,7 @@ class _DataObj_Case extends _DataObj_Base {
                         break;
                         default:this.endEventBounty();//DELETEME: FAIRE TOUS LES SCENARIO
                     };
-                 });
+                })
         }
     };
 
@@ -402,7 +413,7 @@ class _DataObj_Case extends _DataObj_Base {
 
         }).then((value) => {
             if(value==='xButton_A'){ // fight
-                $combats.initialize(this);
+                new _Combats(this._bountyData);
             }
             this.endEventBounty();
         });
@@ -463,8 +474,8 @@ class _DataObj_Case extends _DataObj_Base {
     /** Passe en mode combat, lorsque un combat est initialiser */
     setCombatMode(value){
         value = value?0:1;
-        this.p.child.CaseColor.alpha = value;
-        this.p.child.CaseBounty.alpha = value;
+        this.child.CaseColor.alpha = value;
+        this.child.CaseBounty.alpha = value;
     };
 
     /** start event from type*/

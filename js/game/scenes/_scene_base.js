@@ -7,8 +7,9 @@ class _Scene_Base extends PIXI.projection.Container3d {
         this._ready = false;
         /** indique si la scene est started */
         this.parentGroup = $displayGroup.group[0];
-        /** Scene background */
+        /** @type {_Container_Background} */
         this.Background = null;
+        this.BackgroundCombat = null;
         this._sceneWidth = null;
         this._sceneHeight = null;
     };
@@ -40,22 +41,13 @@ class _Scene_Base extends PIXI.projection.Container3d {
         this.clearBackground();
         const DATA = this.DATA;
         const backgroundName = name || DATA._background;
-        if(backgroundName){
-            const dataBase = $loader.DATA2[backgroundName];
-            const Background = this.Background = $objs.ContainerDN(dataBase, backgroundName)
-                Background.convertSubtreeTo3d()
-                Background.zOrder = -1;
-                Background.parentGroup = $displayGroup.group[0];
-                Background.d.anchor.set(0.5);
-                Background.n.anchor.set(0.5);
-                Background.euler.x = -Math.PI/2;
-                this._sceneWidth = dataBase.textures[backgroundName].width;
-                this._sceneHeight = dataBase.textures[backgroundName].height;
-            this.addChildAt(Background,0);
-        }else{
-            const Background = this.Background = new PIXI.Container();
-            this.addChildAt(Background,0);
-        };
+        const dataBase = $loader.DATA2[backgroundName];
+        //TODO: OBJET 
+        this.Background = backgroundName? $objs.create(null,dataBase, backgroundName):new _Container_Background(null);  //$objs.ContainerDN(dataBase, backgroundName);
+        this.Background.setPlane();
+        this._sceneWidth  = this.Background.realWidh;
+        this._sceneHeight = this.Background.realHeight;
+        this.addChildAt(this.Background,0);
     };
 
     /** create les objet pour la scene avec les dataObj  */
@@ -130,10 +122,10 @@ class _Scene_Base extends PIXI.projection.Container3d {
         });
     };
     clearBackground(makeEmpty) {
-        if(this.Background){
-            this.removeChild(this.Background);
-            this.Background = null;
-        };
+        this.Background && this.removeChild(this.Background);
+        this.BackgroundCombat && this.removeChild(this.BackgroundCombat);
+        this.Background = null;
+        this.BackgroundCombat = null;
         if(makeEmpty){
             //this.background = $objs.newContainer_type('background');
         }

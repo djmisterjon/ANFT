@@ -147,6 +147,8 @@ class _Editor_Obj{
         this.clearTrack();
         if(e.button === 0){ //save
             if(this.EDITOR._pathMode){
+                this.PATHBUFFER.push(this.TRACKING2,this);
+                this.createPath();
                 this.TRACKING2 = this;
             }
             this.saveToMap();

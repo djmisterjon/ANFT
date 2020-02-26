@@ -278,7 +278,7 @@ class _Huds_Victory extends _Huds_Base{
         tl.fromTo(ee.scale, 0.4, {x:'+=0.2',y:'+=0.2'},{x:1,y:1, ease: Expo.easeOut},0);
         tl.to(ee, 0.4, {rotation:0, ease: Expo.easeOut},0);
         tl.call(() => { this.hide(); },null,this,0.1)
-        tl.call(() => { $combats.exitCombat(); },null,null,0.4)
+        tl.call(() => { _Combats.exitCombat(); },null,null,0.4)
         tl.call(() => { this.renderable },null,this,0.4)
         
     };

@@ -148,7 +148,7 @@ class _camera {
             const renderable = bounds.x+bounds.width >= 0 && 
             bounds.y+bounds.height>=0 && 
             bounds.x-bounds.width <= this._screenW && 
-            bounds.y-bounds.height*2 <= this._screenH ;
+            bounds.y-bounds.height*2 <= this._screenH;
             container.renderable = renderable;
             // en mode combat on peut hacker et forcer visibility car sinon les sa bug , les renderable:false peuvent etre interactive. fixme:
             container.visible = visible? renderable:true; // TODO: STOKER bounds, CAR VISIBLE NE FONCTIONNE PAS MAIS DONNERAIT DE SUPER PERFORMANCE.

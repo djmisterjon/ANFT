@@ -38,11 +38,11 @@ class _Container_Base extends PIXI.projection.Container3d {
     /** @returns {_Container_Base} */
     get p() { return this };
     /** @returns {PIXI.Sprite} - diffuse */
-    get d() { return this.child.d || false };
+    get d() { return this.child.d };
     /** @returns {PIXI.Sprite} - normal */
-    get n() { return this.child.n || false }; //
-    /** @returns [PIXI.Sprite,PIXI.Sprite] - arrays combat .cd, .cn */
-    get c() { return this.DataObj.dataBase.isBackground && [this.child.cd,this.child.cn] || false };
+    get n() { return this.child.n }; //
+    /** @returns {PIXI.Sprite} - combat diffuse */
+    get c() { return this.child.c };
     get register() { return this.DataObj.register || false };
     set register(value) { value? $objs.addToRegister(this)  : $objs.removeToRegister(this) }; // 0 ou 1
     get isReverse() { return this.s?this.s.scale._x < 0 : this.scale._x < 0 }; // TODO: probleme avec spine et animations

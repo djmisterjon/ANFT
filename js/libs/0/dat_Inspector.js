@@ -85,6 +85,29 @@ class Inspectors {
         Light.position && f1.add(Light, "position",['x','y'] ).step(10);
         return gui;
     };
+
+    static Combats = function(){
+        const Combat = _Combats.Active;
+        const gui = new Inspectors('Combat Debugger');
+        const options = {
+            Culling:false,
+        }
+        const f1 = gui.addFolder('options').listen().slider();
+        f1.add(options, "Culling" ).onChange((context,input,value)=>{
+            if(context.Culling){//!debugCulling
+                const cull = new PIXI.Graphics();
+                cull.lineStyle(4, 0xFEEB77, 1).beginFill(0xfff,0).drawRect(0, 0, 1920, 1080).endFill();
+                const spriteCull = new PIXI.projection.Sprite3d( $app.renderer.generateTexture(cull) );
+                spriteCull.scale3d.set(0.5);
+                spriteCull.anchor.set(0.5);
+                spriteCull.position3d.copy($players.p0.p.position3d);
+                Combat.___spriteCull = $stage.scene.addChild(spriteCull);
+            }else{
+                $stage.scene.removeChild(Combat.___spriteCull);
+            }
+        })
+        return gui;
+    };
     //#endregion
 
     //#region [Static]
@@ -186,6 +209,9 @@ class Inspectors {
                                 select[key] = +key;
                         });
                         F.add(DisplayObject ,k, { select }).listen()
+                    break;
+                    case 'pathConnexion':
+                        return F.add({pathConnexion:Object.keys(DisplayObject[k]).join()} ,k);
                     break;
                     case '_color':
                         F.add(DisplayObject ,k,{ select: Object.fromEntries(Object.keys($systems.colorsSystem).map(k=>[k,k])) }).listen()
@@ -677,8 +703,8 @@ class Inspectors {
             }else{ console.error('Folder alrealy exist',name) };
         };
 
-        add(target,proprety,selects){
-            const el = new Inspectors.ELEMENT(target,proprety,selects,this._NAME,this._name);
+        add(target,proprety,options){
+            const el = new Inspectors.ELEMENT(target,proprety,options,this._NAME,this._name);
             this.__content.appendChild(el.__el);
             this._disable && el.disable();
             this._listen  && el.listen ();
@@ -970,6 +996,7 @@ class Inspectors {
     
             return container;
         };
+
         onChange(cb){
             this._onchange = cb;
             return this;

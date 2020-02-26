@@ -10,51 +10,24 @@ dans les class, . pour les objects, function deep (non Json), _ pour les props a
 //TODO: NOTE: LES MONSTERS SERON TOUS INITIALISER 1 FOI AU DEBUT, ENSUITE ON CLONE LORS DE COMBAT. Ceci permetra egalement le livre des monstre d'utiliser les references
 /** class Battler on des method comune avec les MONSTER */
 class _battler  {
-    constructor(id,data,type,iconId) {
+    constructor(DataBattlers) {
+        this.DataBattlers = DataBattlers;
         /** type de chara excel [p,m] */
-        this._type = type;
-        /**@type {_DataObj_Case} */
-        this.toCase = null;
-        /** id for icons dataBase */
-        this._iconId = iconId;
-        this._level =  1;
-        /**id from order creation */
-        this._id = id;
-        /** game dataBase identification */
-        this._game_id = data.info._game_id[0];
-        /** hauteur normal */
-        this._default_heigth = data.info._default_heigth[0];
-        /** ratio master (sayen) */
-        this._master_rate = data.info._master_rate[0];
-        /** le dataObj connecter */
-        this.dataObj = {};
-        /** combat slot debloquer et acheter */
-        this._combatSlotsUnlocked = 3;
-        /** tempon memoire des dernier PinSlotId attacher */
-        this.combatSlotsValues = [null,null,null];
-        /** data excel */
-        this.data = data;
-        /** battler direction Axe X */
-        this._dirX = 6;
-        /**@type {_DataObj_Case} store current player case */
-        this.inCase = null;
-        this.evo = $systems.extractEvo(data.statesBase);//this.extractEvo(this.data.statesBase);
+        /**@type {number} - id du en cours de deplament */
+        this._toCase = null;
+        /**@type {number} - id du case */
+        this._inCase = null;
         /** ID battler en combat */
         this._battlerID = null;
         /** timer de tour en combat: 0 est son tour */
         this._battleTime = 0;
-        /** nom de l'action selectionner pour ce combatant: attack,def,mbook...*/
-        this._combatAction = null;
         /** @type {{ 'ContainerSpine':_Container_Spine }} */
         this.child = null;
         /** list les states actif sur le battler
          * @type {{ hp:String,mp:String,hg:String,hy:String,atk:String,def:String,sta:String,int:String,lck:String,expl:String,mor:String,}} */
-        this.states = {
-            
-        };
+        this.states = null;
         /** list les status active sur le battler */
         this.status = [];
-        
         /** heritage de la faiblesse orbic -20%  'orbsSynegies*/
         this.faiblesseOrbic = []; //todo: mapper et creer avant ...data.orbsSynegies.fo_base
         /** heritage de la puissance orbic +20% 'orbsSynegies*/
@@ -95,8 +68,17 @@ class _battler  {
 
         /** point experience actuel */
         this._xp = 0
-    };
+    }
 
+    get defaultHeight(){
+        return this.DataBattlers.defaultHeight;
+    }
+    get inCase() {
+        return $objs.CASES_L[this._inCase];
+    }
+    get toCase() {
+        return $objs.CASES_L[this._toCase];
+    }
     /** @returns {PIXI.projection.Container3d} */
     get p(){ return this.child.ContainerSpine }
     /** @returns {PIXI.projection.Spine3d} */
@@ -114,6 +96,7 @@ class _battler  {
         this.s.scale3d.setZero(ratio);
         this.p.parentGroup = $displayGroup.group[1];
         this.initialize_stats(level,true);
+        this.evo = $systems.extractEvo(data.statesBase);//this.extractEvo(this.data.statesBase);
         //this.debug();
     };
     get isPlayers() {

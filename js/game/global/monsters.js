@@ -1,135 +1,59 @@
 
 /** monsters generator and data controler */
-class _monsters {
-
-    constructor() {
-
-    };
-    // '$monsters.generate(0);'
-    /** generer un monster et sauvegarde ces data */
-    generate(id,level=1,master=false){ //TODO: MAP INFLUENCE
-        const data = $loader.DATA.base['m'+id];
-        const _dataMonster = new _monsters._monster_Base(id,level,master,data);
-        return _dataMonster;
-    };
-    // '$monsters.generate(0);'
-    /** generer un _monster_Base pour les bounties cases monster  */
-    create(_monster_Base){
-        return $players.createMonster(_monster_Base);
-    };
-   
-    //#region [rgba(200, 50, 20, 0.05)]
-    /**@class monster _monster_Base est un generateur de data permanent en jeux baser sur les source original des data excel */
-    static _monster_Base = class _monster_Base {
-        constructor(id,level,master,data) {
-            /** monster data Id */
-            this._id = id;
-            this._level = level;
-            this._master = master; // epic
-
-            /** pre calcule les aleatoires */
-            this.combatActions = this.initialize_combatActions (data.combatActions );
-            this.itemsDrops    = this.initialize_itemsDrops    (data.itemsDrops    );
-            this.capacity      = this.initialize_capacity      (data.capacity      );
-            this.gemImunity    = this.initialize_gemImunity    (data.gemImunity    );
-            this.statusImunity = this.initialize_statusImunity (data.statusImunity );
-            this.alimentations = this.initialize_alimentations (data.alimentations );
-            this.orbsSynegies  = this.initialize_orbsSynegies  (data.orbsSynegies  );
-        };
-
-        initialize_combatActions(data){
-            const ca = {};
-            data.forEach(element => {
-                element.allow && (ca[element.combat_base] = element.IA);
-            });
-            return ca;
-        };
-
-        initialize_itemsDrops(data){
-            const items = [];
-            for (let i=0, l=data.length; i<l; i++) {
-                const content = data[i];
-                if(content){
-                    // ["itemId", "min", "max", "rate", "rate_master"]
-                    //TODO: randomFromTo : loop avec un rate + playerluck ..
-                    items.push({[content.itemId]: Math.randomFrom(content.min,content.max) });
-                };
-            };
-            return items;
-        };
-
-        initialize_capacity(data){
-            const capacities = [];
-            for (let i=0, l=data.length; i<l; i++) {
-                const content = data[i];
-                if(content){
-                    if( this._level>=content.min_lv ){
-                        (Math.random()<=content.rate) && capacities.push(content.capacity); // todo: new capacity() car on veut garder les data permanet
-                    }
-                }
-            };
-            return capacities;
-        };
-
-        /** heritage des gem imunnity, elle reduisent les degat de 50% */
-        initialize_gemImunity(data){
-            const gemImunity = [];
-            for (let i=0, l=data.length; i<l; i++) {
-                const content = data[i].length && data[i];
-                if(content){
-                    (Math.random()<=content.rate) && gemImunity.push(content.itemId);
-                }
-            };
-            return gemImunity;
-        };
-
-        /** heritage des immunity de status */
-        initialize_statusImunity(data){
-            const statusImunity = [];
-            for (let i=0, l=data.length; i<l; i++) {
-                const content = data[i];
-                if(content){
-                    (Math.random()<=content.rate) && statusImunity.push(content.statusId);
-                }
-            };
-            return statusImunity;
-        };
-
-        /** alimentations preferer de la creature */
-        initialize_alimentations(data){
-            const alimentations = [];
-            for (let i=1, l=data.length; i<l; i++) {
-                const content = data[i].length && data[i];
-                if(content){
-                    (Math.random()<=content.rate) && alimentations.push(content.itemId);
-                }
-            };
-            return alimentations;
-        };
-
-        /** prepare les data  synergie */
-        initialize_orbsSynegies(data){
-            return {faiblesseOrbic:data.fo_base,puissanceOrbic:data.po_base};
-        };
-    };
+class _monsters extends _battler{
+    //#region [Static]
+    /** @type {Array.<_monsters>} POOL de tous les dataMonster existant*/
+    static POOL = [];
     //#endregion
+    /**@param {_DataBattlers} DataMonsters */
+    constructor(DataMonsters) {
+        super(DataMonsters);
+        _monsters.POOL.push(this);
+        this.child = null;
+        this.initialize()
+    }
+    //#region [GetterSetter]
+    get dataBase() {
+        return  $loader.DATA2[this.DataMonsters._dataBaseName];
+    }
+
+    //#endregion
+    //#region [Initialize]
+    initialize() {
+        this.initialize_base()
+        //this.initialize_sprites(generateData);
+        ////this.initialize_states();
+        //this.initialize_stats(1,true);
+        //this.updateStates();
+        //this.updateOrbic();
+        ////this.initialize_listeners();
+        ////this.setupTweens();
+        ////this.addInteractive();
+
+        //this.initialize_interactions()
+        //this.child = this.childrenToName()
+    }
+        
+    initialize_base() {
+        const ContainerSpine = $objs.create(null,this.dataBase,'idle').setName('ContainerSpine');
+        ContainerSpine.scale.set(this._default_heigth/spine.height); //TODO: passer les base info dans battlers ou _monster ?
+        ContainerSpine.scale.setZero();
+        this.child = ContainerSpine.childrenToName();
+    }
+    //#endregion
+   
+ 
 
     //#region [rgba(200, 200, 20, 0.1)]
     /**@class creer une antiter monster */
     static _monster = class _monster extends _battler {
         constructor(id,data,generateData) {
             super(id,data,'m',generateData._id);
+            /** @type {{ 'ContainerSpine':_Container_Spine, 'BB':, 'CC':, 'DD':, 'EE':, 'FF':, }} */
+            this.child = null;
             this.initialize(generateData);
         };
         //get name() { return $loader.DATA.base.monster_0.info._game_id[0] };//TODO: TEMP FIX NAME A refaire et debugger
-        /** @returns {PIXI.Container} */
-        get p(){ return this.dataObj.child.p }
-        /** @returns {PIXI.Container} */
-        get s(){ return this.dataObj.child.s }
-        /** @returns {PIXI.Sprite} */
-        get d(){ return this.dataObj.child.d };// spine arrays
-        /** @returns {PIXI.Sprite} */
-        get n(){ return this.dataObj.child.n };// spine arrays
         get id() {
             return this._monster_Base._id;
         }
@@ -147,8 +71,10 @@ class _monsters {
         /** initialise monster grafics from dataBase */
         initialize_sprites(generateData) {
             const dataBase = $loader.DATA2[`m${generateData._id}`]
-            const dataObj = this.dataObj = $objs.create(dataBase,'idle'); //TODO: passer un type player ou chare ? qui defeni tosu ca ?
-            const spine = this.s;
+            const ContainerSpine = $objs.create(null,dataBase,'idle').setName('ContainerSpine'); //TODO: passer un type player ou chare ? qui defeni tosu ca ?
+            this.child = ContainerSpine.childrenToName();
+
+           const spine = this.s;
             this.p.parentGroup = $displayGroup.group[1];
             spine.scale.set(this._default_heigth/spine.height); //TODO: passer les base info dans battlers ou _monster ?
             spine.scale.setZero();
@@ -191,7 +117,7 @@ class _monsters {
         checkActions(){ //TODO: RENDU ICI
             this.showThinking();
             const intentions = [];
-            $combats.battlers.forEach(target => {
+            _Combats.battlers.forEach(target => {
                 // creer des entry d'intention pour chaque battlers
                 intentions.push({ target:target, ...this._monster_Base.combatActions });
             });
@@ -217,9 +143,9 @@ class _monsters {
             const type = Object.keys(this._monster_Base.combatActions).reduce((a, b) => intention[a] === intention._highValue ? a : b);
             if(target && type){
                 //this.doAction(target,type);
-                $combats.selectTarget(0);//todo: simul selection target player1
+                _Combats.selectTarget(0);//todo: simul selection target player1
                 setTimeout(()=>{
-                    $combats.doAction()
+                    _Combats.doAction()
                 },2000)
                 
             }else{  //TODO: si aucune intention possible ?! pourrait arriver avec des status.
@@ -302,7 +228,4 @@ class _monsters {
         };*/
     };
     //#endregion
-};
-
-let $monsters = new _monsters();
-console.log1('$monsters: ', $monsters);
+}

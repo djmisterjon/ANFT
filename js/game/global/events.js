@@ -99,7 +99,7 @@ class _events{
         };
 
         function jumpOutBed() {
-            const startCase = $objs.LOCAL[25];
+            const startCase = $objs.CASES_L[0];
             const bag = $objs.LOCAL[16];
             const tl = new TimelineMax({id:'jumpOutBed'});
             tl.add(() => {
@@ -162,13 +162,13 @@ class _events{
                 master.pause();
                 $messages.show('GetTheBag').then( ()=>{
                     const bag = $objs.LOCAL[16];
-                    const case28 = $objs.LOCAL[28];
+                    const Case3 = $objs.CASES_L[3];
                     $stage.scene.interactiveChildren = true;
-                    gsap.to($camera.view.position3d, 1, {x:case28.p.p.position3d.x,y:0,z:case28.p.p.position3d.z, ease:Back.easeInOut.config(1.7) } );
+                    gsap.to($camera.view.position3d, 1, {x:Case3.p.p.position3d.x,y:0,z:Case3.p.p.position3d.z, ease:Back.easeInOut.config(1.7) } );
                     gsap.to($camera, 1, {_zoom:0.5, ease:Power4.easeOut } );
-                    const Bubble = new _Bubble( $texts.MotionsTxt('___clickHere_move'), case28.p, null, _Bubble.TYPE.POINT_OBJ );
+                    const Bubble = new _Bubble( $texts.MotionsTxt('___clickHere_move'), Case3.p, null, _Bubble.TYPE.POINT_OBJ );
                     let waitNearBag = setInterval(() => { // lorsque asser proche du bag
-                        if(p0.inCase === case28){
+                        if(p0.inCase === Case3){
                             Bubble.Destroy();
                             $stage.scene.interactiveChildren = false;
                             clearInterval(waitNearBag);

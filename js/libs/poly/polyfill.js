@@ -38,6 +38,11 @@ String.prototype.hashCode = function() {
 }
 Object.defineProperty(String.prototype, 'hashCode',{enumerable:false})
 
+String.prototype.reverseString = function() {
+    return this.split("").reverse().join("");
+};
+Object.defineProperty(String.prototype, 'reverseString',{enumerable:false})
+
 
 //#ARRAY
 Array.prototype.unique = function () {
@@ -73,6 +78,11 @@ Array.prototype.contains = function (element) {
 }
 Object.defineProperty(Array.prototype, 'contains',{enumerable:false})
 
+Array.prototype.clear = function () {
+    return this.splice(0,this.length).length;
+}
+Object.defineProperty(Array.prototype, 'clear',{enumerable:false})
+
 Array.prototype.remove = function (arg) {
     if(arguments.length){
         const arr = arguments;
@@ -83,8 +93,8 @@ Array.prototype.remove = function (arg) {
             }
        }
     }else{
-        for (let i=0, l=this.length; i<l; i++) {
-            this[i] ?? delete this[i];
+        for (let i=this.length; i--; ) {
+            this[i] ?? this.splice(i, 1);
         }
     }
    return this;

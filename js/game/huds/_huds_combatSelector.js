@@ -41,7 +41,7 @@ class _CombatSelector extends PIXI.Container {
         this.initialize_interaction();
    
     };
-    get battler() { return $combats.battlers[this._battlerId] };
+    get battler() { return _Combats.battlers[this._battlerId] };
 
     initialize(){
         const dataBase = $loader.DATA2.HudsCombats;
@@ -81,10 +81,10 @@ class _CombatSelector extends PIXI.Container {
         this.on("pointerdown" , this.pointerdown_combatSelector ,this);
         this.on("pointerup"   , this.pointerup_combatSelector   ,this);
     };
-
+//#region [Interactive]
     /**@param {PIXI.interaction.InteractionEvent} e */
     pointerover_combatSelector(e){
-        $combats.selectTarget(this.battlerId);
+        _Combats.selectTarget(this.battlerId);
     };
     /**@param {PIXI.interaction.InteractionEvent} e */
     pointerout_combatSelector(e){
@@ -100,12 +100,13 @@ class _CombatSelector extends PIXI.Container {
     pointerup_combatSelector(e){
 
     };
+//#endregion
 
 
       
     /** update le timer */
     update_timer(){
-        const ratio = -(this.battler._battleTime/$combats._timeLimit)+1;
+        const ratio = -(this.battler._battleTime/_Combats._timeLimit)+1;
         this.child.combatTimerBar_progress.scale.x = ratio;
         this.child.TimerTxt.text = Math.floor(this.battler._battleTime*100)/100;
     };

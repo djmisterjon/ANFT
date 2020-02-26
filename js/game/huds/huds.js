@@ -24,6 +24,7 @@ class _GUI { //TODO REFACTORING DANS UN CONTAINER ? .huds .menue gui.huds. gui.m
     get States() { return this.child._Huds_States };
     get Minimap() { return this.child._Huds_Minimap };
     get CombatSelector() { return this.child._Huds_CombatSelector };
+    get CombatScreenChoice() { return this.child._Huds_CombatScreenChoice };
     get MessageIndicator() { return this.child._Huds_MessageIndicator };
     get GameSteps() { return this.child._Huds_GameSteps };
     //!Menues
@@ -71,6 +72,7 @@ class _GUI { //TODO REFACTORING DANS UN CONTAINER ? .huds .menue gui.huds. gui.m
         //this.States.show();
         //this.Minimap.show();
         //this.Items.show();
+        //this.CombatScreenChoice.show();
         //this.MessageIndicator.show();
     }
 
@@ -90,6 +92,14 @@ class _GUI { //TODO REFACTORING DANS UN CONTAINER ? .huds .menue gui.huds. gui.m
     show(name){
         const gui = this[name];
         gui && this[name].show();
+    }
+
+    showAll(){
+        this.PinBar.show();
+        this.Travel.show();
+        this.States.show();
+        this.Minimap.show();
+        this.Items.show();
     }
 
 }

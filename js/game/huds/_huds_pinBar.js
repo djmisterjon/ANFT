@@ -501,7 +501,7 @@ class __PinOption extends PIXI.Container {
     /** @param {PIXI.interaction.InteractionEvent} e -*/
     pointerup_PinOption(e) {
         const ee = e.currentTarget;
-        if ($combats._started) { //TODO: delette me
+        if (_Combats.Active) { //TODO: delette me
             // this._selected = true;
             // $combats.setupCombatMode('selectTarget',this.cName);
         } else {

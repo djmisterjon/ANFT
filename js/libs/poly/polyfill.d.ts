@@ -43,6 +43,12 @@ interface String {
  * @return {Number} 32bit hash 
  */
     hashCode() : number;
+
+    /**
+     *  renvoi le string inverse chart
+     * @return {string} 
+     */
+    reverseString() : string;
 }
 interface Array<T> {
     /**
@@ -83,6 +89,12 @@ interface Array<T> {
     * @return {Array} renvoi un nouveau tableau avec les element suprimer
     */
     remove(...args: any) : Array<T>;
+
+    /**
+     * Clear tous le array et gard ca reference intancier
+    * @return {number} renvoi le total elements cleared
+    */
+   clear() : number;
 
     /**
      * Supprimer une list d'arguments devient (empty), garde la hyharchie index

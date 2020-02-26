@@ -43,7 +43,7 @@ class _Huds_combats extends _Huds_Base {
 
     /** creer les CombatSelectors */
     initialize_CombatSelectors(){
-        for (let i=0, l=$combats.battlers.length; i<l; i++) {
+        for (let i=0, l=_Combats.battlers.length; i<l; i++) {
             this.CombatSelectors[i] = new _huds_combats._CombatSelector(i);
             const w = 620/l; // width //todo: ? 100. cette facon fair permet de dispatcher egual baser sur lespace du centre 
             const centerScreen = ((1920/2)-(w*l)/2);
@@ -97,7 +97,7 @@ class _Huds_combats extends _Huds_Base {
 
     /** affiche les huds de combat Actions selon le joueur */
     show_CombatActions(){
-        const actions = $combats.currentBattlerTurn.battleOptions;
+        const actions = _Combats.currentBattlerTurn.battleOptions;
         for (let i=0, l=this.CombatActions.length; i<l; i++) {
             const CombatActions = this.CombatActions[i];
             CombatActions.show(actions[i].combat_base);
@@ -171,7 +171,7 @@ class _Huds_combats extends _Huds_Base {
 
     /** permet de enable les Selector apres le choix d'action. si values:false disable tous */
     enable_CombatSelectors(values){
-        const currentBattlerId = !values && $combats.currentBattlerTurn._battlerID;
+        const currentBattlerId = !values && _Combats.currentBattlerTurn._battlerID;
         for (let i=0, l=this.CombatSelectors.length; i<l; i++) {
             const CombatSelectors = this.CombatSelectors[i];
             CombatSelectors.alpha = values||currentBattlerId===i?1:0.4;
@@ -202,7 +202,7 @@ class _Huds_combats extends _Huds_Base {
     };
 
 
-    drawBezierfromSourceToTarget(sourceID = $combats.sourceID, targetID = $combats.targetID){
+    drawBezierfromSourceToTarget(sourceID = _Combats.sourceID, targetID = _Combats.targetID){
         if(this.BezierArrow){ this.removeChild( this.BezierArrow ) };
         const toX = this.CombatSelectors[targetID].position.x-this.CombatSelectors[sourceID].position.x;
         const toY = this.CombatSelectors[targetID].position.y+55;
@@ -327,7 +327,7 @@ class _Huds_combats extends _Huds_Base {
          * @param {PIXI.interaction.InteractionEvent} e */
         pointerdown_action(e){
             if(e.currentTarget !== e.target){return}// car les CombatSlots sont child de ActionSlot
-            if(this._selected && $combats.targetBattlerSelected){
+            if(this._selected && _Combats.targetBattlerSelected){
                 this.alpha = 0.5;
                 const shaker = RoughEase.ease.config({ template:  Power4.easeOut, strength: 3, points: 35, taper: "in", randomize: false, clamp: false});
                 const tl = this.Shake = new TimelineMax();
@@ -359,7 +359,7 @@ class _Huds_combats extends _Huds_Base {
             }else{
                 //TODO: FAIRE GETTER _actionType VERS LE ID select_CombatActions
                 $gui.Combat.select_CombatActions(this._id);
-                $combats.setupCombatMode('selectTarget', this._actionType); // en premier psk la mathBox est creat dans select_CombatActions
+                _Combats.setupCombatMode('selectTarget', this._actionType); // en premier psk la mathBox est creat dans select_CombatActions
             };
         };
 
@@ -374,7 +374,7 @@ class _Huds_combats extends _Huds_Base {
                 const ItemsSprites = this.createItemsSpriteFromCombatSlots();
                 $gui.Combat.hide_CombatMathBox();
                 $gui.Combat.hide_CombatActions();
-                $combats.doAction(ItemsSprites);
+                _Combats.doAction(ItemsSprites);
             }else{
                 TweenLite.to(this.scale, 0.1, {x:1.4,y:1.4 });
                 this.showCombatSlots(); // reset les slotsPositions
@@ -614,7 +614,7 @@ class _Huds_combats extends _Huds_Base {
                 this.scale.setZero();
             };
 
-            get battler() { return $combats.battlers[this._battlerID] };
+            get battler() { return _Combats.battlers[this._battlerID] };
             
             initialize() {
                 this.initialize_frames();
@@ -666,7 +666,7 @@ class _Huds_combats extends _Huds_Base {
 
             /**@param {PIXI.interaction.InteractionEvent} e */
             pointerover_combatSelector(e){
-                $combats.selectTarget(this._battlerID);
+                _Combats.selectTarget(this._battlerID);
             };
             /**@param {PIXI.interaction.InteractionEvent} e */
             pointerout_combatSelector(e){
@@ -685,7 +685,7 @@ class _Huds_combats extends _Huds_Base {
                         
             /** update le timer */
             update_timer(){
-                const ratio = -(this.battler._battleTime/$combats._timeLimit)+1;
+                const ratio = -(this.battler._battleTime/_Combats._timeLimit)+1;
                 this.child.combatTimerBar_progress.scale.x = ratio;
                 this.child.TimerTxt.text = Math.floor(this.battler._battleTime*100)/100;
             };
@@ -872,9 +872,9 @@ class _Huds_combats extends _Huds_Base {
             };
 
             /** update les states,math dans le frame */
-            initialize_states( sourceId = $combats.sourceID, targetId = $combats.targetID){
+            initialize_states( sourceId = _Combats.sourceID, targetId = _Combats.targetID){
                 //!Action
-                const combatAction = $combats.currentBattlerTurn._combatAction;
+                const combatAction = _Combats.currentBattlerTurn._combatAction;
                 // ont creer la formule selon le actionType: atk,def,magic...
                 const stateFormula = this.statesFormula = $statesManager.createStatesForumla (combatAction,sourceId, targetId);
                 const result_min   = $statesManager.computeStatesFormula(combatAction,stateFormula,{min:true});
@@ -912,7 +912,7 @@ class _Huds_combats extends _Huds_Base {
 
             /** computing States result */
             getResult(){
-                const combatAction = $combats.currentBattlerTurn._combatAction;
+                const combatAction = _Combats.currentBattlerTurn._combatAction;
                 return $statesManager.computeStatesFormula(combatAction,this.statesFormula );
             };
 
@@ -926,7 +926,7 @@ class _Huds_combats extends _Huds_Base {
                     return;
                 };
                 this.renderable = true;
-                switch ($combats._combatMode) {
+                switch (_Combats._combatMode) {
                     // mode animation, camera, attente d'un tour
                     case $systems.COMBAT_MODE.TIMER : this.setupFrom_timer (); break;
                     // mode information++ et choix action

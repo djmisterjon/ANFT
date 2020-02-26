@@ -28,6 +28,7 @@ class Scene_Boot extends _Scene_Base {
         ////$player.transferMap(1); // HACKED FOR DEBUG// FIXME: SceneManager.goto(Scene_Loader,"Scene_IntroVideo_data",Scene_IntroVideo);
         ////$stage.goto(Scene_IntroVideo);
         this.__initialize();
+        Debug.CreateInspector();//DELETEME DEBUG
     };
 
     //#region [Method]

@@ -54,7 +54,7 @@ class _Huds_MessageIndicator extends _Huds_Base{
         const LightFlare = new PIXI.lights.PointLight().setName("LightFlare");
             LightFlare.y = Flare2.y;
             LightFlare.color = 0xFCFFAF;
-            Inspectors.Light(LightFlare);
+            //Inspectors.Light(LightFlare); //DELETEME: DEBUG
         //!end
         Master.addChild(bg,BarL,BarR,Flare,Flare2,LightFlare);
         Master.scale.set(1,0.7);

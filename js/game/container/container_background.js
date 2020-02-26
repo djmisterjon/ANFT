@@ -1,59 +1,54 @@
+// note: les bg peut etre decouper en arrays[[1,2,3],[1,2,3]] pour textures packer, et textureName pourrai etre diferent version , season !?
 
-/*:
-// PLUGIN □────────────────────────────────□CONTAINER BACKGROUND MANAGER□───────────────────────────────┐
-* @author □ Jonathan Lepage (dimisterjon),(jonforum) 
-* @module manage container and sprite from pixijs
-* V.0.1
-* License:© M.I.T
-└───────────────────────────────────────────────────────────────────────────────────────────────────┘
-*/
-
-/** @memberof _Container_Base */
-class Container_Background extends _Container_Base {
-    // note: les bg peut etre decouper en arrays[[1,2,3],[1,2,3]] pour textures packer, et textureName pourrai etre diferent version , season !?
+class _Container_Background extends _Container_Base {
+        /**
+     *Creates an instance of _Container_Spine.
+     * @param {_DataObj_Base} dataObj
+     * @memberof _Container_Spine
+    */
     constructor(dataObj) {
         super(dataObj);
+        this.child = null;
     };
-    // getters for ContainerTiles
+    get realWidh() {
+        return this.DataObj?.dataBase.textures[this.DataObj._textureName].width || 1080;
+    }
+    get realHeight() {
+        return this.DataObj?.dataBase.textures[this.DataObj._textureName].height || 1080;
+    }
 
+
+    //#region [Initialize]
     initialize_base () {
         // TODO: les bg pourrai etre parfoi decouper en arrays dans textures packer
-        const dataObj = this.DataObj;
-        const dataBase = dataObj.dataBase;
-        const textureName = dataObj.textureName;
-
-        const td = textureName? dataBase.textures   [textureName.d ] : PIXI.Texture.WHITE;
-        const tn = textureName? dataBase.textures_n [textureName.n ] : PIXI.Texture.WHITE;
-        const d = new PIXI.projection.Sprite2d(td);
-        const n = new PIXI.projection.Sprite2d(tn);
-        //TODO: AJOUTER UN TYPE C POUR COMBAT
-        const tc = $Loader.combatMap;
-        const c = new PIXI.projection.Sprite2d(tc);
-        c.anchor.set(0.5,1);
-        c.renderable = false;
-
-        this.Sprites = {d,n,c};
+        const DataObj = this.DataObj;
+        const dataBase = DataObj.dataBase;
+        const textureName = DataObj._textureName;
+        const texturesCombat = dataBase.textures[textureName+'_c'] || PIXI.Texture.WHITE;
+        const d = new PIXI.projection.Sprite3d(dataBase.textures[DataObj._textureName]).setName('d');
+        const n = new PIXI.projection.Sprite3d(dataBase.textures_n[DataObj._textureName]).setName('n');
+        const c = new PIXI.projection.Sprite3d(texturesCombat).setName('c');
+            c.parentGroup = PIXI.lights.diffuseGroup;
+            d.parentGroup = PIXI.lights.diffuseGroup;
+            n.parentGroup = PIXI.lights.normalGroup;
+            d.anchor.set(0.5);
+            n.anchor.set(0.5);
+            c.anchor.set(0.5);
         this.addChild(c,d,n);
-    };
+    }
+    //#endregion
 
-    asignDataObjValues() {
-        super.asignDataObjValues();
-        const dataObj = this.DataObj;
-        if(!dataObj.textureName){
-            // si pas de texture? ces un background vide, que on ajust a lecrant
-            this.d.scale.set($app.screen.width/10, $app.screen.height/10); 
-            this.n.scale.set($app.screen.width/10, $app.screen.height/10); 
-        }
+    //#region [Method]
+    /** applani la scene affine euler */
+    setPlane(){
+        this.zOrder = -1;
         this.parentGroup = $displayGroup.group[0];
-        this.d.parentGroup = PIXI.lights.diffuseGroup;
-        this.c.parentGroup = PIXI.lights.diffuseGroup;
-        this.n.parentGroup = PIXI.lights.normalGroup;
-    };
+        this.euler.x = -Math.PI/2;
+        //this.affine = 0;
+    }
+    //#endregion
 
-    affines (value) {
-        this.affine = 0;
-    };
-};
+}
 
 //END CLASS
     

@@ -12,10 +12,11 @@ class _DataBase {
     static pool = [];
     static DATA2 = {};
     static TYPE = {
-        _Container_Base     :'_Container_Base',
-        _Container_Sprite   :'_Container_Sprite',
-        _Container_Animation:'_Container_Animation',
-        _Container_Spine    :'_Container_Spine',
+        _Container_Base       :'_Container_Base'       ,
+        _Container_Background :'_Container_Background' ,
+        _Container_Sprite     :'_Container_Sprite'     ,
+        _Container_Animation  :'_Container_Animation'  ,
+        _Container_Spine      :'_Container_Spine'      ,
     };
     static CATEGORY = { //tips: dir -Directory in powershell pour update
        Backgrounds  :'Backgrounds'  ,
@@ -78,6 +79,9 @@ class _DataBase {
         }else
         if(res.data && res.data.animations){
             return _DataBase.TYPE._Container_Animation;
+        }else
+        if(this.isBackground){
+            return _DataBase.TYPE._Container_Background;
         }else
         if( !this.isBackground && !this.isVideo ){
             return _DataBase.TYPE._Container_Sprite;

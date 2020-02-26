@@ -8,6 +8,8 @@ class _Editor_ObjCase extends _Editor_Obj{
     static RECPATH = false;
     /** @type {Array.<_Editor_ObjCase>} - BUFFERS PATH POUR pointerUp */
     static PATHBUFFER = [];
+    /** stock les id des lines path, pour eviter dupliquer */
+    static LINEBUFFER = [];
     /** @type {Array.<_Editor_ObjCase>} */
     static POOL = [];
     static presetCase(DataObj) { // change to mode cases
@@ -65,6 +67,7 @@ class _Editor_ObjCase extends _Editor_Obj{
         this.drawPath();
     }
     static drawPath(){
+        this.LINEBUFFER.clear();
         this.POOL.forEach(ObjCase=>{
             ObjCase.renderablePathDebug(true);
             ObjCase.toggleInteractive(false,false,true);
@@ -73,8 +76,10 @@ class _Editor_ObjCase extends _Editor_Obj{
     }
     static hide(){
         this.RECPATH = false;
-        this.PATHBUFFER = [];
-        Inspectors.DESTROY('PathMode')
+        this.TRACKING2 = null;
+        this.LINEBUFFER.clear();
+        this.PATHBUFFER.clear();
+        Inspectors.DESTROY('PathMode');
         _Editor_Obj.makeInteractive(true); // ont disable tous pour activer seulement les circles
         $EDITOR.toggle_debugMode(false);
         this.POOL.forEach(ObjCase=>{
@@ -101,6 +106,9 @@ class _Editor_ObjCase extends _Editor_Obj{
         this.POOL2.push(this);
     };
     //#region [GetterSetter]
+    get LINEBUFFER() {
+        return _Editor_ObjCase.LINEBUFFER;
+    }
     get TRACKING2() {
         return _Editor_ObjCase.TRACKING2;
     }
@@ -203,10 +211,7 @@ class _Editor_ObjCase extends _Editor_Obj{
         this.RECPATH = false;
         this.EDITOR.showLog('rec end');
         this.createPath();
-        this.POOL2.forEach(ObjCase=>{
-            ObjCase.drawPath();
-            this.renderablePathDebug(true);
-        })
+        _Editor_ObjCase.drawPath();
     }
 
     //#endregion
@@ -218,15 +223,15 @@ class _Editor_ObjCase extends _Editor_Obj{
         this.child.Circle3d.scale.set(value&&2||1);
     }
     createPath(){
-        const buffer = this.PATHBUFFER.map(o=>o.DataObj);
+        const buffer = this.PATHBUFFER.remove().map(o=>o.DataObj);
         for (let i=0, l=buffer.length; i<l; i++) {
             const preview = buffer[i-1];
             const current = buffer[i  ];
             const next    = buffer[i+1];
             //TODO: FIXME: compute distance via global position for Math.hypot
             if(preview){
-                //const id = preview._localCaseId;
-                //current.pathConnexion[String(id)] = +this.getDistanceFrom(current.p, preview.p).d.toFixed(2);
+                const id = preview._localCaseId;
+                current.pathConnexion[String(id)] = +this.getDistanceFrom(preview.p, current.p).d.toFixed(2);
             }
             if(next){
                 const id = next._localCaseId;
@@ -235,6 +240,7 @@ class _Editor_ObjCase extends _Editor_Obj{
         }
         this.PATHBUFFER.splice(0, buffer.length)
     }
+
     drawPath(){
         this.child.PathContainer.removeChildren();
         const CASES_G = $objs.CASES_G; // parceque les localID cible les global du jeux
@@ -242,7 +248,12 @@ class _Editor_ObjCase extends _Editor_Obj{
         const DataObj = this.DataObj;
         const PathContainer = this.child.PathContainer;
         const pathConnexion = Object.keys(DataObj.pathConnexion);
-        pathConnexion.forEach(id => {
+        for (let i=0, l=pathConnexion.length; i<l; i++) {
+            const id = pathConnexion[i];
+            const buffId = ''+this.DataObj._localCaseId+id;
+            const buffIdReverse = ''+id+this.DataObj._localCaseId; // on reverse aussi
+            if(this.LINEBUFFER.contains(buffId)){ continue };
+            this.LINEBUFFER.push(buffId,buffIdReverse);
             const dist = this.getDistanceFrom(CASES_L[id].p) //DataObj.pathConnexion[id];
             const line = new PIXI.Graphics().lineStyle(4, 0x4286f4, 1)
             .moveTo(0,0).bezierCurveTo(0, 70, dist.d, 70, dist.d, 0).endFill();
@@ -259,13 +270,12 @@ class _Editor_ObjCase extends _Editor_Obj{
             txtSprite.x = dist.d/2;
             txtSprite.proj.affine = 4;
             lineSprite.addChild(txtSprite);
-        });
+        };
     }
 
     /** draw une line entre le tracking et traking2 quand hover un circle3d
      * @param {_Editor_ObjCase} tracked - l'objet track par le mouse
      */
-    //TODO: RENDU ICI, permetre quand addtomap de continuer un tracking linear, et suprimer quand right click cancel
     drawTracking2Path(tracked){ // reverse track
         tracked.child.PathContainer.removeChildren().forEach(c=>c.destroy(true));
         const clampPos = this.normalizeVector(tracked);
