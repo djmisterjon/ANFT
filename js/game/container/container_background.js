@@ -34,7 +34,9 @@ class _Container_Background extends _Container_Base {
             d.anchor.set(0.5);
             n.anchor.set(0.5);
             c.anchor.set(0.5);
-        this.addChild(c,d,n);
+            c.renderable = false;
+            c.visible = false;
+        this.addChild(d,n,c);
     }
     //#endregion
 

@@ -10,6 +10,7 @@ dans les class, . pour les objects, function deep (non Json), _ pour les props a
 //TODO: NOTE: LES MONSTERS SERON TOUS INITIALISER 1 FOI AU DEBUT, ENSUITE ON CLONE LORS DE COMBAT. Ceci permetra egalement le livre des monstre d'utiliser les references
 /** class Battler on des method comune avec les MONSTER */
 class _battler  {
+    /**@param {_DataBattlers} DataBattlers */
     constructor(DataBattlers) {
         this.DataBattlers = DataBattlers;
         /** type de chara excel [p,m] */
@@ -25,7 +26,7 @@ class _battler  {
         this.child = null;
         /** list les states actif sur le battler
          * @type {{ hp:String,mp:String,hg:String,hy:String,atk:String,def:String,sta:String,int:String,lck:String,expl:String,mor:String,}} */
-        this.states = null;
+        this.states = {}; // voir si tou va bien
         /** list les status active sur le battler */
         this.status = [];
         /** heritage de la faiblesse orbic -20%  'orbsSynegies*/
@@ -65,11 +66,11 @@ class _battler  {
         this._ccrt = 0;
         /** chance d'evation */
         this._ceva = 0;
-
         /** point experience actuel */
         this._xp = 0
     }
-
+    //#region [GetterSetter]
+    get dataBase() { return $loader.DATA2[this.DataBattlers._dataBaseName] };//todo: refair nom
     get defaultHeight(){
         return this.DataBattlers.defaultHeight;
     }
@@ -79,6 +80,22 @@ class _battler  {
     get toCase() {
         return $objs.CASES_L[this._toCase];
     }
+    get evo() {
+        return this.DataBattlers.evo;
+    }
+    
+    get isPlayers() {
+        return this.constructor.name !== '_monsters';
+    };
+    get isMonsters() {
+        return this.constructor.name === '_monsters';
+    };
+    /** return boolean si est revers */
+    get isRevers() {
+        return this._dirX === 4;
+    }
+    /** check if the battler is death */
+    get isDeath(){ return this.HP<1 };
     /** @returns {PIXI.projection.Container3d} */
     get p(){ return this.child.ContainerSpine }
     /** @returns {PIXI.projection.Spine3d} */
@@ -87,40 +104,40 @@ class _battler  {
     get d(){ return this.child.ContainerSpine.d };// spine arrays
     /** @returns {PIXI.Sprite} */
     get n(){ return this.child.ContainerSpine.n };// spine arrays
+    //#endregion
 
-    
-    /** initialise battler data */
-    initialize_battler(level = 1){
-        const height = this.data.info._default_heigth[0];
-        const ratio = height/this.s.height;
-        this.s.scale3d.setZero(ratio);
-        this.p.parentGroup = $displayGroup.group[1];
-        this.initialize_stats(level,true);
-        this.evo = $systems.extractEvo(data.statesBase);//this.extractEvo(this.data.statesBase);
+    //#region [Initialize]
+    initialize_base(){
+        const ContainerSpine = $objs.create(null,this.dataBase,'idle').setName('ContainerSpine');
+        ContainerSpine.parentGroup = $displayGroup.group[1];
+        ContainerSpine.s.scale3d.setZero(this.defaultHeight/ContainerSpine.s.height); // ratio hauteur from excel
+        this.child = ContainerSpine.childrenToName();
+        //this.setupAnimations(dataObj);
+
+
+        //dataObj.child.p.parentGroup = $displayGroup.group[1];
+        //dataObj.child.s.scale3d.set(0.4);
+        //dataObj.child.s.scale3d.setZero();
+
+        this.initialize_stats();
         //this.debug();
-    };
-    get isPlayers() {
-        return this._type === 'p';
-    };
-    get isMonsters() {
-        return this._type === 'm';
-    };
-    /** return boolean si est revers */
-    get isRevers() {
-        return this._dirX === 4;
     }
+    
+    /** initialize les stats a un level */
+    initialize_stats(level=1, ){
+        this._level = level;
+        this._currentHP = this.hp;
+        this._currentMP = this.mp;
+        this._currentHG = this.hg;
+        this._currentHY = this.hy;
+        Object.values(this.evo).forEach(evo=>{
+            if(evo.type !== 'extra'){ //TODO: RENDU ICI , SOURCE NAME P1
+                this.states[evo.name] = $statesManager.create(evo.name, this._id)._contextId;
+            }
+        });
+    }
+    //#endregion
 
-    /** list des battle options disponible pour le battler
-    * @return ["monsterBook", "capaBook|magicBook", "atk", "def", "move", "run", "asimilation|identification"]
-    */
-    get battleOptions(){
-        return  this.data.combatActions.filter(action => action.allow );
-    };
-
-    /** check if the battler is death */
-    get isDeath(){
-        return this.HP<1;
-    };
 
     get level (){ return this._level }
     get xp (){ return this._xp }
@@ -208,22 +225,7 @@ class _battler  {
         return ~~(ev.b*(1+(level-1)*ev.r) + (ev.f*(level-1)))+bonus;
     };
 
-    /** initialize les stats a un level 
-     * @param {Boolean} reset - restoration des states au changement 
-    */
-    initialize_stats(level=1, reset){
-        this._level = level;
-        this._currentHP = this.hp;
-        this._currentMP = this.mp;
-        this._currentHG = this.hg;
-        this._currentHY = this.hy;
 
-        Object.values(this.evo).forEach(evo=>{
-            if(evo.type !== 'extra'){ //TODO: RENDU ICI , SOURCE NAME P1
-                this.states[evo.name] = $statesManager.create(evo.name, this._id)._contextId;
-            }
-        });
-    };
 
     /** forcer un call update des status du battlers (seulement les class) 
      * @param huds - si pluto passer par le update huds, car players a des states vivible (refactory les huds ) ces une option temporaire
@@ -256,8 +258,7 @@ class _battler  {
         if(dataObj){
             this.p.position3d.copy(dataObj.p.position3d);
             this.p.position3d.z-=15; //fix case pivot
-            this.inCase = dataObj;
-            dataObj._battlerID = this._battlerID; // permet de retrouver le battler sur la cases.
+            this._inCase = caseId;
         }else{
             console.error(`la cases de transfer nexiste pas !!! ID: `,caseId)
         }

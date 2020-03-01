@@ -129,17 +129,17 @@ class _systems{
         };
         Object.defineProperty( this.optionsType, 'keys', {enumerable: false});
         /**list of possible action combat */
-        this.actionType = {
-            get attack         () { return {color:'white' ,sIcon:'atk'  } },//#ffffff
-            get defense        () { return {color:'green' ,sIcon:'def'  } },//#00ff3c
-            get cBook          () { return {color:'pink'  ,sIcon:'int'  } },//#f600ff
-            get move           () { return {color:'blue'  ,sIcon:'sta'  } },//#003cff
-            get asimilation    () { return {color:'brown' ,sIcon:'expl' } },//#70562e
-            get identification () { return {color:'red'   ,sIcon:'mor'  } },//#ff0000
-            /**@returns {Array<["attack", "defense", "cBook", "move", "asimilation", "identification"]>} */
+        this.BATTLECOMMAND = {
+            get attack         () { return {id:0,color:'white' ,sIcon:'atk'  } },//#ffffff
+            get defense        () { return {id:1,color:'green' ,sIcon:'def'  } },//#00ff3c
+            get cBook          () { return {id:2,color:'pink'  ,sIcon:'int'  } },//#f600ff
+            get move           () { return {id:3,color:'blue'  ,sIcon:'sta'  } },//#003cff
+            get asimilation    () { return {id:4,color:'brown' ,sIcon:'expl' } },//#70562e
+            get identification () { return {id:5,color:'red'   ,sIcon:'mor'  } },//#ff0000
+            /**@returns {["attack", "defense", "cBook", "move", "asimilation", "identification"]} */
             get keys() { return Object.keys(this)},
         };
-        Object.defineProperty( this.actionType, 'keys', {enumerable: false});
+        Object.defineProperty( this.BATTLECOMMAND, 'keys', {enumerable: false});
 
         /**Type element in game, general */
         this.filterType = {
@@ -311,19 +311,7 @@ class _systems{
     };
 
     
-    /**
-     * @description Les base d'evolutions par level du battler 
-     * @returns {{atk:{r:Number,b:Number,f:Number},def:{r:Number,b:Number,f:Number},sta:{r:Number,b:Number,f:Number},int:{r:Number,b:Number,f:Number},lck:{r:Number,b:Number,f:Number},expl:{r:Number,b:Number,f:Number},mor:{r:Number,b:Number,f:Number},name,type }
-    */
-    extractEvo(statesBase){
-        const evo = {};
-        statesBase.forEach(el => {
-            evo[el.state_base] = { 
-                name:el.state_base, r:el.Rate, b:el.base, f:el.flat, type:el.type,
-            };
-        });
-        return evo;
-    };
+
 
     
     /** //! utilitaire pour debug un display objet et tous ces child */

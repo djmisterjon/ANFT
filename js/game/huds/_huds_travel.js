@@ -27,7 +27,7 @@ class _Huds_Travel extends _Huds_Base {
         this._showed = false;
         /** @type {{ 'Master':ContainerDN, 'Gear_Center':ContainerDN, 'Gear_Top':ContainerDN, 
          * 'FlashLight':ContainerDN, 'Gear_backDeco':ContainerDN, 'Gear_Bottom':ContainerDN,
-         * 'TravelPointTxt':PIXI.Text, 'TravelSlot':Array.<__TravelSlot>,  }} */
+         * 'TravelPointTxt':PIXI.Text, 'TravelSlot':Array.<__TravelSlot>,CombatCommand:PIXI.Sprite  }} */
         this.child = null;
 
     };
@@ -39,6 +39,14 @@ class _Huds_Travel extends _Huds_Base {
     set sta(value) { 
         this._stamina = value;
         this.updateTxtValue();
+    }
+    /** return le combat active */
+    get CombatActive() {
+        return _Combats.Active;
+    }
+    /** return la command active en combat */
+    get ActiveCommand() {
+        return $gui.BattlersCommands.SelectedCommands[0];
     }
     //#endregion
 
@@ -88,6 +96,10 @@ class _Huds_Travel extends _Huds_Base {
          const TravelPointTxt = new PIXI.Text('setup'.toUpperCase(),$systems.styles[10]).setName('TravelPointTxt');
             TravelPointTxt.scale.set(0.7)
             TravelPointTxt.anchor.set(0.5);
+        //! Command Icons pour combat voir swapActiveCommand()
+        //# data2\System\orbs\SOURCE\images\orb_ico_attack.png
+        const CombatCommand = new PIXI.Sprite(PIXI.Texture.WHITE).setName('CombatCommand');
+            CombatCommand.anchor.set(0.5);
         //# FX1 Big circle
             /*const FX1 = $objs.ContainerDN(dataBase2,'FXEnergieA','FX1');
                 FX1.child.parentGroup = $displayGroup.group[0]
@@ -97,7 +109,7 @@ class _Huds_Travel extends _Huds_Base {
                 FX1.child.child.a.loop = true;
                 FX1.child.child.a.animationSpeed = 0.4;*/
         //!end
-        Master.addChild(Gear_Bottom,FlashLight,Gear_Center,...TravelSlots,TravelPointTxt,Gear_Top);
+        Master.addChild(Gear_Bottom,FlashLight,Gear_Center,...TravelSlots,TravelPointTxt,CombatCommand,Gear_Top);
         this.addChild(Gear_backDeco,Master);
     };
 
@@ -253,7 +265,7 @@ class _Huds_Travel extends _Huds_Base {
             Gear_Center.interactive = true;
         })
     }
-
+    /** cache le hud */
     hide(){
         this._showed = false;
         const Master = this.child.Master;
@@ -264,7 +276,7 @@ class _Huds_Travel extends _Huds_Base {
         gsap.to(Master, 0.7, {x:-Master.width, ease:Back.easeOut.config(1.2) });
         gsap.to(Gear_backDeco, 0.7, {x:-270, rotation:`+=${Math.PI*2}`, ease:Back.easeOut.config(1.2) });
     }
-
+    /** pass en mode rotation */
     idleRotation(active=true){
         if(!"option animate travelSlots"){ return };
         const Master = this.child.Master;
@@ -280,6 +292,16 @@ class _Huds_Travel extends _Huds_Base {
             gsap.killTweensOf(Gear_Bottom);
             gsap.killTweensOf(Gear_backDeco);
             gsap.killTweensOf(Gear_Top);
+        }
+    }
+    /** remplace le centre par une Command de combat active ou le classic stamina */
+    swapActiveCommand(ActiveCommand = this.ActiveCommand){
+        if(ActiveCommand){
+            //# data2\System\orbs\SOURCE\images\orb_ico_attack.png
+            const dataBase = $loader.DATA2.Orbs;
+            const CombatCommand = this.child.CombatCommand;
+            CombatCommand.texture = dataBase.textures['orb_ico_'+ActiveCommand]
+            CombatCommand.renderable = true;
         }
     }
 
@@ -325,16 +347,20 @@ class _Huds_Travel extends _Huds_Base {
 
     /** roll dice */
     startRoll() {
-        //! setup
-        $audio._sounds.JMP_A.play("JMP_A4").speed = 1;
-        $audio._sounds.JMP_A.play("JMP_A5").speed = 0.5;
-        //!tween
-        TweenLite.fromTo(this.scale, 2  , { x:'+=0.43', y:'+=0.4' },{ x:1, y:1, ease: Elastic.easeInOut.config(0.8, 0.3) });
-        TweenLite.fromTo(this.child.TravelSlot.map(s=>s.scale), 1, { x: 1.3, y: 1.3 },{ x: 1, y: 1, ease: Elastic.easeOut.config(0.9, 0.3) })
-        //!result
-        const result = this.result = this.computeRoll();
-        result.values.push($players.p0.STA);
-        this.onCompletteRoll(result);
+        if(this.CombatActive){ // si en combat, utiliser le startRoll de combat
+            return this.CombatActive.startRoll();
+        }else{
+            //! setup
+            $audio._sounds.JMP_A.play("JMP_A4").speed = 1;
+            $audio._sounds.JMP_A.play("JMP_A5").speed = 0.5;
+            //!tween
+            TweenLite.fromTo(this.scale, 2  , { x:'+=0.43', y:'+=0.4' },{ x:1, y:1, ease: Elastic.easeInOut.config(0.8, 0.3) });
+            TweenLite.fromTo(this.child.TravelSlot.map(s=>s.scale), 1, { x: 1.3, y: 1.3 },{ x: 1, y: 1, ease: Elastic.easeOut.config(0.9, 0.3) })
+            //!result
+            const result = this.result = this.computeRoll();
+            result.values.push($players.p0.STA);
+            this.onCompletteRoll(result);
+        }
     }
 
     /** Calcul le stamina et l'affectation des slots

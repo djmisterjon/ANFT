@@ -125,6 +125,11 @@ interface Array<T> {
      */
     sum() : number;
 
+    /**
+     * sort les elements random dans un arrays
+     */
+    sortRandom() : Array<T>;
+    
 };//!end
 
 

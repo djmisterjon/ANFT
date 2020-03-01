@@ -34,7 +34,7 @@ class _camera {
         this._perspective = -1//Math.PI / 2;
         this.__ang = 0; // intelicam angle
         this.__perspective = -1 // intelicam perspective
-        /** plus lourd mais permet update le _focus _near _far _orthographic*/
+        /** plus lourd mais permet update le _focus _near _far _orthographic pour FX zoom*/
         this._planeUpdate = false;
         this._inteliCam = false;
         this._culling = true;

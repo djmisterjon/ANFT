@@ -28,7 +28,7 @@ class _DataBattlers {
     static generate(id,level=1,master=false){ //TODO: MAP INFLUENCE
         const data = $loader.DATA.base['m'+id];
         if(data){
-            const DataMonsters = new _DataBattlers('m'+id,level,master);
+            const DataMonsters = new _DataBattlers('m'+id,level,master,id);
             this.POOL.push(DataMonsters);
             return DataMonsters;
         }else{
@@ -44,9 +44,11 @@ class _DataBattlers {
      * @param {*} level
      * @param {*} master
      */
-    constructor(dataBaseName,level,master) {
+    constructor(dataBaseName,level,master,id) {
         /** monster data Id */
         this._dataBaseName = dataBaseName;
+        /** id number from p0,m0 */
+        this._id = id;
         /** Level actuel */
         this._level = level;
         /** Ces un epic master sayen */
@@ -59,7 +61,7 @@ class _DataBattlers {
         return $loader.DATA.base[this._dataBaseName];
     }
     get defaultHeight() {
-        return this.DATAEXCEL.info._default_heigth
+        return this.DATAEXCEL.info._default_heigth[0]
     }
     //#endregion
     //#region [Initialize]
@@ -73,6 +75,7 @@ class _DataBattlers {
         this.statusImunity = this.initialize_statusImunity ();
         this.alimentations = this.initialize_alimentations ();
         this.orbsSynegies  = this.initialize_orbsSynegies  ();
+        this.evo = this.initialize_Evo();
     }
 
     initialize_info(){
@@ -160,6 +163,30 @@ class _DataBattlers {
         const orbsSynegies = this.DATAEXCEL.orbsSynegies;
         return {faiblesseOrbic:orbsSynegies.fo_base,puissanceOrbic:orbsSynegies.po_base};
     };
+
+
+    /**
+     * @description Les base d'evolutions par level du battler 
+     * @returns {{
+     * atk:{r:Number,b:Number,f:Number},
+     * def:{r:Number,b:Number,f:Number},
+     * sta:{r:Number,b:Number,f:Number},
+     * int:{r:Number,b:Number,f:Number},
+     * lck:{r:Number,b:Number,f:Number},
+     * expl:{r:Number,b:Number,f:Number},
+     * mor:{r:Number,b:Number,f:Number},
+     * name,type}}
+    */
+   initialize_Evo(){
+        const EVO = this.DATAEXCEL.statesBase;
+        const evo = {};
+        EVO.forEach(el => {
+            evo[el.state_base] = { 
+                name:el.state_base, r:el.Rate, b:el.base, f:el.flat, type:el.type,
+            };
+        });
+        return evo;
+    }
     //#endregion
 
 }

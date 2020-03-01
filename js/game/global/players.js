@@ -6,8 +6,8 @@ class _Players {
     //#region [Initialize]
     /** initialise les players selon class choisis au depart du jeux */
     initialize(){
-        const DataBattlers0 = new _DataBattlers('p0',1,false);
-        const DataBattlers1 = new _DataBattlers('p1',1,false);
+        const DataBattlers0 = new _DataBattlers('p0',1,false,0);
+        const DataBattlers1 = new _DataBattlers('p1',1,false,1);
         const p0 = new _player0(DataBattlers0);
         const p1 = new _player1(DataBattlers1);
         this.group.push(p0,p1);

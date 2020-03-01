@@ -133,15 +133,22 @@ class _Huds_PinBar extends _Huds_Base {
     show(){
         this.renderable = true;
     };
+
+    /** cacher completement en mode combat */
+    hide(){
+        const PinBar = this.child.Bar;
+        const Rotator = this.child.Rotator;
+        Inspectors.DisplayObj(PinBar)
+    }
     
     togglePinBarSlide(value = !this._pinOptionShowed){
         if(value !== this._pinOptionShowed){
             const PinBar = this.child.Bar;
             const Rotator = this.child.Rotator;
-            if(value){
+            if(value){//half
                 gsap.to(PinBar.position, 0.3, {x:0, ease: Back.easeInOut.config(1.4) });
                 gsap.to(Rotator, 0.34, {rotation:`+=${Math.PI}`, ease: Back.easeInOut.config(1.6) });
-            }else{
+            }else{//full
                 gsap.to(PinBar.position, 0.3, {x:PinBar.position.zero.x, ease: Back.easeInOut.config(1.3) });
                 gsap.to(Rotator, 0.34, {rotation:`-=${Math.PI}`, ease: Back.easeInOut.config(1.6) });
             }

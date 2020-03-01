@@ -72,7 +72,6 @@ Array.prototype.equals = function (other, callback = (x, y) => (x === y)) {
 }
 Object.defineProperty(Array.prototype, 'equals',{enumerable:false})
 
-
 Array.prototype.contains = function (element) {
     return this.indexOf(element) >= 0;
 }
@@ -142,6 +141,13 @@ Array.prototype.chunk = function(howMany) {
     return chunkarr;
 }
 Object.defineProperty(Array.prototype, 'chunk',{enumerable:false})
+
+Array.prototype.sortRandom = function() {
+    return this.sort((a, b) => 0.5 - Math.random());
+}
+Object.defineProperty(Array.prototype, 'sortRandom',{enumerable:false})
+
+
 
 //#MATH
 Math.randomFrom = function(min=0,max=1,precision=0){   

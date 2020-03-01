@@ -445,7 +445,7 @@ class _mouse extends PIXI.Container{
      * @param {String} txtId - passe un text id
     */
     showHelpBox(txtId){
-        const txt = $texts.getStringById(txtId);
+        const txt = $texts.getStringById(txtId) || 'todo id: '+txtId;
         const HelpBoxContainer  = this.child.HelpBoxContainer;
         const helpBoxBG  = this.child.helpBoxBG;
         const HelpBoxTxt = this.child.HelpBoxTxt;

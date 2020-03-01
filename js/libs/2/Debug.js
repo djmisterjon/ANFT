@@ -11,6 +11,7 @@ class Debug extends PIXI.Container {
             reduit_HG_deMotier:this.reduit_HG_deMotier,
             reset_HG_toMax:this.reset_HG_toMax,
             StartCombat_x1:this.StartCombat_x1,
+            StartCombat_x5:this.StartCombat_x5,
         }
         Inspectors.Objects(Command,'DEBUG HACK');
     }
@@ -53,6 +54,24 @@ class Debug extends PIXI.Container {
         $players.p0.s.state.addAnimation(3, "visiteCase", false,0);
         const bountyData = [
             _DataBattlers.generate(0),
+        ];
+        new Promise((resolve, reject) => { // resolve()
+            $gui.CombatScreenChoice.show(resolve,bountyData);
+        }).then((value) => {
+            switch (value) {
+                case 'xButton_A': new _Combats(bountyData);break;
+                default:break;
+            }
+        });
+    }
+    static StartCombat_x5() {
+        $players.p0.s.state.addAnimation(3, "visiteCase", false,0);
+        const bountyData = [
+            _DataBattlers.generate(0),
+            _DataBattlers.generate(1),
+            _DataBattlers.generate(2),
+            _DataBattlers.generate(3),
+            _DataBattlers.generate(3),
         ];
         new Promise((resolve, reject) => { // resolve()
             $gui.CombatScreenChoice.show(resolve,bountyData);

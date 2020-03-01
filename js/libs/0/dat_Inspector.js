@@ -141,6 +141,8 @@ class Inspectors {
         DisplayObj.scale && f1.add(DisplayObj, "scale",['x','y'] ).step(0.01);
         DisplayObj.pivot && f1.add(DisplayObj, "pivot",['x','y'] ).step(0.01);
         DisplayObj.euler && f1.add(DisplayObj, "euler",['x','y','z'] ).step(0.01);
+        f1.add(DisplayObj, 'rotation').step(0.01);
+        f1.add(DisplayObj, 'alpha').step(0.01);
         if(Debug){
             if(Array.isArray(Debug)){
                 Debug.forEach(key => {

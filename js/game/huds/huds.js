@@ -8,7 +8,8 @@ class _GUI { //TODO REFACTORING DANS UN CONTAINER ? .huds .menue gui.huds. gui.m
          * '_Huds_PinBar'            :_Huds_PinBar            ,
          * '_Huds_States'            :_Huds_States            ,
          * '_Huds_Minimap'           :_Huds_Minimap           ,
-         * '_Huds_CombatSelector'    :_Huds_CombatSelector    ,
+         * '_Huds_BattlersSelectors'    :_Huds_BattlersSelectors    ,
+         * '_Huds_BattlersCommands'    :_Huds_BattlersCommands    ,
          * '_Huds_CombatScreenChoice':_Huds_CombatScreenChoice,
          * '_Huds_MessageIndicator'  :_Huds_MessageIndicator  ,
          * '_Huds_GameSteps'         :_Huds_GameSteps         ,
@@ -23,7 +24,8 @@ class _GUI { //TODO REFACTORING DANS UN CONTAINER ? .huds .menue gui.huds. gui.m
     get PinBar() { return this.child._Huds_PinBar };
     get States() { return this.child._Huds_States };
     get Minimap() { return this.child._Huds_Minimap };
-    get CombatSelector() { return this.child._Huds_CombatSelector };
+    get BattlersSelectors() { return this.child._Huds_BattlersSelectors };
+    get BattlersCommands() { return this.child._Huds_BattlersCommands };
     get CombatScreenChoice() { return this.child._Huds_CombatScreenChoice };
     get MessageIndicator() { return this.child._Huds_MessageIndicator };
     get GameSteps() { return this.child._Huds_GameSteps };
@@ -47,7 +49,8 @@ class _GUI { //TODO REFACTORING DANS UN CONTAINER ? .huds .menue gui.huds. gui.m
             new _Huds_Travel(),
             new _Huds_States(),
             new _Huds_Minimap(),
-            new _Huds_CombatSelector(),
+            new _Huds_BattlersSelectors(),
+            new _Huds_BattlersCommands(),
             new _Huds_CombatScreenChoice(),
             new _Huds_MessageIndicator(),
             new _Huds_GameSteps(),
@@ -71,6 +74,8 @@ class _GUI { //TODO REFACTORING DANS UN CONTAINER ? .huds .menue gui.huds. gui.m
         //this.Travel.show();
         //this.States.show();
         //this.Minimap.show();
+        //this.BattlersSelectors.show();
+        //this.BattlersCommands.show();
         //this.Items.show();
         //this.CombatScreenChoice.show();
         //this.MessageIndicator.show();

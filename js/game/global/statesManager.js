@@ -520,7 +520,7 @@ class _statesManager {
             
             /** @returns {Number} - Renvoi calcule une valeur de base brute , facteur utiliser pour calculer les conditions du state si beoin */
             getValue() {
-                return this.source[this.name];
+                return 1;//this.source[this.name]; //todo: rethink
             };
 
             /** @returns {String} - Renvoi une description selon le context du state */

@@ -7,36 +7,29 @@ class _player0 extends _battler {
         this.initialize();
     }
     //#region [GetterSetter]
-    get dataBase() { return $loader.DATA2.heroe1_rendered };//todo: refair nom
+    
     //#endregion
     //#region [Initialize]
     /** initialize spine sprite */
     initialize(){
-        this.initialize_sprites();
+        this.initialize_base();
         this.initialize_listeners();
-        this.initialize_battler();
+        this.initialise_animations();
         //this.setupTweens();
         //this.addInteractive();
-    };
-
-    /** initialize tous les elements */
-    initialize_sprites(){
-        //TODO: peut etre ajouter un nouveau container, pour mettre des FX speciaux au players
-        const ContainerSpine = $objs.create(null,this.dataBase,'idle').setName('ContainerSpine');
-        this.child = ContainerSpine.childrenToName();
-        //this.setupAnimations(dataObj);
-            //TODO: EXPERIMENTAL wink eyes, use spine events random
-            //const spine = dataObj.child.s;
-        /*setInterval(function(){
+    }
+    initialise_animations(){
+        const spine = this.s;
+        spine.stateData.defaultMix = 0.2;
+        spine.state.setAnimation(0, "idle", true);
+        spine.state.setAnimation(1, "hair_idle", true);
+        spine.skeleton.setSlotsToSetupPose();
+        //TODO: EXPERIMENTAL wink eyes, use spine events random
+        setInterval(function(){
             const allowWink = Math.random() >= 0.5;
             allowWink && spine.state.setAnimation(2, 'wink1', false); 
-        }, 1250);*/
-
-        //dataObj.child.p.parentGroup = $displayGroup.group[1];
-        //dataObj.child.s.scale3d.set(0.4);
-        //dataObj.child.s.scale3d.setZero();
-    };
-
+        }, 1250);
+    }
     initialize_listeners() {
         const checkEvent = (entry, event) => {
             switch (event.data.name) {
@@ -102,15 +95,7 @@ class _player0 extends _battler {
     //#endregion
 
     //#region [Method]
-    setupAnimations(dataObj){
-        //! hack player
-        const spine = dataObj.child.s;
-        spine.stateData.defaultMix = 0.2;
-        spine.hackAttachmentGroups("_n", PIXI.lights.normalGroup, PIXI.lights.diffuseGroup); // (nameSuffix, group)
-        spine.state.setAnimation(0, "idle", true);
-        spine.state.setAnimation(1, "hair_idle", true);
-        spine.skeleton.setSlotsToSetupPose();
-    };
+
 
     
     /** update les heritages synergie orbic 

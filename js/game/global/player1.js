@@ -2,44 +2,37 @@
 
 /**@class players heroes 1  cat*/
 class _player1 extends _battler {
-    constructor(data,id) {
-        super(id,data,'p',1);
-        /** @type {{ 'ContainerSpine':_Container_Spine }} */
-        this.child = null;
+    constructor(DataBattlers) {
+        super(DataBattlers);
+        this.pathBuffer = [];
         this.initialize();
     };
     
     //#region [Initialize]
-    /** initialize spine sprite */
     initialize(){
-        this.initialize_sprites();
+        this.initialize_base();
+        this.initialise_animations();
         //this.initialize_listeners();
-        this.initialize_battler();
         //this.setupTweens();
         //this.addInteractive();
-    };
-
-    /** initialize tous les elements */
-    initialize_sprites(){
-        //TODO: peut etre ajouter un nouveau container, pour mettre des FX speciaux au players
-        const ContainerSpine = $objs.create(null,this.dataBase,'idle').setName('ContainerSpine');
-        this.child = ContainerSpine.childrenToName();
-    };
+    }
+    initialise_animations(){
+        const spine = this.s;
+        spine.stateData.defaultMix = 0.1;
+        spine.state.setAnimation(0, "idle", true);
+        spine.skeleton.setSlotsToSetupPose();
+        //TODO: EXPERIMENTAL wink eyes, use spine events random
+        setInterval(function(){
+            const allowWink = Math.random() >= 0.8;
+            allowWink && spine.state.setAnimation(2, 'wink1', false); 
+        }, 3000);
+        this.p.pivot3d.y = 100;
+    }
     //#endregion
 
     //#region [GetterSetter]
-    get dataBase() { return $loader.DATA2.heroe2}
     //#endregion
 
     //#region [Method]
-    setupAnimations(dataObj){
-        //! hack player
-        const spine = dataObj.child.s;
-        spine.stateData.defaultMix = 0.2;
-        spine.hackAttachmentGroups("_n", PIXI.lights.normalGroup, PIXI.lights.diffuseGroup); // (nameSuffix, group)
-        spine.state.setAnimation(0, "idle", true);
-        spine.state.setAnimation(1, "hair_idle", true);
-        spine.skeleton.setSlotsToSetupPose();
-    };
     //#endregion
 }

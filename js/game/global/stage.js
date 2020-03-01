@@ -82,7 +82,7 @@ class _stage extends PIXI.display.Stage {
         if(this.scene){
             if(this.scene._started){
                 this.scene.update(delta);
-                $statesManager.update();
+                //$statesManager.update();
                 $camera.update();
             }else{
                 this.scene.initialize();

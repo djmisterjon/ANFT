@@ -13,36 +13,36 @@ class _monsters extends _battler{
         this.initialize()
     }
     //#region [GetterSetter]
-    get dataBase() {
-        return  $loader.DATA2[this.DataMonsters._dataBaseName];
-    }
 
     //#endregion
     //#region [Initialize]
-    initialize() {
-        this.initialize_base()
-        //this.initialize_sprites(generateData);
-        ////this.initialize_states();
-        //this.initialize_stats(1,true);
-        //this.updateStates();
-        //this.updateOrbic();
-        ////this.initialize_listeners();
-        ////this.setupTweens();
-        ////this.addInteractive();
-
-        //this.initialize_interactions()
-        //this.child = this.childrenToName()
+    initialize(){
+        this.initialize_base();
+        this.initialise_animations();
+        //this.initialize_listeners();
+        //this.setupTweens();
+        //this.addInteractive();
     }
-        
-    initialize_base() {
-        const ContainerSpine = $objs.create(null,this.dataBase,'idle').setName('ContainerSpine');
-        ContainerSpine.scale.set(this._default_heigth/spine.height); //TODO: passer les base info dans battlers ou _monster ?
-        ContainerSpine.scale.setZero();
-        this.child = ContainerSpine.childrenToName();
+
+    initialise_animations(){
+        const spine = this.s;
+        spine.stateData.defaultMix = 0.1;
+        spine.state.setAnimation(0, "idle", true);
+        spine.skeleton.setSlotsToSetupPose();
+        this.p.renderable = false;
+        //TODO: EXPERIMENTAL wink eyes, use spine events random
     }
     //#endregion
    
- 
+        /** fait apparaitre le monstre */
+    appear(){
+        // todo: faire des data dans excel
+        this.p.renderable = true;
+        const spine = this.s;
+        spine.state.setAnimation(0, "apear", false, 0).timeScale = (Math.random() * 0.6) + 0.6;
+        spine.state.addAnimation(0, "idle", true, 0);
+        $audio._sounds.BT_A.play("BT_A00");
+    };
 
     //#region [rgba(200, 200, 20, 0.1)]
     /**@class creer une antiter monster */
