@@ -128,7 +128,8 @@ class _Combats {
     }
     /** prepare le timer du combat et la gestion de tour */
     intitialize_tiker(){
-        this.Battlers.forEach(b => { b._battleTime = this._timeLimit });// assign a tous les personage la limite
+        //todo: sorting selon sta et besoin +i pour eviter les sta identique
+        this.Battlers.forEach((b,i) => { b._battleTime = this._timeLimit+i });// assign a tous les personage la limite
         PIXI.ticker.shared.add(this.update, this);
     }
     /** prepare et ajoute les huds a la scene et pass en mode combatle hud pinBar*/
@@ -332,10 +333,6 @@ class _Combats {
         $mouse.showHelpBox('Combat roll');
     }
 
-    focusOnBattler(battlerID){
-        const battler = this.Battlers[battlerID];
-        $camera.moveToTarget(battler,0.2,Power4.easeOut,'combat2')
-    }
 }
 
 

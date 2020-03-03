@@ -47,13 +47,35 @@ class _Huds_BattlersSelectors extends _Huds_Base {
     
     update_turn(){
         this.BattlersSelectors.forEach(BattlerSelectors => {
-            BattlerSelectors.renderable && BattlerSelectors.update_timer()
+           
         });
+        const BattlersSelectors = this.BattlersSelectors.filter(e=>e.renderable);
+
+        const sorted = BattlersSelectors.slice().sort(function(a,b) {
+            return b.Battler._battleTime - a.Battler._battleTime;
+        })
+        const test = sorted.every((Bsorted, index, array)=>{
+            return Bsorted === BattlersSelectors[index];
+          })
+
+        for (let i=0, l=sorted.length; i<l; i++) {
+            const B = sorted[i];
+            B.update_timer();
+            !test && gsap.to( B.position, {y:106*i})
+        }
+        //this.BattlersSelectors = sorted; //todo: refactoriser
     }
 
     startTurn(){
         const battlerID = this.CurrentBattlerTurn._battlerID;
         this.BattlersSelectors[battlerID].startTurn();
+    }
+    showCombatMathBox(sourceId,targetIds,boosters){
+        // todo: multi targets ?
+        const CombatMathBox = new _CombatMathBox(sourceId,targetIds[0],boosters);
+        const targetSelector = this.BattlersSelectors[targetIds[0]]; 
+        this.addChild(CombatMathBox);
+        CombatMathBox.position.set(-100,targetSelector.y);
     }
 }
 

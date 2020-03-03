@@ -46,7 +46,7 @@ class _Huds_Travel extends _Huds_Base {
     }
     /** return la command active en combat */
     get ActiveCommand() {
-        return $gui.BattlersCommands.SelectedCommands[0];
+        return $gui.BattlersCommands.selected_commandGroup_Actions[0];
     }
     //#endregion
 
@@ -55,7 +55,7 @@ class _Huds_Travel extends _Huds_Base {
         this.initialize_main();
         this.child = this.childrenToName();
         this.initialize_interactions();
-        this.position.set(200,885);
+        this.position.set(200,920);
     }
 
     /**build main frame */

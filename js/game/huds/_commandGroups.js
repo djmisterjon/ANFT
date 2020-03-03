@@ -1,9 +1,13 @@
 /** class de Regroupement d'une  list de commands _CombatCommands */
 class _CommandGroups extends PIXI.Container{
     /**@param {Array.<String>} commandList list des commands */
-    constructor(commandList,title) {
+    constructor(commandList,title,allowMultiCommand=false) {
         super();
         this._title = title;
+        /** @type {Array.<_CombatCommands>} */
+        this.commandSelected = [];
+        /** permet les choix de command multiple */
+        this._allowMultiCommand = allowMultiCommand;
         this.commandList = commandList;
         /** @type {{ 'TxtCommand':Array.<_CombatCommands>, 'ActivePointSelect':PIXI.Sprite, 'CC':, 'DD':, 'EE':, 'FF':, }} */
         this.child = null;
@@ -12,6 +16,9 @@ class _CommandGroups extends PIXI.Container{
 
     get BattlersCommands() {
         return $gui.BattlersCommands;
+    }
+    get haveCommands() {
+        return !!this.commandSelected.length
     }
     //#region [Initialize]
     initialize() {
@@ -43,7 +50,7 @@ class _CommandGroups extends PIXI.Container{
         const Commands = [];
         for (let i=0, l=this.commandList.length; i<l; i++) {
             const commandName = this.commandList[i];
-            const TxtCommand = new _CombatCommands(commandName).setName('TxtCommand');
+            const TxtCommand = new _CombatCommands(commandName,this).setName('TxtCommand');
             TxtCommand.y = i*34;
             Commands.push(TxtCommand);
         };
@@ -51,7 +58,6 @@ class _CommandGroups extends PIXI.Container{
     }
     
     initialize_interactions() {
-        this.disable();
         this.child.TxtCommand.forEach(TxtCommand => {
             TxtCommand.on('pointerover' , this.pointerover_commandGroup , this);
         })
@@ -70,12 +76,32 @@ class _CommandGroups extends PIXI.Container{
     //#region [Method]
     /** disable le groups, lorsque focus un autre group */
     disable(){
+        this.renderable = false;
         this.interactiveChildren = false;
         this.alpha = 0.5;
     }
     enable(){
+        this.renderable = true;
         this.interactiveChildren = true;
         this.alpha = 1;
+    }
+
+    updateCommand(Commands){
+        const wasIn = this.commandSelected.contains(Commands);
+        if(!this._allowMultiCommand){
+            this.commandSelected.forEach(cmd => {
+                cmd.select(false);
+            })
+            this.commandSelected.clear();
+        }
+        if(!wasIn){
+            this.commandSelected.push(Commands);
+            Commands.select(true);
+        }else{
+            this.commandSelected.remove(Commands)
+            Commands.select(false); 
+        }
+        this.BattlersCommands.updateGroup();
     }
     //#endregion
 

@@ -14,6 +14,8 @@
         "js/libs/2/pixi-projection-spine.js",
         "js/libs/1/_pixi-spine.js",
         "js/libs/editor/pixiMapEditor. 1.js",
+        "js\\game\\global\\statesManager.hold.2.js",
+       
         "**/node_modules/*"],
     "comment":["allowSyntheticDefaultImports: true", "exlu proj car problem intelisence !!!!"]
 }

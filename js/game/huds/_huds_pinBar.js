@@ -22,7 +22,7 @@ class _Huds_PinBar extends _Huds_Base {
         this.optSlots = new Array(7);
         /** Indicateur si la pinBar affiche les options */
         this._pinOptionShowed = false;
-        /** @type {{ Bar:ContainerDN, Rotator:ContainerDN, Bag:ContainerDN, PinSlotContainer:PIXI.Container, PinOptionContainer:PIXI.Container }} */
+        /** @type {{ Bar1:ContainerDN,Bar2:ContainerDN, Rotator:ContainerDN, Bag:ContainerDN, PinSlotContainer:PIXI.Container, PinOptionContainer:PIXI.Container }} */
         this.child = null;
         
     };
@@ -40,7 +40,7 @@ class _Huds_PinBar extends _Huds_Base {
     initialize(options) {
         this.initialize_base();
         this.initialize_interactions();
-        this.position.set(25, 1060); // basic position.
+        this.position.set(25, 1050); // basic position.
        // $systems.debug(this); //DELETEME;
        // this.initialize_bag();
        // this.initialize_rotator();
@@ -72,14 +72,9 @@ class _Huds_PinBar extends _Huds_Base {
             Bag.position.set(-30,-48);
             Bag.d.anchor.set(0.5);
             Bag.n.anchor.set(0.5);
-        //#" data2\GUI\huds\pinBar\SOURCE\images\pinslot_Bar.png
-        const Bar = $objs.ContainerDN(dataBase,'pinslot_Bar','Bar');
-            Bar.position.setZero(-860,0);
-            Bar.d.anchor.set(0,0.5);
-            Bar.n.anchor.set(0,0.5);
         //#PinSlot
         const PinSlotContainer = new PIXI.Container().setName("PinSlotContainer");
-            PinSlotContainer.x = 1235;
+            PinSlotContainer.x = 400;
             for (let i=0, l=7; i<l; i++) {
                 const PinSlot = new __PinSlot(i);
                 PinSlotContainer.addChild(PinSlot);
@@ -92,9 +87,23 @@ class _Huds_PinBar extends _Huds_Base {
                 const PinOption = new __PinOption(i,menuName);
                 PinOptionContainer.addChild(PinOption);
             };
-        Bar.addChild(PinSlotContainer,PinOptionContainer);
+        //#" data2\GUI\huds\pinBar\SOURCE\images\pinslot_Bar.png
+        const Bar1 = $objs.ContainerDN(dataBase,'pinslot_Bar','Bar1');
+            Bar1.position.setZero(-20,0);
+            Bar1.d.anchor.set(0,0.5);
+            Bar1.n.anchor.set(0,0.5);
+            Bar1.rotation = -Math.PI/2;
+        //#" data2\GUI\huds\pinBar\SOURCE\images\pinslot_Bar.png
+        const Bar2 = $objs.ContainerDN(dataBase,'pinslot_Bar','Bar2');
+            Bar2.position.setZero(-0,0);
+            Bar2.d.anchor.set(0,0.5);
+            Bar2.n.anchor.set(0,0.5);
+        Inspectors.DisplayObj(Bar2)
         //!END
-        Master.addChild(Bar,Bag,Rotator);
+        Bar1.addChild(PinOptionContainer);
+        Bar2.addChild(PinSlotContainer);
+
+        Master.addChild(Bar1,Bar2,Bag,Rotator);
         this.addChild(Master);
         this.child = this.childrenToName();
         
@@ -136,20 +145,24 @@ class _Huds_PinBar extends _Huds_Base {
 
     /** cacher completement en mode combat */
     hide(){
-        const PinBar = this.child.Bar;
+        const PinBar = this.child.Bar1;
         const Rotator = this.child.Rotator;
-        Inspectors.DisplayObj(PinBar)
     }
     
     togglePinBarSlide(value = !this._pinOptionShowed){
         if(value !== this._pinOptionShowed){
-            const PinBar = this.child.Bar;
+            const PinBar = this.child.Bar1;
+            const PinBar2 = this.child.Bar2;
             const Rotator = this.child.Rotator;
             if(value){//half
-                gsap.to(PinBar.position, 0.3, {x:0, ease: Back.easeInOut.config(1.4) });
-                gsap.to(Rotator, 0.34, {rotation:`+=${Math.PI}`, ease: Back.easeInOut.config(1.6) });
+                gsap.to(PinBar , 0.3, { rotation: (-Math.PI/2)-0.3, ease: Back.easeIn.config(1.3) });
+                gsap.to(PinBar2, 0.3, { rotation:           0.3   , ease: Back.easeIn.config(1.3) });
+              // gsap.to(PinBar.position, 0.3, {x:0, ease: Back.easeInOut.config(1.4) });
+                gsap.to(Rotator, 0.34, {rotation:`+=${Math.PI}`, ease: Back.easeIn.config(1.6) });
             }else{//full
-                gsap.to(PinBar.position, 0.3, {x:PinBar.position.zero.x, ease: Back.easeInOut.config(1.3) });
+                gsap.to(PinBar , 0.4, { rotation: (-Math.PI/2), ease: Elastic.easeOut.config(0.9, 0.6) });
+                gsap.to(PinBar2, 0.4, { rotation:           0 , ease: Elastic.easeOut.config(0.9, 0.6) });
+             // gsap.to(PinBar.position, 0.3, {x:PinBar.position.zero.x, ease: Back.easeInOut.config(1.3) });
                 gsap.to(Rotator, 0.34, {rotation:`-=${Math.PI}`, ease: Back.easeInOut.config(1.6) });
             }
             this._pinOptionShowed = value;
@@ -163,16 +176,16 @@ class _Huds_PinBar extends _Huds_Base {
         const Rotator = this.child.Rotator;
         if(modeOption){
             this.optSlots.forEach(slot => { slot.renderable = true });
-            TweenLite.to(PinBar, 0.7, { rotation: -Math.PI / 2, ease: Elastic.easeInOut.config(0.8, 0.6) });
-            TweenLite.to(PinBar.position, 0.6, { x: -200,y:120, ease: Power4.easeInOut });
+            //TweenLite.to(PinBar, 0.7, { rotation: -Math.PI / 2, ease: Elastic.easeInOut.config(0.8, 0.6) });
+           // TweenLite.to(PinBar.position, 0.6, { x: -200,y:120, ease: Power4.easeInOut });
             TweenLite.to(Rotator, 0.6, { rotation:-(Math.PI*2), ease: Back.easeInOut.config(1.7) });
         }else{
             this.optSlots.forEach(slot => { slot.renderable = true });
-            TweenLite.to(PinBar, 0.7, { rotation: 0, ease: Elastic.easeInOut.config(0.8, 0.6) });
-            TweenLite.to(PinBar.position, 0.6, { x: 0,y:0, ease: Power4.easeInOut });
+            //TweenLite.to(PinBar, 0.7, { rotation: 0, ease: Elastic.easeInOut.config(0.8, 0.6) });
+            //TweenLite.to(PinBar.position, 0.6, { x: 0,y:0, ease: Power4.easeInOut });
             TweenLite.to(Rotator, 0.6, { rotation:0, ease: Back.easeInOut.config(1.7) });
 
-        };
+        }
     };
 
     /** attache a orbs or items 
@@ -432,6 +445,7 @@ class __PinOption extends PIXI.Container {
         this.initialize_base();
         this.initialize_interactions();
         this.position.set(this._id*95,0);
+        this.rotation = Math.PI/2;
         this.setLock(false);
     };
     initialize_base(){
