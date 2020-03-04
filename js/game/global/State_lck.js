@@ -7,4 +7,10 @@ class _State_lck extends _StateBase {
         this.name = 'lck';
     }
 
+    /** return la list des influenceur max hp */
+    getInfluer(){
+        const influers = [
+        ].remove();
+        return influers;
+    }
 }

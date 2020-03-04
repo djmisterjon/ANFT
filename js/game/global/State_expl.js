@@ -7,4 +7,10 @@ class _State_expl extends _StateBase {
         this.name = 'expl';
     }
 
+    /** return la list des influenceur max hp */
+    getInfluer(){
+        const influers = [
+        ].remove();
+        return influers;
+    }
 }

@@ -138,6 +138,7 @@ class _battler  {
         this._currentMP = this.mp;
         this._currentHG = this.hg;
         this._currentHY = this.hy;
+        $statesManager.update();
     }
     //#endregion
 

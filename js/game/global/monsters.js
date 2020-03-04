@@ -61,8 +61,7 @@ class _monsters extends _battler{
             this.initialize_sprites(generateData);
             //this.initialize_states();
             this.initialize_stats(1,true);
-            this.updateStates();
-            this.updateOrbic();
+          
             //this.initialize_listeners();
             //this.setupTweens();
             //this.addInteractive();

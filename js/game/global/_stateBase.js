@@ -1,5 +1,5 @@
 /** Base dun state */
-class _StateBase extends PIXI.Container{
+class _StateBase extends _StateSprite{
     //#region [Static]
     /** Stock les Tracking values */ 
     static BUFFER = [];//todo: voir si ca peut fucker, si ont utilise un compute multicore cpu ascyn, pour + de perf
@@ -16,7 +16,9 @@ class _StateBase extends PIXI.Container{
         this.source = source;
         this._value = value;
         this._operator = operator;
-        this._contextId = `${this.name}_${source.constructor.name}`;
+        this._contextId = `${this.name}_${source.constructor.name}`;   
+        /** @type {{ 'AA':, 'BB':, 'CC':, 'DD':, 'EE':, 'FF':, }} */          
+        this.child = null;
     }
     //#region [GetterSetter]
     get BUFFER (){
@@ -27,6 +29,8 @@ class _StateBase extends PIXI.Container{
         return this._value ?? this.source.getEvoValue(this.name);
     }
     //#endregion
+
+
     //#region [Method]
     /** 
      * @typedef {"+"|"-"|"*"|"/"} OPERATOR - list dynamic math computing operator

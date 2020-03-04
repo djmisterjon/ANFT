@@ -6,5 +6,10 @@ class _State_hg extends _StateBase {
         super(source,null,null);
         this.name = 'hg';
     }
-
+    /** return la list des influenceur max hp */
+    getInfluer(){
+        const influers = [
+        ].remove();
+        return influers;
+    }
 }

@@ -10,6 +10,7 @@ window.onload = function() {
                 files = files.filter(f => f.split('.').length<3 ); // filter(remove) les clones vscode .1.js,.2.js
                 files = files.filter(f => f.split('---').length!==2 ); // filter(remove) les fichier (---)
                 files.sort((a, b) => a.replace(/_/g, ' ').localeCompare(b.replace(/_/g, ' ')));  // sort file with '_' first
+                console.log('onload: ', files.slice());
                 const head = document.getElementsByTagName('head')[0];
                 function next() {
                     const path = files.shift()

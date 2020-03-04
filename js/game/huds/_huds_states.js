@@ -1,5 +1,9 @@
+//TODO: TOUS REFACTORING POUR PERMETRE 2
+//TODO: CREER UNE ESPACE TRAVAIL POUR HUDS
 /**@class huds qui affiche les states p1 selon choix (toggle click)*/
 class _Huds_States extends _Huds_Base {
+    /** @type {Array.<_Huds_States>} - p0 et p1*/
+    static POOL = [];
     constructor(options) {
         super(options);
         /** @type {{ 'CenterBg':ContainerDN, 'HeadIcon':ContainerDN, 'TxtLevelValue':PIXI.Text, 'StatesContainer':PIXI.Container, 'EE':, 'FF':, }} */
@@ -8,7 +12,12 @@ class _Huds_States extends _Huds_Base {
         this._showStatesMode = false;
     };
     //#region [GetterSetter]
-
+    get POOL() {
+        return _Huds_States.POOL;
+    }
+    get Source(){
+        return $players.p0
+    }
     //#endregion
 
     //#region [Initialize]
@@ -16,6 +25,7 @@ class _Huds_States extends _Huds_Base {
         this.initialize_base();
         this.initialize_interactions();
         this.position.set(290,45); //45 90
+        this.POOL.push(this);
     };
 
     initialize_base(){
@@ -46,9 +56,7 @@ class _Huds_States extends _Huds_Base {
         for (let i=0, l=7; i<l; i++) {
             //# data2\System\states\SOURCE\images\st_atk.png
             const stName = $systems.states.base[4+i];
-            const State = $objs.ContainerDN(dataBase3,`st_${stName}`,'State');
-                State.d.anchor.set(0.5);
-                State.n.anchor.set(0.5);
+            const State = this.Source.states[stName] //$objs.ContainerDN(dataBase3,`st_${stName}`,'State');
                 State.scale.set(0.5);
                 State.position.set(75*i,0);
             //# txt value
@@ -118,14 +126,14 @@ class __StatesBar extends PIXI.Container {
         this.name = "StatesBar";
         this._id = id;
         /** id du player actuelement afficher */
-        this._actorId = 0;
+        this._sourceID = 0;
         /** @type {{ BarBgTop:_objs.ContainerDN, BarFillTop:_objs.ContainerDN, BarCornerTop:_objs.ContainerDN, stateTxtValue:PIXI.Text}} */
         this.child = null;
         this.initialize();
     };
     //#region [GetterSetter]
     /**@returns {_battler} */
-    get source() { return $players.group[this._sourceID]};
+    get Source() { return $players.p0};
     //#endregion
 
     //#region [Initialize]
@@ -160,11 +168,9 @@ class __StatesBar extends PIXI.Container {
             Frame.d.anchor.set(...anchor[this._id]);
             Frame.n.anchor.set(...anchor[this._id]);
         //# data2\System\states\SOURCE\images\st_hp.png
-        const Icon = $objs.ContainerDN(dataBase2,`st_${name}`,'Icon');
+        const Icon = this.Source.states[name] //$objs.ContainerDN(dataBase2,`st_${name}`,'Icon');
             Icon.position.set(...iconPosition[this._id]);
             Icon.scale.set(0.4);
-            Icon.d.anchor.set(0.5);
-            Icon.n.anchor.set(0.5);
         //# Txt value 
         const TxtValue = new PIXI.Text('9999/9999',$systems.styles[0]);
             TxtValue.position.set(...TxtPosition[this._id]);
@@ -183,7 +189,7 @@ class __StatesBar extends PIXI.Container {
 
     //#region [Method]
     /** refresh des valeur des states bar*/
-    refresh(){//todo: animations
+    update(){//todo: animations
         const stateName = this._stateName;
         const max = this.source[stateName.toUpperCase()];
         const curr = this.source['_'+stateName.toUpperCase()];
@@ -329,7 +335,7 @@ class _StatesHud extends PIXI.Container {
         });
         //!bar
         this.Bars.forEach(Bar => {
-            Bar.refresh();
+            Bar.update();
         });
         //!status bar
         // retrouve les ref status grace au contextId attacher a la source
