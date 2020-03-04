@@ -1,45 +1,49 @@
-/**Le states math manager permet de creer asigner distribruer les states qui permet des calcule math selon leur source et target
-*/
 
+
+/**Le states math manager permet de creer asigner distribruer les states qui permet des calcule math selon leur source et target */
 class _statesManager {
+    static POOL = {}
     constructor() {
         /** current updateId */
         this._updateId = 0;
         /** last update, lorsque obsolete, doit etre egal au current */
         this.__updateId = 0;
     }
-    getClass(stateName){
-        switch (stateName) {
-            case 'hp'   : return _State_hp   ; break; //data2\System\states\SOURCE\images\st_hp.png
-            case 'mp'   : return _State_mp   ; break; //data2\System\states\SOURCE\images\st_mp.png
-            case 'hg'   : return _State_hg   ; break; //data2\System\states\SOURCE\images\st_hg.png
-            case 'hy'   : return _State_hy   ; break; //data2\System\states\SOURCE\images\st_hy.png
-            case 'atk'  : return _State_atk  ; break; //data2\System\states\SOURCE\images\st_atk.png
-            case 'def'  : return _State_def  ; break; //data2\System\states\SOURCE\images\st_def.png
-            case 'sta'  : return _State_sta  ; break; //data2\System\states\SOURCE\images\st_sta.png
-            case 'lck'  : return _State_lck  ; break; //data2\System\states\SOURCE\images\st_lck.png
-            case 'int'  : return _State_int  ; break; //data2\System\states\SOURCE\images\st_int.png
-            case 'expl' : return _State_expl ; break; //data2\System\states\SOURCE\images\st_expl.png
-            case 'mor'  : return _State_mor  ; break; //data2\System\states\SOURCE\images\st_mor.png
-            default: throw `FATAL Error ${stateName} class not exist!`; break;
-        }
 
-
-    }
     /** creer un states 
      * @param stateName {String} - Nom de la class State
-     * @param sourceId {Number} - ID de la source battler
-     * @return {_statesManager._StateSetting} - Le state dans le POOL
+     * @param source {_battler} - ID de la source battler
     */
-    create(stateName,sourceId){
-        const State = new _statesManager[type](sourceId,targetId,parentId,options);
-        this.addToPool(State);
+    create(stateName,source){
+        let State;
+        switch (stateName) {
+            case 'hp'   : State= new _State_hp  (source) ; break; //data2\System\states\SOURCE\images\st_hp.png
+            case 'mp'   : State= new _State_mp  (source) ; break; //data2\System\states\SOURCE\images\st_mp.png
+            case 'hg'   : State= new _State_hg  (source) ; break; //data2\System\states\SOURCE\images\st_hg.png
+            case 'hy'   : State= new _State_hy  (source) ; break; //data2\System\states\SOURCE\images\st_hy.png
+            case 'atk'  : State= new _State_atk (source) ; break; //data2\System\states\SOURCE\images\st_atk.png
+            case 'def'  : State= new _State_def (source) ; break; //data2\System\states\SOURCE\images\st_def.png
+            case 'sta'  : State= new _State_sta (source) ; break; //data2\System\states\SOURCE\images\st_sta.png
+            case 'lck'  : State= new _State_lck (source) ; break; //data2\System\states\SOURCE\images\st_lck.png
+            case 'int'  : State= new _State_int (source) ; break; //data2\System\states\SOURCE\images\st_int.png
+            case 'expl' : State= new _State_expl(source) ; break; //data2\System\states\SOURCE\images\st_expl.png
+            case 'mor'  : State= new _State_mor (source) ; break; //data2\System\states\SOURCE\images\st_mor.png
+
+            case 'hunger'  : State= new _State_hunger (source) ; break; //data2\System\states\SOURCE\images\st_mor.png
+            default: throw `FATAL Error ${stateName} class not exist!`; break;
+        }
+        _statesManager.POOL[State._contextId] = State;
+        return State;
     }
+
+    /** @returns {_statesManager._StateBase } Return un state du pool*/
+    getState(contextId){
+        return _statesManager.POOL[contextId];
+    };
 
     /** verify les INFLIGERSLIST invok summon list des states appliquer selon certain context global, lorsque des changement on operer */
     update(){
         if(this.__updateId!==this._updateId){
-            console.log('this.__updateId: ', this.__updateId,this._updateId);
             this.__updateId = this._updateId; // doi ateindre __updateId;
             for (let i=0,contextId = Object.keys(this.PoolStates), l=contextId.length; i<l; i++) {
                 const context = this.PoolStates[contextId[i]];

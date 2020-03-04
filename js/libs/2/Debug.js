@@ -8,7 +8,6 @@ class Debug extends PIXI.Container {
             addTravelPoint:this.addTravelPoint,
             addStatusPoisonToPlayer1:this.addStatusPoisonToPlayer1,
             addStatusHungerToPlayer1:this.addStatusHungerToPlayer1,
-            reduit_HG_deMotier:this.reduit_HG_deMotier,
             reset_HG_toMax:this.reset_HG_toMax,
             StartCombat_x1:this.StartCombat_x1,
             StartCombat_x5:this.StartCombat_x5,
@@ -39,8 +38,9 @@ class Debug extends PIXI.Container {
 
     };
     static addStatusHungerToPlayer1() {
-        $players.p0.addStatus('hunger',true)
-
+        $players.p0.status['hunger'] = $statesManager.create('hunger',  $players.p0)
+        $players.p0.HP;
+       
     };
     static reduit_HG_deMotier() {
         $players.p0.add_HG(-$players.p0._HG/2.5);

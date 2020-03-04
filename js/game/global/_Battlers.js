@@ -24,11 +24,17 @@ class _battler  {
         this._battleTime = 0;
         /** @type {{ 'ContainerSpine':_Container_Spine }} */
         this.child = null;
+
         /** list les states actif sur le battler
-         * @type {{ hp:String,mp:String,hg:String,hy:String,atk:String,def:String,sta:String,int:String,lck:String,expl:String,mor:String,}} */
+        * @type {{ 
+        * hp  : _State_hp  , mp   :_State_mp   , hg  :_State_hg  , hy :_State_hy,
+        * atk : _State_atk , def  :_State_def  , sta :_State_sta , int:_State_int,
+        * lck : _State_lck , expl :_State_expl , mor :_State_mor ,
+        }} */
+        // @ts-ignore
         this.states = {}; // voir si tou va bien
         /** list les status active sur le battler */
-        this.status = [];
+        this.status = {};
         /** heritage de la faiblesse orbic -20%  'orbsSynegies*/
         this.faiblesseOrbic = []; //todo: mapper et creer avant ...data.orbsSynegies.fo_base
         /** heritage de la puissance orbic +20% 'orbsSynegies*/
@@ -113,12 +119,9 @@ class _battler  {
         ContainerSpine.s.scale3d.setZero(this.defaultHeight/ContainerSpine.s.height); // ratio hauteur from excel
         this.child = ContainerSpine.childrenToName();
         //this.setupAnimations(dataObj);
-
-
         //dataObj.child.p.parentGroup = $displayGroup.group[1];
         //dataObj.child.s.scale3d.set(0.4);
         //dataObj.child.s.scale3d.setZero();
-
         this.initialize_stats();
         //this.debug();
     }
@@ -126,15 +129,15 @@ class _battler  {
     /** initialize les stats a un level */
     initialize_stats(level=1, ){
         this._level = level;
+        Object.values(this.evo).forEach(evo=>{
+            if(evo.type !== 'extra'){ //TODO: RENDU ICI , SOURCE NAME P1
+                this.states[evo.name] = $statesManager.create(evo.name, this);
+            }
+        })
         this._currentHP = this.hp;
         this._currentMP = this.mp;
         this._currentHG = this.hg;
         this._currentHY = this.hy;
-        Object.values(this.evo).forEach(evo=>{
-            if(evo.type !== 'extra'){ //TODO: RENDU ICI , SOURCE NAME P1
-                this.states[evo.name] = $statesManager.create(evo.name, this._id)._contextId;
-            }
-        });
     }
     //#endregion
 
@@ -144,24 +147,17 @@ class _battler  {
     get ccrt (){ return this._ccrt }
     get ceva (){ return this._ceva }
     //#region [rgba(200, 0, 0, 0.1)] // data2/System/states/SOURCE/images/st_hp.png
-    /** add value to current*/
     set _HP  (value){ this._currentHP = Math.max(Math.min(this._HP+value, this.HP),0) };
-    /** valeur current */
     get _HP  (){ return this._currentHP };
-    /** valeur reel effective du state (inclu: status,states)*/
-    get HP  (){ return $statesManager.getState(this.states.hp).computeValue() };
-    /** return la value evolutive max selon level  */
-    get hp  (){ return this.getEvoValue('hp',true)  };
+    get HP  (){ return this.states.hp.getReelValue() };
+    get hp  (){ return this.states.hp.value };
     //#endregion
     //#region [rgba(150, 0, 200, 0.1)] // data2/System/states/SOURCE/images/st_mp.png
     /** add value to current*/
     set _MP  (value){ this._currentMP = Math.max(Math.min(this._MP+value, this.MP),0) };
-    /** valeur current */
     get _MP  (){ return this._currentMP };
-    /** valeur reel effective du state (inclu: status,states)*/
-    get MP  (){ return $statesManager.getState(this.states.mp).computeValue() };
-    /** return la value evolutive max selon level  */
-    get mp  (){ return this.getEvoValue('mp',true) };
+    get MP  (){ return this.states.mp.getReelValue() };
+    get mp  (){ return this.states.mp.value };
     //#endregion
     //#region [rgba(0, 200, 0, 0.1)] // data2/System/states/SOURCE/images/st_hg.png
     /** set value to current*/
@@ -169,20 +165,9 @@ class _battler  {
     /** valeur current */
     get _HG  (){ return this._currentHG };
     /** valeur reel effective du state atk (inclu: status,states)*/
-    get HG  (){ return $statesManager.getState(this.states.hg).computeValue() };
-    /** return la value evolutive max selon level  */
-    get hg  (){ return this.getEvoValue('hg',true) };
+    get HG  (){ return this.states.hg.getReelValue() };
+    get hg  (){ return this.states.hg.value };
     /** obtien le rate % entre current et max */
-    get hgHG(){return this._HG/this.HG }
-
-    add_HG(value){
-        const hold = this._HG;
-        this._HG = hold+value;
-        if(hold!==this._HG){
-            this.updateStates(this.states.hg);
-        }
-    }
-
     //#endregion
     //#region [rgba(0, 100, 200, 0.1)] // data2/System/states/SOURCE/images/st_hy.png
     /** add value to current*/
@@ -190,39 +175,33 @@ class _battler  {
     /** valeur current */
     get _HY  (){ return this._currentHY };
     /** valeur reel effective du state (inclu: status,states)*/
-    get HY  (){ return $statesManager.getState(this.states.hy).computeValue() };
-    /** return la value evolutive max selon level  */
-    get hy  (){ return this.getEvoValue('hy',true) };
-    //#endregion
+    get HY  (){ return this.states.hy.getReelValue() };
+    get hy  (){ return this.states.hy.value };
     //#region [rgba(200, 200, 200, 0.05)] // data2/System/states/SOURCE/images/st_atk.png
     /** valeur reel effective du state atk (inclu: status,states)*/
-    get ATK(){ return $statesManager.getState(this.states.atk).computeValue() }
-    get atk(){ return this.getEvoValue('atk',true) };
-    /** valeur reel effective du state def (inclu: status,states)*/
-    get DEF(){ return $statesManager.getState(this.states.def).computeValue()   }
-    get def(){ return this.getEvoValue('def',true) };
-    /** valeur reel effective du state sta (inclu: status,states)*/
-    get STA(){ return $statesManager.getState(this.states.sta).computeValue()   }
-    get sta(){ return this.getEvoValue('sta',true)  };
-    /** valeur reel effective du state int (inclu: status,states)*/
-    get INT(){ return $statesManager.getState(this.states.int).computeValue()   }
-    get int(){ return this.getEvoValue('int',true)  };
-    /** valeur reel effective du state lck (inclu: status,states)*/
-    get LCK(){ return $statesManager.getState(this.states.lck).computeValue()   }
-    get lck(){ return this.getEvoValue('lck',true)  };
-    /** valeur reel effective du state expl (inclu: status,states)*/
-    get EXPL(){ return $statesManager.getState(this.states.expl).computeValue()   }
-    get expl(){ return this.getEvoValue('expl',true)  };
-    /** valeur reel effective du state mor (inclu: status,states)*/
-    get MOR(){ return $statesManager.getState(this.states.mor).computeValue()   }
-    get mor(){ return this.getEvoValue('mor',true)  };
+    get ATK (){ return this.states.atk.getReelValue() };
+    get atk (){ return this.states.atk.value };
+    get DEF (){ return this.states.def.getReelValue() };
+    get def (){ return this.states.def.value };
+    get STA (){ return this.states.sta.getReelValue() };
+    get sta (){ return this.states.sta.value };
+    get INT (){ return this.states.int.getReelValue() };
+    get int (){ return this.states.int.value };
+    get LCK (){ return this.states.lck.getReelValue() };
+    get lck (){ return this.states.lck.value };
+    get EXPL (){ return 1||this.states.expl.getReelValue() };
+    get expl (){ return this.states.expl.value };
+    get MOR (){ return this.states.mor.getReelValue() };
+    get mor (){ return this.states.mor.value };
     //#endregion
 
     /** Formule evolution par level */
-    getEvoValue(st,level=this._level,bonus){
+    getEvoValue(st,level=this._level){
         const ev = this.evo[st];
-        bonus = bonus && this['_'+st] || 0;
-        return ~~(ev.b*(1+(level-1)*ev.r) + (ev.f*(level-1)))+bonus;
+        if(ev){
+            const bonus = 0;// bonus && this['_'+st] || 0; todo:
+            return ~~(ev.b*(1+(level-1)*ev.r) + (ev.f*(level-1)))+bonus;
+        }
     };
 
 

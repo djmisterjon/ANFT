@@ -1,13 +1,11 @@
-
-// data2/System/states/SOURCE/images/st_hp.png
+// data2/System/states/SOURCE/images/st_def.png
 /**@class indicateur de vitaliter du battler */
-class _State_hp extends _StateBase {
+class _State_def extends _StateBase {
     /**@param {_battler} source */
     constructor(source) {
         super(source,null,null);
-        this.name = 'hp';
+        this.name = 'def';
     }
-
     /** return la list des influenceur max hp */
     getInfluer(){
         const influers = [
