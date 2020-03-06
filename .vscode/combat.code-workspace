@@ -3,5 +3,10 @@
 		{
 			"path": "C:\\Users\\InformatiqueLepage\\Documents\\Dev\\anft_1.7"
 		}
-	]
+	],
+	"settings": {
+		"workbench.colorCustomizations": {
+			"titleBar.activeBackground": "#466c0a" // Change this color!
+		  }
+	}
 }

@@ -1,7 +1,8 @@
 /**@class players battler groups manager*/
 class _Players {
     constructor() {
-        this.group = [];
+        /** @type {[_player0,_player1]} */
+        this.group = null;
     };
     //#region [Initialize]
     /** initialise les players selon class choisis au depart du jeux */
@@ -10,17 +11,14 @@ class _Players {
         const DataBattlers1 = new _DataBattlers('p1',1,false,1);
         const p0 = new _player0(DataBattlers0);
         const p1 = new _player1(DataBattlers1);
-        this.group.push(p0,p1);
+        this.group = [p0,p1];
     }
     //#endregion
     //#region [GetterSetter]
-    /**@returns {_player0} */
-    get p0() { return this.group[0] };
-    /**@returns {_player1} */
-    get p1() { return this.group[1] };
+    get p0() { return this.group?.[0] };
+    get p1() { return this.group?.[1] };
     //#endregion
     //#region [Method]
-    /** @returns {_battler}*/
     getSourceFromID(id){
         return this.group[id];//$combats.battlers[id];
     }

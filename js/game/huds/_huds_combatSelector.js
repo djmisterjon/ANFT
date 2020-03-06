@@ -70,10 +70,10 @@ class _Huds_BattlersSelectors extends _Huds_Base {
         const battlerID = this.CurrentBattlerTurn._battlerID;
         this.BattlersSelectors[battlerID].startTurn();
     }
-    showCombatMathBox(sourceId,targetIds,boosters){
+    showCombatMathBox(source,target,actionType,boosters){
         // todo: multi targets ?
-        const CombatMathBox = new _CombatMathBox(sourceId,targetIds[0],boosters);
-        const targetSelector = this.BattlersSelectors[targetIds[0]]; 
+        const CombatMathBox = new _CombatMathBox(source,target,actionType,boosters);
+        const targetSelector = this.BattlersSelectors[target._battlerID]; 
         this.addChild(CombatMathBox);
         CombatMathBox.position.set(-100,targetSelector.y);
     }

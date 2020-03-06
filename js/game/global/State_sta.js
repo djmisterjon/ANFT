@@ -2,8 +2,8 @@
 /**@class indicateur de vitaliter du battler */
 class _State_sta extends _StateBase {
     /**@param {_battler} source */
-    constructor(source) {
-        super(source,null,null);
+    constructor(source,target) {
+        super(source,target,null,null);
         this.name = 'sta';
     }
 

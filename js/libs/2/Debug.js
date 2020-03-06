@@ -8,7 +8,8 @@ class Debug extends PIXI.Container {
             addTravelPoint:this.addTravelPoint,
             addStatusPoisonToPlayer1:this.addStatusPoisonToPlayer1,
             addStatusHungerToPlayer1:this.addStatusHungerToPlayer1,
-            reset_HG_toMax:this.reset_HG_toMax,
+            HG_reduce1:this.HG_reduce1,
+            HG_ToMax:this.HG_ToMax,
             StartCombat_x1:this.StartCombat_x1,
             StartCombat_x5:this.StartCombat_x5,
         }
@@ -46,8 +47,15 @@ class Debug extends PIXI.Container {
         $players.p0.add_HG(-$players.p0._HG/2.5);
 
     };
-    static reset_HG_toMax() {
-        $players.p0.add_HG(999);
+
+    static HG_reduce1(){
+        $players.p0._HG = $players.p0._HG-1
+        $gui.States.update()
+    }
+    static HG_ToMax() {
+        $players.p0._HG = 9999;
+        $gui.States.update()
+
     };
     
     static StartCombat_x1() {

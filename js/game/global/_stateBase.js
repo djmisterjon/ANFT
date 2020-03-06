@@ -7,13 +7,15 @@ class _StateBase extends _StateSprite{
 
     /**
      * @param {_battler} source - Source player | monster
+     * @param {_battler} target - target player | monster
      * @param {number} value - passer une valeur static seulment pour les (Status)
      * @param {OPERATOR} operator - passer une valeur static seulment pour les (Status)
      * 
     */
-    constructor(source,value,operator) {
+    constructor(source,target,value,operator) {
         super();
         this.source = source;
+        this.target = target;
         this._value = value;
         this._operator = operator;
         this._contextId = `${this.name}_${source.constructor.name}`;   
@@ -41,7 +43,7 @@ class _StateBase extends _StateSprite{
             case '+':return a + b ;break;
             case '-':return a - b ;break;
             case '*':return a * b ;break;
-            default:break;
+            default:return 0;break;
         }
     };
     /** return un tracking values pour les math */
@@ -59,7 +61,7 @@ class _StateBase extends _StateSprite{
     /** Calcul une valeur incluant les Influenceur 
      * @returns {number}
     */
-    getReelValue(parent,priority=-1){
+    getReelValue(parent=null,priority=-1){
         let value = this.getTrackingValues(parent,++priority);
         !parent && this.BUFFER.clear();
         this.BUFFER.push(value);
@@ -68,20 +70,21 @@ class _StateBase extends _StateSprite{
             value.Influer.push(state.getReelValue(this,priority))
         })
         if(!parent){ // calcul en reverse et pour donner une valeur influencer
-            return this.computeTracking(this.BUFFER.sort((a,b)=>b._priority-a._priority));
+           return this.computeTracking(this.BUFFER.sort((a,b)=>b._priority-a._priority));
         }
         return value;
     }
 
+    
     /**@returns {number} */
     computeTracking(ReverseBuffer){ // todo: reverse, et ajouter le parent, pour permet els pourcentage sur parent
         let value = this.value; // start
         ReverseBuffer.forEach(tracking => {
             if(tracking.parent){
-                value+=this.operators(tracking._operator, tracking.parent._value, tracking._value)
+                value+=this.operators(tracking._operator, tracking.parent.value, tracking.value)
             }
         });
-        return Math.abs(Math.ceil(-0.5));
+        return Math.abs(Math.ceil(value));
     }
     //#endregion
 

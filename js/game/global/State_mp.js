@@ -3,8 +3,8 @@
 
 class _State_mp extends _StateBase {
     /**@param {_battler} source */
-    constructor(source) {
-        super(source,null,null);
+    constructor(source,target) {
+        super(source,target,null,null);
         this.name = 'mp';
     }
     /** return la list des influenceur max hp */

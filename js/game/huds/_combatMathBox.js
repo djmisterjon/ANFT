@@ -1,14 +1,15 @@
-/** class qui manage les huds de combat selection en combat */
+/** class qui manage les states formula de commands */
 class _CombatMathBox extends PIXI.Container {
     /**@param {number} sourceId - la source qui apelle les commands
      * @param {number} targetId - le target commands
      * @param {Array.<number>} boosters - les boosters commands
     */
-    constructor(sourceId,targetId,boosters) {
+    constructor(source,target,actionType,boosters) {
         super();
-        this._sourceId = sourceId;
-        this._targetId = targetId;
-        this.boosters = boosters;
+        this.source = source;
+        this.target = target;
+        this._boosters = boosters;
+        this._actionType = actionType;
         this.child = null;
         this.initialize();
     }
@@ -33,7 +34,8 @@ class _CombatMathBox extends PIXI.Container {
     initialize_states(){
         //!Action
         // ont creer la formule selon le actionType: atk,def,magic...
-        const stateFormula = $statesManager.createStatesForumla (combatAction,sourceId, targetId);
+
+        const stateFormula = $statesManager.createStatesForumla(this.source, this.target, this._actionType, this._boosters);
       
     }
     //#endregion

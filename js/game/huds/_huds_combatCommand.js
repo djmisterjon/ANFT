@@ -154,8 +154,15 @@ class _Huds_BattlersCommands extends _Huds_Base {
         select && $camera.moveToTarget(Battler,0.2,Power4.easeOut,'combat2');
 
         const sourceId = _Combats.Active.currentBattlerTurn._battlerID;
-        const targetIds = this.child.commandGroup_Battlers.commandSelected;
+        const targetId = battlerID//this.child.commandGroup_Battlers.commandSelected;
+        const actionType = this.child.commandGroup_Actions.commandSelected[0]._commandName;
         const boosters = this.child.commandGroup_Boosters.commandSelected;
-        $gui.BattlersSelectors.showCombatMathBox(sourceId,targetIds,boosters);
+        if(_Combats.Active){
+            const source = _Combats.Active.Battlers[sourceId];
+            const target = _Combats.Active.Battlers[targetId];
+            
+            $gui.BattlersSelectors.showCombatMathBox(source,target,actionType,boosters);
+        }
+        
     }
 }

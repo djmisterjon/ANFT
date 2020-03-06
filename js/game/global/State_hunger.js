@@ -1,8 +1,8 @@
 // data2/System/states/SOURCE/images/st_hunger.png
 /**@class Status de famine, reduit MaxHp */
 class _State_hunger extends _StateBase {
-    constructor(sourceId) {
-        super(sourceId,-0.5,"*");
+    constructor(source,target) {
+        super(source,target,-0.5,"*");
         this.name = 'hunger';
     }
 

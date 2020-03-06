@@ -21,13 +21,14 @@ class _systems{
     constructor() {
 
         /**list des states pour les chara et monstres 
-         * @type { {base:Array<["hp", "mp", "hg", "hy","atk","def","lck","int","sta","expl","mor",]>, extra:Array<["ccrt", "ceva", "xp",]>, list:Array} }  */
+         * @type {{
+            * base:["atk","def","lck","int","sta","expl","mor"],
+            * bars:["hp", "mp", "hg", "hy",] 
+            * extra:["ccrt", "ceva", "xp",], 
+            * status:['poison'], 
+            * }}  */
         this.states = {
             base:[
-                'hp',
-                'mp',
-                'hg',
-                'hy',
                 'atk',
                 'def',
                 'lck',
@@ -36,15 +37,20 @@ class _systems{
                 'expl',
                 'mor',
             ],
+            bars:[
+                'hp',
+                'mp',
+                'hg',
+                'hy',
+            ],
             extra:[
                 'ccrt',
                 'ceva',
                 'xp',
             ],
             status:[
-                ''
+                'poison'
             ],
-             /**@returns {Array<["setting", "save", "quest", "map", "item", "status", "mBook"]>} */
             get list() { return [...this.base,...this.status] }
         };
         Object.defineProperty( this.states, 'list', {enumerable: false});

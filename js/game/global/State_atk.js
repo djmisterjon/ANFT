@@ -2,8 +2,8 @@
 /**@class indicateur de vitaliter du battler */
 class _State_atk extends _StateBase {
     /**@param {_battler} source */
-    constructor(source) {
-        super(source,null,null);
+    constructor(source,target) {
+        super(source,target,null,null);
         this.name = 'atk';
     }
 
@@ -11,6 +11,7 @@ class _State_atk extends _StateBase {
     getInfluer(){
         const influers = [
             this.source.status.deshydrate,
+            this.target?.states.def,
         ].remove();
         return influers;
     }

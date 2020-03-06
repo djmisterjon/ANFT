@@ -2,8 +2,8 @@
 /**@class indicateur de vitaliter du battler */
 class _State_def extends _StateBase {
     /**@param {_battler} source */
-    constructor(source) {
-        super(source,null,null);
+    constructor(source,target) {
+        super(source,target,null,"-");
         this.name = 'def';
     }
     /** return la list des influenceur max hp */
