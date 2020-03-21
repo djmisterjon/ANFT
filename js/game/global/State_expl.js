@@ -3,14 +3,14 @@
 class _State_expl extends _StateBase {
     /**@param {_battler} source */
     constructor(source,target) {
-        super(source,target,null,null);
+        super(source,target,'+');
         this.name = 'expl';
     }
 
     /** return la list des influenceur max hp */
     getInfluer(){
         const influers = [
-        ].remove();
+        ].flat().remove();
         return influers;
     }
 }

@@ -3,14 +3,11 @@
 class _State_hy extends _StateBase {
     /**@param {_battler} source */
     constructor(source,target) {
-        super(source,target,null,null);
+        super(source,target,'+');
         this.name = 'hy';
     }
-
-    /** return la list des influenceur max hp */
-    getInfluer(){
-        const influers = [
-        ].remove();
-        return influers;
+    add(value){
+        this.source._currentHY = (this.source._currentHY+value).clamp(0, this.source.HY);
+        this.update(true);
     }
 }

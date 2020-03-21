@@ -16,7 +16,6 @@ class _Huds_States extends _Huds_Base {
         this.initialize_base();
        //this.initialize_interactions();
        //this.position.set(290,45); //45 90
-       this.update();
     };
 
     initialize_base(){
@@ -41,6 +40,5 @@ class _Huds_States extends _Huds_Base {
             PlayerStateHud.update();
         });
     }
-
     //#endregion
 };

@@ -31,9 +31,7 @@ class _battler  {
         * atk : _State_atk , def  :_State_def  , sta :_State_sta , int:_State_int,
         * lck : _State_lck , expl :_State_expl , mor :_State_mor ,
         }} */
-        // @ts-ignore
         this.states = {}; // voir si tou va bien
-        /** list les status active sur le battler */
         this.status = {};
         /** heritage de la faiblesse orbic -20%  'orbsSynegies*/
         this.faiblesseOrbic = []; //todo: mapper et creer avant ...data.orbsSynegies.fo_base
@@ -41,9 +39,13 @@ class _battler  {
         this.puissanceOrbic = []; //todo: ...data.orbsSynegies.po_base
 
         /** hp actuel du battler */
+        /**@type {number} hp actuel */
         this._currentHP = 0;
+        /**@type {number} mp actuel */
         this._currentMP = 0;
+        /**@type {number} hg actuel */
         this._currentHG = 0;
+        /**@type {number} hy actuel */
         this._currentHY = 0;
         /** bonus au hp */
         this._hp = 0;
@@ -76,6 +78,7 @@ class _battler  {
         this._xp = 0
     }
     //#region [GetterSetter]
+
     get dataBase() { return $loader.DATA2[this.DataBattlers._dataBaseName] };//todo: refair nom
     get defaultHeight(){
         return this.DataBattlers.defaultHeight;
@@ -138,7 +141,6 @@ class _battler  {
         this._currentMP = this.mp;
         this._currentHG = this.hg;
         this._currentHY = this.hy;
-        $statesManager.update();
     }
     //#endregion
 
@@ -162,7 +164,10 @@ class _battler  {
     //#endregion
     //#region [rgba(0, 200, 0, 0.1)] // data2/System/states/SOURCE/images/st_hg.png
     /** set value to current*/
-    set _HG  (value){ this._currentHG = Math.max(Math.min(value, this.HG),0) };
+    set _HG  (value){ 
+        this._currentHG = Math.max(Math.min(value, this.HG),0);
+        $statesManager._updateId++;
+    };
     /** valeur current */
     get _HG  (){ return this._currentHG };
     /** valeur reel effective du state atk (inclu: status,states)*/
@@ -204,20 +209,6 @@ class _battler  {
             return ~~(ev.b*(1+(level-1)*ev.r) + (ev.f*(level-1)))+bonus;
         }
     };
-
-
-
-    /** forcer un call update des status du battlers (seulement les class) 
-     * @param huds - si pluto passer par le update huds, car players a des states vivible (refactory les huds ) ces une option temporaire
-    */
-    updateStates(contextId){
-        //! si passe un context ex: (ex: add_HG()), update juste ce context, ce context peut demander un mise a jour global si a des changement
-        if(contextId){
-            $statesManager.getState(contextId).update();
-        };
-        
-    };
-
     /** change le type d'action en combat
      * @param type String - type de combatAction actuel du battler: list $systems.actionType.keys
      */

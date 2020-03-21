@@ -2,10 +2,13 @@
 class _Huds_BattlersSelectors extends _Huds_Base {
     constructor(battlerId) {
         super();
-        /** @type {Array.<_BattlerSelectors>} - list des BattlerSelectors de combat 7+2 */
-        this.BattlersSelectors = null;
+        /** @type {{ 'BattlersSelector':Array.<_BattlerSelectors>, 'ContainerMath':PIXI.Container, 'CC':, 'DD':, 'EE':, 'FF':, }} */
+        this.child = null;
     }
     //#region [GetterSetter]
+    get BattlersSelectors() {
+        return this.child.BattlersSelector
+    }
     get Battlers() {
         return _Combats.Active.Battlers;
     }
@@ -17,17 +20,18 @@ class _Huds_BattlersSelectors extends _Huds_Base {
     //#region [Initialize]
     initialize() {
         this.initialize_base();
+        this.child = this.childrenToName()
         //this.initialize_interactions()
-        //this.child = this.childrenToName()
         this.position.setZero(1850,130+35);
     }
     initialize_base(){
         const BattlersSelectors = []
         for (let i=0; i<7+2; i++) {
-            BattlersSelectors.push(new _BattlerSelectors(i));
-        };
-        this.BattlersSelectors = BattlersSelectors;
-        this.addChild(...BattlersSelectors);
+            BattlersSelectors.push(new _BattlerSelectors(i).setName('BattlersSelector'));
+        }
+        //! ContainerMath
+        const ContainerMath = new PIXI.Container().setName('ContainerMath'); //  contien les mathBox
+        this.addChild(...BattlersSelectors,ContainerMath);
     }
     //#endregion
     
@@ -61,7 +65,7 @@ class _Huds_BattlersSelectors extends _Huds_Base {
         for (let i=0, l=sorted.length; i<l; i++) {
             const B = sorted[i];
             B.update_timer();
-            !test && gsap.to( B.position, {y:106*i})
+            !test && gsap.to( B.position, {y:106*i});
         }
         //this.BattlersSelectors = sorted; //todo: refactoriser
     }
@@ -72,10 +76,14 @@ class _Huds_BattlersSelectors extends _Huds_Base {
     }
     showCombatMathBox(source,target,actionType,boosters){
         // todo: multi targets ?
+        const ContainerMath = this.child.ContainerMath;
         const CombatMathBox = new _CombatMathBox(source,target,actionType,boosters);
-        const targetSelector = this.BattlersSelectors[target._battlerID]; 
-        this.addChild(CombatMathBox);
-        CombatMathBox.position.set(-100,targetSelector.y);
+        const targetSelector = this.BattlersSelectors[target._battlerID];
+        ContainerMath.removeChildren();
+        CombatMathBox.pivot.x = CombatMathBox.width;
+        CombatMathBox.position.set(0,targetSelector.y);
+        ContainerMath.addChild(CombatMathBox);
+        
     }
 }
 

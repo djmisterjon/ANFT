@@ -10,6 +10,8 @@ class Debug extends PIXI.Container {
             addStatusHungerToPlayer1:this.addStatusHungerToPlayer1,
             HG_reduce1:this.HG_reduce1,
             HG_ToMax:this.HG_ToMax,
+            addStatus_hunger_amphet:this.addStatus_hunger_amphet,
+            HungerAllMonsters:this.HungerAllMonsters,
             StartCombat_x1:this.StartCombat_x1,
             StartCombat_x5:this.StartCombat_x5,
         }
@@ -49,14 +51,22 @@ class Debug extends PIXI.Container {
     };
 
     static HG_reduce1(){
-        $players.p0._HG = $players.p0._HG-1
-        $gui.States.update()
+        $players.p0.states.hg.add(-1);
     }
     static HG_ToMax() {
-        $players.p0._HG = 9999;
-        $gui.States.update()
-
+        $players.p0.states.hg.add(9999);
     };
+    static addStatus_hunger_amphet(){
+        // ajout hunger pour 3 turn
+        // ajoute amphet qui anile hunger
+        $statesManager.create(_State_amphetamine, null, $players.p0);
+        $players.p0.states.hg.add(-$players.p0.hg);
+    }
+    static HungerAllMonsters(){
+        _Combats.Active.Monsters.forEach(m=>{
+            m.status.hunger = $statesManager.create('hunger', m)
+        })
+    }
     
     static StartCombat_x1() {
         $players.p0.s.state.addAnimation(3, "visiteCase", false,0);

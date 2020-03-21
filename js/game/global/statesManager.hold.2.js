@@ -14,7 +14,7 @@ class _statesManager {
         this.PoolStates = {};
         this.poolHash = {};
         /** current updateId */
-        this._updateId = 0;
+    this._updateId = 0;
         /** last update, lorsque obsolete, doit etre egal au current */
         this.__updateId = 0;
     };

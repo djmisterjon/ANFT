@@ -231,4 +231,3 @@ declare namespace PIXI.interaction {
         readonly isMiddle: boolean;
     }
 }
-

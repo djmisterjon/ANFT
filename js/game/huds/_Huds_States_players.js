@@ -6,7 +6,7 @@ class _Huds_States_players extends PIXI.Container {
         super();
         this._sourceId = sourceId;
         /** @type {{
-         * 'CenterBg':ContainerDN, 'HeadIcon':ContainerDN, 'TxtLevelValue':PIXI.Text, 'StatesContainer':PIXI.Container, 
+         * 'CenterBg':ContainerDN, 'HeadIcon':ContainerDN, 'TxtLevelValue':PIXI.Text, 'StatesContainer':PIXI.Container, 'StatusContainer':PIXI.Container,
          * 'TxtStatesValue':Array.<PIXI.Text>, 'StateBar':Array.<_Huds_States_Bars>,  }} */
         this.child = null;
         /** indicateur si les states son afficher */
@@ -42,7 +42,7 @@ class _Huds_States_players extends PIXI.Container {
         //# txt LV value
         const TxtLevelValue = new PIXI.Text('LV:99',$systems.styles[0]).setName('TxtLevelValue');
             TxtLevelValue.anchor.set(0.5);
-            TxtLevelValue.position.set(0,35);
+            TxtLevelValue.position.set(0,-38);
         //# statesBar
         const STATESBARS = [];
         for (let i=0, l=4; i<l; i++) {
@@ -59,13 +59,16 @@ class _Huds_States_players extends PIXI.Container {
                 State.scale.set(0.5);
                 State.position.set(75*i,0);
             //# txt value
-            const TxtStatesValue = new PIXI.Text('999',$systems.styles[0]).setName('TxtStatesValue');
+            const TxtStatesValue = new PIXI.Text('???',$systems.styles[0]).setName('TxtStatesValue');
                 TxtStatesValue.anchor.set(0.5);
                 TxtStatesValue.position.set(75*i,20);
             StatesContainer.addChild(State,TxtStatesValue);
         };
+        //# Satus Container
+        const StatusContainer = new PIXI.Container().setName('StatusContainer');
+            StatusContainer.position.set(0,50)
         //!end
-        this.addChild(STATESBARS[0],STATESBARS[2],CenterBg,STATESBARS[1],STATESBARS[3],HeadIcon,TxtLevelValue,StatesContainer);
+        this.addChild(STATESBARS[0],STATESBARS[2],CenterBg,STATESBARS[1],STATESBARS[3],HeadIcon,TxtLevelValue,StatesContainer,StatusContainer);
         this.child = this.childrenToName();
     };
     //#endregion
@@ -112,13 +115,14 @@ class _Huds_States_players extends PIXI.Container {
 
     /** refresh les stats et bar */
     update(){
+        //!states
         for (let i=0,stateKeys=$systems.states.base, l=stateKeys.length; i<l; i++) {
             const stName = stateKeys[i];
             const State = this.Source.states[stName];
             const TxtStatesValue = this.child.TxtStatesValue[i];
-            const value = String(State.value);
+            const value = String(State.getReelValue());
             if(value !==TxtStatesValue.text){
-                TxtStatesValue.text = String(State.value);
+                TxtStatesValue.text = String(value);
                 gsap.fromTo(TxtStatesValue.scale, 0.3,{x:1.1,y:1.1}, {x:1,y:1});
             }
         };
@@ -127,6 +131,16 @@ class _Huds_States_players extends PIXI.Container {
         });
 
         //!status bar
+        const list = Object.values(_statesManager.POOL).filter(State=>{
+            return State.target === this.Source;
+        })
+        list.forEach((State,i) => {
+            if(!State.parent){
+                gsap.fromTo(State.scale, 1,{ x:0, y:0 },{ x:0.5, y:0.5, ease:Elastic.easeOut.config(1, 0.3) });
+                State.x = 52*i;
+                this.child.StatusContainer.addChild(State)
+            }
+        })
         // retrouve les ref status grace au contextId attacher a la source
         /*let negX = -60; // start point des status positif
         let posX = +60; // start point des status negatif

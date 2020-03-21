@@ -4,14 +4,11 @@
 class _State_mp extends _StateBase {
     /**@param {_battler} source */
     constructor(source,target) {
-        super(source,target,null,null);
+        super(source,target,'+');
         this.name = 'mp';
     }
-    /** return la list des influenceur max hp */
-    getInfluer(){
-        const influers = [
-            this.source.status.deshydrate,
-        ].remove();
-        return influers;
+    add(value){
+        this.source._currentMP = (this.source._currentMP+value).clamp(0, this.source.MP);
+        this.update(true);
     }
 }

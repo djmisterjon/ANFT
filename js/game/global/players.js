@@ -29,12 +29,6 @@ class _Players {
         this.p1.transferToCase(caseId+1);
     };
 
-    /** update les status des 2 joueur */
-    updateStates(){
-        this.p0.updateStates();
-       // this.p2.updateStates();
-    };
-
     /** update les po et fo, permanent par tours, mais pourrait etre retirer. le p2 peut aussi heriter avec options 
      * @param result {ResultTravel}
     */

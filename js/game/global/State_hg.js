@@ -3,13 +3,18 @@
 class _State_hg extends _StateBase {
     /**@param {_battler} source */
     constructor(source,target) {
-        super(source,target,null,null);
+        super(source,target,'+');
         this.name = 'hg';
     }
-    /** return la list des influenceur max hp */
-    getInfluer(){
-        const influers = [
+    add(value=0){
+        this.source._currentHG = (this.source._currentHG+value).clamp(0, this.source.HG);
+        this.update(true);
+    }
+
+    getInfliger(){
+        const Infligers = [
+            _State_hunger.INFLIGE(this),
         ].remove();
-        return influers;
+        return Infligers;
     }
 }
