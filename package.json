@@ -7,7 +7,7 @@
     "dat.gui": "^0.7.6",
     "date-and-time": "^0.14.2",
     "draggable": "^4.2.0",
-    "gsap": "^3.1.1",
+    "gsap": "^3.6.0",
     "izitoast": "^1.4.0",
     "mn-accordion": "^1.0.3",
     "nw": "^0.39.0-sdk",
